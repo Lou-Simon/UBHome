@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Messagerie - Hub Étudiant UBO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#2b8cee",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+            "ubo-blue": "#0055A4",
+            "ubo-yellow": "#FDB913",
+            "ubo-neutral-bg": "#F4F6F8",
+            "ubo-neutral-text": "#6c757d",
+            "surface-light": "#ffffff",
+            "surface-dark": "#182431",
+            "border-light": "#e5e7eb",
+            "border-dark": "#374151"
+          },
+          fontFamily: {
+            "display": ["Lexend", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100">
+<div class="flex h-screen w-full">
+<aside class="flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+<div class="flex items-center gap-3 mb-8">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBXThS4nBxn71ZEb3oCyF6kjsHNECRII5cEvAImXdZVIiaindSPacPMauCHZ1jfAjARiCmktMGZ1ZH2lH7CLgBhQNoeXzgBdX7EKLigQ8UuYuLCeY-0O7nEDYrfmms4PU_lmqVygg90S_xGg7Ubfrpcziwm_EQCYrVFB7n0ITPoeRK-hjKAvLWfBmYTUAlLm40HI88BuUOFcLAqDBDaCcFY9fDahWVpLZNAbHGVCXZzFBuAnYdTYujb5EHZLkiFfpaRKf63uHs97Ly");'></div>
+<h1 class="text-gray-900 dark:text-white text-lg font-bold">Hub Étudiant UBO</h1>
+</div>
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard' %}">
+<span class="material-symbols-outlined text-xl">home</span>
+<p class="text-sm font-medium">Accueil</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'calendar' %}">
+<span class="material-symbols-outlined text-xl">calendar_month</span>
+<p class="text-sm font-medium">Calendrier</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-ubo-yellow/20 text-ubo-blue dark:text-ubo-yellow" href="{% url 'chat' %}">
+<span class="material-symbols-outlined text-xl">mail</span>
+<p class="text-sm font-bold">Messagerie</p>
+</a>
+<div class="pl-4 mt-1 flex flex-col gap-1 border-l-2 border-ubo-yellow ml-5">
+<a class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20" href="{% url 'chat' %}">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">inbox</span>
+<p class="text-sm font-medium">Boîte de réception</p>
+</div>
+<span class="flex items-center justify-center rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">3</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="#">
+<span class="material-symbols-outlined text-xl">send</span>
+<p class="text-sm font-medium">Envoyés</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="#">
+<span class="material-symbols-outlined text-xl">draft</span>
+<p class="text-sm font-medium">Brouillons</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="#">
+<span class="material-symbols-outlined text-xl">delete</span>
+<p class="text-sm font-medium">Corbeille</p>
+</a>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'forum' %}">
+<span class="material-symbols-outlined text-xl">forum</span>
+<p class="text-sm font-medium">Forum</p>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-ubo-blue text-white text-sm font-bold shadow-sm hover:bg-ubo-blue/90">
+<span class="material-symbols-outlined text-xl">edit</span>
+<span class="truncate">Nouveau Message</span>
+</button>
+<a class="mt-2 flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+   href="{% url 'logout' %}">
+<span class="truncate">Se déconnecter</span>
+</a>
+</div>
+</aside>
+<main class="flex w-full max-w-md flex-col border-r border-border-light dark:border-border-dark bg-ubo-neutral-bg dark:bg-background-dark">
+<div class="sticky top-0 z-10 border-b border-border-light dark:border-border-dark bg-ubo-neutral-bg dark:bg-background-dark p-4">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark focus-within:ring-2 focus-within:ring-ubo-yellow">
+<div class="text-ubo-neutral-text flex items-center justify-center pl-3">
+<span class="material-symbols-outlined text-2xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-ubo-neutral-text px-2 text-base font-normal" placeholder="Rechercher un e-mail" value=""/>
+</div>
+</label>
+</div>
+<div class="flex gap-2 p-4 overflow-x-auto flex-shrink-0">
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-3 pr-2">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium">Tous</p>
+<span class="material-symbols-outlined text-lg text-ubo-neutral-text">expand_more</span>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-3 pr-2">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium">Non lus</p>
+<span class="material-symbols-outlined text-lg text-ubo-neutral-text">expand_more</span>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark pl-3 pr-2">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium">Avec pièce jointe</p>
+<span class="material-symbols-outlined text-lg text-ubo-neutral-text">expand_more</span>
+</button>
+</div>
+<div class="overflow-y-auto">
+<div class="flex cursor-pointer gap-4 bg-ubo-yellow/20 dark:bg-ubo-yellow/20 px-4 py-3 border-l-4 border-ubo-yellow">
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 mt-1" data-alt="Avatar de C. Dupont" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDWhVBm4jU5MIQnbJnD6uev8cEuB57SCPAqevqrq0IwqKgfh8Mdvopm-Ije2yhQ588f2fLTpVBKeGajPSS_e4m6N8e63wW0GFAGmTySJMNZFy8kSboVcKx8anYI-YFEhXuItbNz4ukaZ9bpYbZjxQ-uDsirdEw8BWxvv6GIa-m65LmedvkXA2I1cIKmmoRHCBtPa3btE9wExlHMrsPPtduV8zMvc1y6GNbQv1DzetNvgKoPGdE68CsSITmGwNUgyI_FOuikg1vPuYyl");'></div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex justify-between items-baseline">
+<p class="text-gray-900 dark:text-white text-base font-semibold">C. Dupont</p>
+<p class="text-ubo-neutral-text text-xs font-medium">10:42</p>
+</div>
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium truncate">Annonce importante du cours</p>
+<p class="text-ubo-neutral-text text-sm font-normal truncate">Bonjour à tous, veuillez trouver ci-joint le syllabus mis à jour pour...</p>
+</div>
+</div>
+</div>
+<div class="flex cursor-pointer gap-4 px-4 py-3 border-l-4 border-transparent hover:bg-gray-200 dark:hover:bg-white/5">
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 mt-1" data-alt="Avatar de L. Martin" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZohGcm6BejNrshQUs4ZNAiWmMXboytySBJ4pQ2HxzybQjYyg52BNbGc4vP-COXNyx6GLWTn_07XqdxZF0nrU2eerJTCoopJ_pWoOMYBQKhSnPHZ4aRlSY_VEDB8lN6Onl3TwB7wdxGmJISwD8Kn_cSJhERct4tRngxyAxpBA5f7QYrdj1bHCazv_8kYgZoUQG__IbcTi-gIDDdA1igk3Tvpw_OiMQCVx2QUjHkX-q2TIcX44Bs1OJ-dnU7bdBQWE9PZImFZFeRVPF");'></div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex justify-between items-baseline">
+<p class="text-gray-900 dark:text-white text-base font-semibold">L. Martin</p>
+<p class="text-ubo-neutral-text text-xs font-medium">Hier</p>
+</div>
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium truncate">Invitation: Réunion de projet</p>
+<p class="text-ubo-neutral-text text-sm font-normal truncate">Salut l'équipe, pouvons-nous nous retrouver demain pour discuter des prochaines étapes ?</p>
+</div>
+</div>
+</div>
+<div class="flex cursor-pointer gap-4 px-4 py-3 border-l-4 border-transparent hover:bg-gray-200 dark:hover:bg-white/5">
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 mt-1" data-alt="Avatar de Scolarité UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrH9Wsq9WO4h3mLJajS-roqAHSEKDlIpHZYrCqnNqxbXtmQEU3pH5iWzdSd5iUho4r9X0VZ1STYdnEh8b_PNYqtXucN_9Whk5Pvl6ZDxx_WB_sZqoiUphzzETCJLQFTKaewqunY9sjEKTkxOJKxiLaIwdIztV0deL7aeUfhbrRaDStN_tlN2uNx_liekspbZuzAQAt_hBoJGQwnBOvb19rJTx8z1pwg_bRzh0quL_DQL2BE2twfjb15_7Irb6fH9IHhXpcqCsitYM3");'></div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex justify-between items-baseline">
+<p class="text-gray-900 dark:text-white text-base font-semibold">Scolarité UBO</p>
+<p class="text-ubo-neutral-text text-xs font-medium">21 Nov</p>
+</div>
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium truncate">Confirmation d'inscription</p>
+<p class="text-ubo-neutral-text text-sm font-normal truncate">Votre inscription pédagogique pour le semestre à venir a bien été validée.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<section class="flex flex-1 flex-col bg-surface-light dark:bg-surface-dark">
+<div class="flex items-center justify-between border-b border-border-light dark:border-border-dark p-4 h-[72px]">
+<h2 class="text-xl font-semibold text-gray-900 dark:text-white">Annonce importante du cours</h2>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400">
+<span class="material-symbols-outlined text-2xl">reply</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400">
+<span class="material-symbols-outlined text-2xl">reply_all</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400">
+<span class="material-symbols-outlined text-2xl">forward</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400">
+<span class="material-symbols-outlined text-2xl">delete</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-6">
+<div class="flex items-center gap-4 mb-6">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12" data-alt="Avatar de C. Dupont" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBsAiE97z98PKa-D-Oc6H-nmxXRNrUoI2cpodom4-ChwSos0kClX0nHl7bZHxhkApUSYnU2kiSYF419AQ1fG7iilknRu7u5k4yvZ5Iiyg4xWaEkH5Za9X3TUryRvNmHFJb84JeUvegG8j2FFW56l1PorqhUiw0D8scOK2vYC_GtZNaIEEQzMsfHcaDpk5Z8NBXh0BNbD4C6myskof1F_DdmTPpZrxbcemqOOGm5kQLLuSPSktSVxAlqBTdSakTZzDz3GosqW3IgEpha");'></div>
+<div class="flex-1">
+<p class="font-semibold text-gray-900 dark:text-white">C. Dupont <span class="font-normal text-ubo-neutral-text"><c.dupont@univ-brest.fr></span></p>
+<p class="text-sm text-ubo-neutral-text">À : etudiants.l3-info@univ-brest.fr</p>
+</div>
+<div class="text-right text-sm text-ubo-neutral-text">
+<p>Aujourd'hui, 10:42</p>
+<button class="text-ubo-yellow"><span class="material-symbols-outlined text-xl align-middle">star</span></button>
+</div>
+</div>
+<article class="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-relaxed">
+<p>Bonjour à tous,</p>
+<p>Veuillez trouver ci-joint le syllabus mis à jour pour le cours de "Développement Web Avancé". J'ai ajouté des détails concernant le projet final et ajusté le calendrier des examens partiels.</p>
+<p>N'hésitez pas à me contacter si vous avez des questions.</p>
+<p>Cordialement,</p>
+<p>M. Dupont</p>
+</article>
+<div class="mt-8 pt-6 border-t border-border-light dark:border-border-dark">
+<h3 class="text-base font-semibold text-gray-900 dark:text-white mb-3">Pièces jointes</h3>
+<div class="flex items-center gap-3 p-3 rounded-lg border border-border-light dark:border-border-dark bg-gray-50 dark:bg-white/5 max-w-sm">
+<div class="flex items-center justify-center size-10 rounded-lg bg-red-100 dark:bg-red-900/50">
+<span class="material-symbols-outlined text-red-600 dark:text-red-400">picture_as_pdf</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-gray-900 dark:text-white">Syllabus_DWA_2024.pdf</p>
+<p class="text-xs text-ubo-neutral-text">1.2 MB</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400">
+<span class="material-symbols-outlined text-xl">download</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+</body></html>

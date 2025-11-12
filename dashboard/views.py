@@ -90,6 +90,42 @@ def calendar(request):
     
     return render(request, 'calendar.html', context)
 
+def chat_view(request):
+    """Vue pour afficher la page de chat/emails."""
+    
+    # 1. Vérification de l'authentification (basée sur la session)
+    user_data = get_session_user_data(request)
+
+    if not user_data:
+        return redirect('login') # Redirection si l'utilisateur n'est pas connecté
+        
+    # 2. Préparation du contexte
+    context = {
+        'user': user_data,
+        'title': 'Chat et Emails'
+    }
+
+    # 3. Rendu du template
+    # Supposons que votre template s'appelle 'chat.html' (ou le nom de votre fichier)
+    return render(request, 'chat.html', context)
+
+def forum_view(request):
+    """Vue pour afficher la page du Forum."""
+    
+    # Vérification de l'authentification
+    user_data = get_session_user_data(request)
+
+    if not user_data:
+        return redirect('login') 
+        
+    context = {
+        'user': user_data,
+        'title': 'Forum Étudiant'
+    }
+
+    # Supposons que votre template pour le Forum s'appelle 'forum.html'
+    return render(request, 'forum.html', context)
+
 def profile_view(request):
     """Affiche la page de profil."""
     user_data = get_session_user_data(request)
