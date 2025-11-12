@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="light" lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mon Profil - {{ student.full_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#F4C753",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#1a160d"
+                    },
+                    fontFamily: {
+                        display: "Lexend"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-[#111318] min-h-screen">
+    <div class="max-w-4xl mx-auto pt-10 pb-20 px-4 sm:px-6 lg:px-8">
+        
+        <h1 class="text-4xl font-extrabold text-[#111318] dark:text-white mb-10 text-center font-display">
+            Profil Étudiant
+        </h1>
+
+        <div class="bg-white dark:bg-[#1e2025] rounded-2xl shadow-2xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700">
+            <div class="flex flex-col items-center mb-10">
+                <div class="relative w-32 h-32 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center mb-4 border-4 border-primary/50 shadow-xl">
+                    <span class="text-6xl font-extrabold text-[#111318] dark:text-white">
+                        {{ student.full_name|slice:"1" }}
+                    </span>
+                    </div>
+                <h2 class="text-3xl font-bold text-[#111318] dark:text-white">{{ student.full_name }}</h2>
+                <p class="text-lg text-[#616f89] dark:text-slate-400 mt-1">{{ student.year }}</p>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-[#111318] dark:text-white mb-6 border-b pb-2 border-slate-200 dark:border-slate-700">
+                    Informations de Contact et Scolarité
+                </h3>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-slate-50 dark:bg-[#30333b] rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center text-sm font-semibold text-[#616f89] dark:text-slate-400 mb-2 sm:mb-0">
+                        <span class="material-symbols-outlined mr-3 text-2xl">fingerprint</span>
+                        Numéro d'Étudiant
+                    </div>
+                    <span class="text-lg font-medium text-primary">{{ student.student_id }}</span>
+                    </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-slate-50 dark:bg-[#30333b] rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center text-sm font-semibold text-[#616f89] dark:text-slate-400 mb-2 sm:mb-0">
+                        <span class="material-symbols-outlined mr-3 text-2xl">mail</span>
+                        Adresse Email UBO
+                    </div>
+                    <span class="text-lg font-medium text-[#111318] dark:text-white truncate">{{ student.email }}</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-slate-50 dark:bg-[#30333b] rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center text-sm font-semibold text-[#616f89] dark:text-slate-400 mb-2 sm:mb-0">
+                        <span class="material-symbols-outlined mr-3 text-2xl">school</span>
+                        Année d'Étude
+                    </div>
+                    <span class="text-lg font-medium text-[#111318] dark:text-white">{{ student.year }}</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-red-50 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
+                    <div class="flex items-center text-sm font-semibold text-red-700 dark:text-red-400 mb-2 sm:mb-0">
+                        <span class="material-symbols-outlined mr-3 text-2xl">lock</span>
+                        Statut de Sécurité
+                    </div>
+                    <span class="text-lg text-red-700 dark:text-red-400 font-medium">Mot de passe masqué</span>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 text-center">
+                <a href="/?name={{ student.full_name|urlencode }}&year={{ student.year|urlencode }}&student_id={{ student.student_id|urlencode }}&email={{ student.email|urlencode }}" class="inline-flex items-center py-2.5 px-6 rounded-lg shadow-md text-base font-semibold text-[#111318] bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300">
+                    <span class="material-symbols-outlined mr-2">arrow_back</span>
+                    Retour au Tableau de Bord
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
