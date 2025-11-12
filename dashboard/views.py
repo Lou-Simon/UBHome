@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .models import Student # On importe le Modèle
 
 # --- Fonctions utilitaires du Contrôleur ---
@@ -74,6 +76,19 @@ def dashboard_view(request):
     # Rend la Vue (V) : dashboard.html
     return render(request, 'dashboard.html', {'user': user_data})
 
+def calendar(request):
+    """Vue pour afficher la page du calendrier."""
+    user_data = get_session_user_data(request) # Vérifie la session personnalisée
+    
+    if not user_data:
+        return redirect('login') # Redirection si non authentifié
+        
+    context = {
+        'user': user_data,
+        'title': 'Calendrier'
+    }
+    
+    return render(request, 'calendar.html', context)
 
 def profile_view(request):
     """Affiche la page de profil."""

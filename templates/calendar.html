@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="light" lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Calendrier - Hub Étudiant UBO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C753", "background-light": "#f8f7f6", "background-dark": "#221d10"}, fontFamily: {display: "Lexend"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+ .material-symbols-outlined {
+font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+font-size: 24px;
+}
+</style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="flex h-full min-h-screen">
+<aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6WFHIxSxSg6tfUqACZVyKdDKLs2EPbYRQqDySuXw-YLfWNFgSYM2IRtLk_jDTPDS-AWl69gkmekx9U2yuZRkKmlNbmsxDBzOGzWXyYRb8IvhQUWwmxePbCWhiZU3q54lDovyxQgsit7PfNL1Bk_5u85hodKzsBHLvDn2ugoiuvSBhejXyUm-EMpF0Iw0sS-Gv-gwoVRvfNm2DxYO5Qq59Dqtz6xtedepFcheufkMFtrWsEOWFyjCUS-mdKWCUWpV05rgx_H8TB137");'></div>
+<div class="flex flex-col">
+<h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
+<p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
+       href="{% url 'dashboard' %}"> 
+        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">home</span>
+        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Accueil</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" 
+       href="{% url 'calendar' %}">
+        <span class="material-symbols-outlined text-primary dark:text-primary">calendar_month</span>
+        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Calendrier</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#">
+        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
+        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="#">
+        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
+        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
+    </a>
+</nav>
+</div>
+<div class="flex flex-col gap-1">
+</div>
+</aside>
+<main class="flex-1 p-8">
+<div class="flex flex-col gap-8">
+<header class="flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+    <h1 class="text-[#111318] dark:text-white text-3xl font-bold leading-tight tracking-tight">Calendrier</h1>
+    <p class="text-[#616f89] dark:text-slate-400 text-base font-normal leading-normal">Votre emploi du temps de la semaine.</p>
+</div>
+<div class="flex items-center gap-4">
+    <button class="p-2.5 text-[#616f89] dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <span class="material-symbols-outlined">notifications</span>
+    </button>
+    
+    <a class="p-2.5 text-[#111318] dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" 
+       href="{% url 'profile' %}">
+        <span class="material-symbols-outlined">account_circle</span>
+    </a>
+
+    <a class="p-2.5 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-slate-800 border border-red-200 dark:border-red-700 bg-white dark:bg-slate-900" 
+       href="{% url 'logout' %}">
+        <span class="material-symbols-outlined">logout</span>
+    </a>
+</div>
+</header>
+<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+</button>
+<h2 class="text-lg font-semibold text-[#111318] dark:text-white">15 - 19 Avril 2024</h2>
+<button class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+<button class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800">Aujourd'hui</button>
+</div>
+<div class="grid grid-cols-5 divide-x divide-slate-200 dark:divide-slate-800">
+<div class="flex flex-col">
+<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+<p class="text-sm font-semibold text-[#111318] dark:text-white">Lundi</p>
+<p class="text-xs text-[#616f89] dark:text-slate-400">15</p>
+</div>
+<div class="p-4 h-[500px] relative">
+<div class="absolute top-1/4 left-4 right-4 bg-primary/20 p-3 rounded-lg border-l-4 border-primary">
+<p class="text-sm font-bold text-primary">TD de Physique</p>
+<p class="text-xs text-primary/80">10:00 - 12:00</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+<p class="text-sm font-semibold text-[#111318] dark:text-white">Mardi</p>
+<p class="text-xs text-[#616f89] dark:text-slate-400">16</p>
+</div>
+<div class="p-4 h-[500px]"></div>
+</div>
+<div class="flex flex-col">
+<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+<p class="text-sm font-semibold text-[#111318] dark:text-white">Mercredi</p>
+<p class="text-xs text-[#616f89] dark:text-slate-400">17</p>
+</div>
+<div class="p-4 h-[500px] relative">
+<div class="absolute top-1/2 left-4 right-4 bg-red-500/10 dark:bg-red-500/20 p-3 rounded-lg border-l-4 border-red-500">
+<p class="text-sm font-bold text-red-600 dark:text-red-400">Examen de Mathématiques</p>
+<p class="text-xs text-red-500/80 dark:text-red-400/80">14:00 - 16:00</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+<p class="text-sm font-semibold text-[#111318] dark:text-white">Jeudi</p>
+<p class="text-xs text-[#616f89] dark:text-slate-400">18</p>
+</div>
+<div class="p-4 h-[500px]"></div>
+</div>
+<div class="flex flex-col">
+<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+<p class="text-sm font-semibold text-[#111318] dark:text-white">Vendredi</p>
+<p class="text-xs text-[#616f89] dark:text-slate-400">19</p>
+</div>
+<div class="p-4 h-[500px]"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body>
+</html>
