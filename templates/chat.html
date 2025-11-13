@@ -54,20 +54,20 @@
 <h1 class="text-gray-900 dark:text-white text-lg font-bold">Hub Étudiant UBO</h1>
 </div>
 <nav class="flex flex-col gap-1 flex-1">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:dashboard' %}">
 <span class="material-symbols-outlined text-xl">home</span>
 <p class="text-sm font-medium">Accueil</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'calendar' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
 <span class="material-symbols-outlined text-xl">calendar_month</span>
 <p class="text-sm font-medium">Calendrier</p>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-ubo-yellow/20 text-ubo-blue dark:text-ubo-yellow" href="{% url 'chat' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-ubo-yellow/20 text-ubo-blue dark:text-ubo-yellow" href="{% url 'dashboard:chat' %}">
 <span class="material-symbols-outlined text-xl">mail</span>
 <p class="text-sm font-bold">Messagerie</p>
 </a>
 <div class="pl-4 mt-1 flex flex-col gap-1 border-l-2 border-ubo-yellow ml-5">
-<a class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20" href="{% url 'chat' %}">
+<a class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20" href="{% url 'dashboard:chat' %}">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-xl">inbox</span>
 <p class="text-sm font-medium">Boîte de réception</p>
@@ -87,7 +87,7 @@
 <p class="text-sm font-medium">Corbeille</p>
 </a>
 </div>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'forum' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:forum' %}">
 <span class="material-symbols-outlined text-xl">forum</span>
 <p class="text-sm font-medium">Forum</p>
 </a>
@@ -98,7 +98,7 @@
 <span class="truncate">Nouveau Message</span>
 </button>
 <a class="mt-2 flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
-   href="{% url 'logout' %}">
+   href="{% url 'dashboard:logout' %}">
 <span class="truncate">Se déconnecter</span>
 </a>
 </div>

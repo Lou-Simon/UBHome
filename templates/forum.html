@@ -56,21 +56,21 @@
 </div>
 </div>
 <nav class="flex flex-col gap-2">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-active-light dark:hover:bg-active-dark/50" href="{% url 'dashboard' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-active-light dark:hover:bg-active-dark/50" href="{% url 'dashboard:dashboard' %}">
 <span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">home</span>
 <p class="text-sm font-medium">Accueil</p>
 </a>
 
 
 
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark" href="{% url 'forum' %}">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark" href="{% url 'dashboard:forum' %}">
 <span class="material-symbols-outlined text-primary dark:text-white">forum</span>
 <p class="text-primary dark:text-white text-sm font-bold">Forum</p>
 </a>
 </nav>
 </div>
 <a class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
-   href="{% url 'logout' %}">
+   href="{% url 'dashboard:logout' %}">
 <span class="truncate">Se déconnecter</span>
 </a>
 </aside>

@@ -1,14 +1,26 @@
 # Fichier : dashboard/urls.py
-from django.urls import path
-from . import views
+
+from django.urls import path, include 
+from .views import auth, dashboard, profile 
+
+app_name = 'dashboard' # Nécessaire pour le namespace
 
 urlpatterns = [
-    # Les noms ('dashboard', 'profile', 'login', 'logout') sont utilisés par le tag {% url %} dans le HTML.
-    path('', views.dashboard_view, name='dashboard'), 
-    path('profile', views.profile_view, name='profile'),
-    path('login', views.login_view, name='login'), 
-    path('logout', views.logout_view, name='logout'), 
-    path('calendar/', views.calendar, name='calendar'),
-    path('chat/', views.chat_view, name='chat'),
-    path('forum/', views.forum_view, name='forum')
+    # --- AUTHENTIFICATION & CORE ---
+    # La page d'accueil (/)
+    path('', dashboard.dashboard_view, name='dashboard'), 
+    
+    # La vue de CONNEXION (C'EST LA LIGNE MANQUANTE !)
+    path('login', auth.login_view, name='login'), 
+    
+    # La vue de DÉCONNEXION
+    path('logout', auth.logout_view, name='logout'), 
+    
+    # La vue de PROFIL
+    path('profile', profile.profile_view, name='profile'),
+    
+    # --- FONCTIONNALITÉS INCLUSES (sub_urls) ---
+    path('calendar/', include('dashboard.sub_urls.calendar_urls')),
+    path('chat/', include('dashboard.sub_urls.chat_urls')),
+    path('forum/', include('dashboard.sub_urls.forum_urls')),
 ]

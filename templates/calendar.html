@@ -31,17 +31,17 @@ font-size: 24px;
 </div>
 <nav class="flex flex-col gap-2">
     <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-       href="{% url 'dashboard' %}"> 
+       href="{% url 'dashboard:dashboard' %}"> 
         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">home</span>
         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Accueil</p>
     </a>
     <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" 
-       href="{% url 'calendar' %}">
+       href="{% url 'dashboard:calendar' %}">
         <span class="material-symbols-outlined text-primary dark:text-primary">calendar_month</span>
         <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Calendrier</p>
     </a>
     <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-    href="{% url 'chat' %}">
+    href="{% url 'dashboard:chat' %}">
         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
     </a>
@@ -67,12 +67,12 @@ font-size: 24px;
     </button>
     
     <a class="p-2.5 text-[#111318] dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" 
-       href="{% url 'profile' %}">
+       href="{% url 'dashboard:profile' %}">
         <span class="material-symbols-outlined">account_circle</span>
     </a>
 
     <a class="p-2.5 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-slate-800 border border-red-200 dark:border-red-700 bg-white dark:bg-slate-900" 
-       href="{% url 'logout' %}">
+       href="{% url 'dashboard:logout' %}">
         <span class="material-symbols-outlined">logout</span>
     </a>
 </div>

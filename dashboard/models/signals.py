@@ -1,41 +1,12 @@
-# Fichier : dashboard/models.py
-from django.db import models
-from django.db.utils import OperationalError
+# Fichier : dashboard/models/signals.py (Logique d'Initialisation des Données)
+
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.db.utils import OperationalError
+from .student_model import Student # Importe le modèle depuis le même package
 
-class Student(models.Model):
-    """
-    Modèle représentant un étudiant dans la base de données.
-    Django gère automatiquement la connexion SQLite pour vous.
-    """
-    student_id = models.CharField(max_length=10, primary_key=True, verbose_name="Numéro d'Étudiant")
-    email = models.EmailField(verbose_name="Adresse Email")
-    full_name = models.CharField(max_length=100, verbose_name="Nom Complet")
-    year = models.CharField(max_length=10, verbose_name="Niveau d'Études")
-    # Pour un projet réel, utilisez un hachage sécurisé (ex: Django's User model).
-    password_clear = models.CharField(max_length=50, verbose_name="Mot de passe (Clear Text)")
-    
-    def __str__(self):
-        return f"{self.full_name} ({self.student_id})"
-
-    class Meta:
-        verbose_name = "Étudiant"
-        verbose_name_plural = "Étudiants"
-
-# --- Logique d'initialisation des données (pour simuler init_db) ---
-@receiver(post_migrate)
-def create_initial_students(sender, **kwargs):
-    """
-    Crée les comptes initiaux après les migrations.
-    """
-    # S'assurer que le signal ne s'exécute que pour l'application 'dashboard'
-    if sender.name != 'dashboard':
-        return
-
-    try:
-        if not Student.objects.exists():
-            INITIAL_STUDENTS_DATA = [
+# Contient toutes vos données initiales (assurez-vous d'inclure la liste complète)
+INITIAL_STUDENTS_DATA = [
             # --- L1 ISI ---
             {"student_id": "25001001", "email": "lucas.martin@hub.fr", "full_name": "Lucas Martin", "year": "L1 ISI", "password_clear": "Kj8#mP2a"},
             {"student_id": "25001002", "email": "emma.bernard@hub.fr", "full_name": "Emma Bernard", "year": "L1 ISI", "password_clear": "xR9!vL4z"},
@@ -113,9 +84,20 @@ def create_initial_students(sender, **kwargs):
             {"student_id": "21207104", "email": "oceane.meyer@hub.fr", "full_name": "Océane Meyer", "year": "M2 LSE", "password_clear": "hR6!jT3w"},
             {"student_id": "21207105", "email": "robin.lucas@hub.fr", "full_name": "Robin Lucas", "year": "M2 LSE", "password_clear": "S5k&bP9m"}
             ]
+
+@receiver(post_migrate)
+def create_initial_students(sender, **kwargs):
+    """Crée les comptes initiaux après les migrations."""
+    
+    if sender.name != 'dashboard':
+        return
+
+    try:
+        # Vérifie si le modèle existe et s'il est vide
+        if not Student.objects.exists():
             for data in INITIAL_STUDENTS_DATA:
                 Student.objects.create(**data)
-            print("Données initiales des étudiants insérées via le modèle Django.")
+            print("✅ Données initiales des étudiants insérées.")
     except OperationalError:
-        # Ignore si la table n'existe pas encore
+        # Ceci gère le cas où la BDD n'est pas encore complètement créée au moment du signal
         pass
