@@ -7,7 +7,7 @@ def calendar(request):
     user_data = get_session_user_data(request)
     
     if not user_data:
-        return redirect('login')
+        return redirect('dashboard:login')
         
     context = {
         'user': user_data,

@@ -29,7 +29,7 @@ def get_session_user_data(request):
 def login_view(request):
     """Gère la connexion."""
     if request.session.get('student_id'):
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
         
     if request.method == 'POST':
         try:

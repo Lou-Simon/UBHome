@@ -47,7 +47,7 @@
   </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark" data-current-student-id="{{ user.student_id }}">
   <div class="flex h-screen w-full">
     <aside
       class="flex flex-col w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark p-4 shrink-0">
@@ -97,88 +97,177 @@
           <h1
             class="text-heading-light dark:text-heading-dark text-3xl font-black tracking-tight flex items-center gap-3">
             <span class="material-symbols-outlined text-accent" style="font-size: 32px;">tag</span>
-            <span>Licence Info - S3</span>
+            <span id="channelName">{{ channel.name }}</span>
           </h1>
-          <p class="text-subtle-light dark:text-subtle-dark text-base font-normal">Canal de discussion pour les
-            étudiants en troisième semestre de Licence Informatique.</p>
+          <p id="channelDesc" class="text-subtle-light dark:text-subtle-dark text-base font-normal">{{ channel.description }}</p>
         </header>
-        <div class="flex-grow space-y-6">
-          <div class="flex items-start gap-3 max-w-lg">
-            <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
-            <div class="flex flex-col">
+        <div id="postsContainer" class="flex-grow space-y-6">
+          {% for post in posts %}
+          <div class="flex items-start gap-3 max-w-lg {% if post.author.student_id == user.student_id %} ml-auto justify-end{% endif %}">
+            {% if post.author.student_id != user.student_id %}
+              <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+            {% endif %}
+            <div class="flex flex-col {% if post.author.student_id == user.student_id %} items-end{% endif %}">
               <div class="flex items-baseline gap-2">
-                <p class="font-bold text-heading-light dark:text-heading-dark text-sm">Léa Martin</p>
-                <p class="text-xs text-subtle-light dark:text-subtle-dark">17:40</p>
+                <p class="font-bold {% if post.author.student_id == user.student_id %} text-primary dark:text-accent {% else %} text-heading-light dark:text-heading-dark {% endif %} text-sm">
+                  {% if post.author.student_id == user.student_id %}Vous{% else %}{{ post.author.full_name }}{% endif %}
+                </p>
+                <p class="text-xs text-subtle-light dark:text-subtle-dark">{{ post.posted_at|date:"d/m/Y H:i" }}</p>
               </div>
-              <div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-                <p class="text-sm">Salut tout le monde ! J'ai une question sur le partiel d'Algèbre Linéaire S2. Est-ce
-                  que quelqu'un sait si les démonstrations du cours sont à connaître par cœur ?</p>
+              <div class="mt-1 p-3 rounded-lg {% if post.author.student_id == user.student_id %} bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none {% else %} bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none {% endif %}">
+                <p class="text-sm">{{ post.content }}</p>
               </div>
             </div>
+            {% if post.author.student_id == user.student_id %}
+              <div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
+            {% endif %}
           </div>
-          <div class="flex items-start gap-3 max-w-lg ml-auto justify-end">
-            <div class="flex flex-col items-end">
-              <div class="flex items-baseline gap-2">
-                <p class="font-bold text-primary dark:text-accent text-sm">Vous</p>
-                <p class="text-xs text-subtle-light dark:text-subtle-dark">17:42</p>
-              </div>
-              <div class="bg-primary dark:bg-accent p-3 rounded-lg rounded-tr-none mt-1">
-                <p class="text-sm text-white dark:text-primary">Salut Léa ! Le prof a dit en amphi que les démos ne
-                  seraient pas demandées, il faut surtout comprendre la méthode.</p>
-              </div>
-            </div>
-            <div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
-          </div>
-          <div class="flex items-start gap-3 max-w-lg">
-            <div class="size-10 rounded-full bg-green-200 dark:bg-green-900 flex-shrink-0"></div>
-            <div class="flex flex-col">
-              <div class="flex items-baseline gap-2">
-                <p class="font-bold text-heading-light dark:text-heading-dark text-sm">Yanis Dubois</p>
-                <p class="text-xs text-subtle-light dark:text-subtle-dark">17:45</p>
-              </div>
-              <div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-                <p class="text-sm">Ah super, merci pour l'info ! J'étais en train de galérer dessus. Ça me rassure.</p>
-              </div>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 max-w-lg">
-            <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
-            <div class="flex flex-col">
-              <div class="flex items-baseline gap-2">
-                <p class="font-bold text-heading-light dark:text-heading-dark text-sm">Léa Martin</p>
-                <p class="text-xs text-subtle-light dark:text-subtle-dark">17:46</p>
-              </div>
-              <div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-                <p class="text-sm">Ouf, merci beaucoup ! Je vais pouvoir me concentrer sur les exercices alors.</p>
-              </div>
-            </div>
-          </div>
+          {% empty %}
+          <p class="text-sm text-subtle-light dark:text-subtle-dark">Aucun message pour le moment. Soyez le premier à écrire !</p>
+          {% endfor %}
         </div>
       </div>
       <div
         class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
         <div class="relative">
-          <textarea
-            class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
-            placeholder="Écrire un message dans #licence-info-s3..." rows="1"></textarea>
-          <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <button
-              class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
-            </button>
-            <button
-              class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
-            </button>
-            <button
-              class="h-9 px-4 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold text-sm transition-colors">
-              <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
-            </button>
-          </div>
+          <form method="post" class="relative" id="forumForm">
+            {% csrf_token %}
+            <textarea name="content" id="messageInput"
+              class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
+              placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button type="button"
+                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
+              </button>
+              <button type="button"
+                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
+              </button>
+              <button type="submit" id="sendBtn"
+                class="h-9 px-4 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold text-sm transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </main>
   </div>
+
+  <script>
+    (function () {
+      const postsContainer = document.getElementById('postsContainer');
+      const currentStudentId = document.body.dataset.currentStudentId;
+      const channelNameEl = document.getElementById('channelName');
+      const channelDescEl = document.getElementById('channelDesc');
+      const form = document.getElementById('forumForm');
+      const input = document.getElementById('messageInput');
+      const fetchUrl = '{% url "dashboard:forum_posts_json" %}';
+
+      function renderPosts(data) {
+        if (data.channel) {
+          if (channelNameEl) channelNameEl.textContent = data.channel.name;
+          if (channelDescEl) channelDescEl.textContent = data.channel.description || '';
+        }
+        // Clear container
+        postsContainer.innerHTML = '';
+        if (!data.posts || data.posts.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-sm text-subtle-light dark:text-subtle-dark';
+          p.textContent = 'Aucun message pour le moment. Soyez le premier à écrire !';
+          postsContainer.appendChild(p);
+          return;
+        }
+        data.posts.forEach((post) => {
+          const isMine = post.author.student_id === currentStudentId;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'flex items-start gap-3 max-w-lg' + (isMine ? ' ml-auto justify-end' : '');
+
+          if (!isMine) {
+            const avatar = document.createElement('div');
+            avatar.className = 'size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0';
+            wrapper.appendChild(avatar);
+          }
+
+          const contentCol = document.createElement('div');
+          contentCol.className = 'flex flex-col' + (isMine ? ' items-end' : '');
+
+          const header = document.createElement('div');
+          header.className = 'flex items-baseline gap-2';
+
+          const name = document.createElement('p');
+          name.className = 'font-bold text-sm ' + (isMine ? 'text-primary dark:text-accent' : 'text-heading-light dark:text-heading-dark');
+          name.textContent = isMine ? 'Vous' : post.author.full_name;
+
+          const date = document.createElement('p');
+          date.className = 'text-xs text-subtle-light dark:text-subtle-dark';
+          date.textContent = post.posted_at;
+
+          header.appendChild(name);
+          header.appendChild(date);
+
+          const bubble = document.createElement('div');
+          bubble.className = 'mt-1 p-3 rounded-lg text-sm ' + (isMine
+            ? 'bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none'
+            : 'bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none');
+
+          const text = document.createElement('p');
+          text.className = 'text-sm';
+          text.textContent = post.content;
+          bubble.appendChild(text);
+
+          contentCol.appendChild(header);
+          contentCol.appendChild(bubble);
+
+          wrapper.appendChild(contentCol);
+
+          if (isMine) {
+            const meAvatar = document.createElement('div');
+            meAvatar.className = 'size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0';
+            wrapper.appendChild(meAvatar);
+          }
+
+          postsContainer.appendChild(wrapper);
+        });
+        // Scroll to bottom to see latest
+        postsContainer.parentElement.scrollTop = postsContainer.parentElement.scrollHeight;
+      }
+
+      async function refreshPosts() {
+        try {
+          const res = await fetch(fetchUrl, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) return;
+          const data = await res.json();
+          renderPosts(data);
+        } catch (e) {
+          // ignore network errors silently for polling
+        }
+      }
+
+      // Initial load + polling every 1s
+      refreshPosts();
+      setInterval(refreshPosts, 1000);
+
+      // Intercept form submit to avoid full reload
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = (input.value || '').trim();
+        if (!content) return;
+        try {
+          const formData = new FormData(form); // includes csrfmiddlewaretoken & content
+          const res = await fetch(window.location.pathname, {
+            method: 'POST',
+            body: formData
+          });
+          if (res.ok) {
+            input.value = '';
+            refreshPosts();
+          }
+        } catch (_) {}
+      });
+    })();
+  </script>
 </body>
 
 </html>
