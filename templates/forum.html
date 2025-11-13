@@ -60,7 +60,16 @@
 <span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">home</span>
 <p class="text-sm font-medium">Accueil</p>
 </a>
-
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
+            href="{% url 'dashboard:calendar' %}">
+                <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
+                <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
+            href="{% url 'dashboard:chat' %}">
+                <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
+                <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
+            </a>
 
 
 <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark" href="{% url 'dashboard:forum' %}">
