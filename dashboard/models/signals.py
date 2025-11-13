@@ -1,12 +1,14 @@
-# Fichier : dashboard/models/signals.py (Logique d'Initialisation des Données)
 
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.db.utils import OperationalError
-from .student_model import Student # Importe le modèle depuis le même package
+# Importe tous les modèles
+from .models import Student, ForumChannel, Course, Email, ForumPost, Event 
+# Pas besoin d'importer le modèle séparément si tout est dans models.py
 
 # Contient toutes vos données initiales (assurez-vous d'inclure la liste complète)
 INITIAL_STUDENTS_DATA = [
+            
             # --- L1 ISI ---
             {"student_id": "25001001", "email": "lucas.martin@hub.fr", "full_name": "Lucas Martin", "year": "L1 ISI", "password_clear": "Kj8#mP2a"},
             {"student_id": "25001002", "email": "emma.bernard@hub.fr", "full_name": "Emma Bernard", "year": "L1 ISI", "password_clear": "xR9!vL4z"},
@@ -83,21 +85,117 @@ INITIAL_STUDENTS_DATA = [
             {"student_id": "21207103", "email": "quentin.noel@hub.fr", "full_name": "Quentin Noël", "year": "M2 LSE", "password_clear": "F2v$mS8x"},
             {"student_id": "21207104", "email": "oceane.meyer@hub.fr", "full_name": "Océane Meyer", "year": "M2 LSE", "password_clear": "hR6!jT3w"},
             {"student_id": "21207105", "email": "robin.lucas@hub.fr", "full_name": "Robin Lucas", "year": "M2 LSE", "password_clear": "S5k&bP9m"}
-            ]
+]
+
+# --- NOUVELLES DONNÉES INITIALES ---
+
+INITIAL_CHANNELS_DATA = [
+    {"name": "General", "description": "Discussions générales sur la vie étudiante."},
+    {"name": "L1 ISI", "description": "Discussions pour les étudiants L1 Informatique Scientifique et Ingénierie."},
+    {"name": "L2 IFA", "description": "Discussions pour les étudiants L2 Informatique et Applications."},
+    {"name": "L3 IFA", "description": "Discussions pour les étudiants L3 Informatique et Applications."},
+    {"name": "M1 ILIADE", "description": "Master 1 Ingénierie du Logiciel et de l'Intelligence Artificielle pour les Données et l'Environnement."},
+    {"name": "M1 SIIA", "description": "Master 1 Systèmes d'Information et Ingénierie d'Applications."},
+    {"name": "M1 LSE", "description": "Master 1 Logistique et Systèmes d'Entreprise."},
+    {"name": "M2 ILIADE", "description": "Master 2 Ingénierie du Logiciel et de l'Intelligence Artificielle pour les Données et l'Environnement."},
+    {"name": "M2 SIIA", "description": "Master 2 Systèmes d'Information et Ingénierie d'Applications."},
+    {"name": "M2 LSE", "description": "Master 2 Logistique et Systèmes d'Entreprise."},
+]
+
+INITIAL_COURSES_DATA = [
+    {"name": "Développement Web Avancé", "teacher": "M. Dupont"},
+    {"name": "Intelligence Artificielle", "teacher": "Mme. Lecoeur"},
+    {"name": "Base de Données SQL", "teacher": "M. Petit"},
+    {"name": "Anglais Technique", "teacher": "Mme. Smith"},
+]
+
+# --- AJOUT DE L'EMAIL ET DU POST INITIAL ---
+
+def create_initial_content(students, channels, courses):
+    """Crée un email, un post et un événement initial pour peupler la BDD."""
+    
+    # Email : Simon (M1 ILIADE) envoie à Lou (M1 ILIADE)
+    try:
+        sender = students.get(full_name="Simon Dumas")
+        recipient = students.get(full_name="Lou Simon")
+        Email.objects.create(
+            sender=sender,
+            recipient=recipient,
+            subject="Bienvenue sur la nouvelle messagerie",
+            body="Bonjour Lou, content de voir que la messagerie fonctionne après la refactorisation ! À bientôt."
+        )
+    except Student.DoesNotExist:
+        pass # Ignorer si les étudiants initiaux ne sont pas là
+    
+    # Forum Post : Maël (M1 ILIADE) post dans le canal M1 ILIADE
+    try:
+        author = students.get(full_name="Maël Bogaër")
+        channel = channels.get(name="M1 ILIADE")
+        ForumPost.objects.create(
+            channel=channel,
+            author=author,
+            content="Bonjour à tous les M1 ILIADE ! N'hésitez pas à poster vos questions sur les TP ici. Bon courage pour les premiers modules !"
+        )
+    except Student.DoesNotExist or ForumChannel.DoesNotExist:
+        pass
+
+    # Événement : Examen de Développement Web Avancé
+    try:
+        dev_web = courses.get(name="Développement Web Avancé")
+        Event.objects.create(
+            course=dev_web,
+            title="Examen - Développement Web Avancé",
+            description="Examen final portant sur les frameworks Django et React.",
+            # Utilisation d'une date proche (à ajuster si besoin)
+            start_time='2025-11-20 09:00:00',
+            end_time='2025-11-20 12:00:00',
+            location="Amphi B"
+        )
+    except Course.DoesNotExist:
+        pass
+
 
 @receiver(post_migrate)
-def create_initial_students(sender, **kwargs):
-    """Crée les comptes initiaux après les migrations."""
+def create_initial_data(sender, **kwargs):
+    """Crée les comptes, canaux, cours et contenu initiaux après les migrations."""
     
     if sender.name != 'dashboard':
         return
 
     try:
-        # Vérifie si le modèle existe et s'il est vide
+        # 1. Insertion des Étudiants (Si la table est vide)
         if not Student.objects.exists():
             for data in INITIAL_STUDENTS_DATA:
                 Student.objects.create(**data)
             print("✅ Données initiales des étudiants insérées.")
-    except OperationalError:
+        
+        # Récupération des étudiants pour les FK
+        all_students = Student.objects.all() 
+        
+        # 2. Insertion des Canaux de Forum
+        if not ForumChannel.objects.exists():
+            for data in INITIAL_CHANNELS_DATA:
+                ForumChannel.objects.create(**data)
+            print("✅ Canaux de forum initiaux insérés.")
+            
+        # Récupération des canaux pour les FK
+        all_channels = ForumChannel.objects.all()
+
+        # 3. Insertion des Cours
+        if not Course.objects.exists():
+            for data in INITIAL_COURSES_DATA:
+                Course.objects.create(**data)
+            print("✅ Cours initiaux insérés.")
+            
+        # Récupération des cours pour les FK
+        all_courses = Course.objects.all()
+
+        # 4. Insertion du Contenu Initial (Emails, Posts, Events)
+        if all_students.exists() and all_channels.exists() and all_courses.exists() and not Email.objects.exists():
+             create_initial_content(all_students, all_channels, all_courses)
+             print("✅ Contenu initial (Email, Post, Event) inséré.")
+             
+    except OperationalError as e:
         # Ceci gère le cas où la BDD n'est pas encore complètement créée au moment du signal
+        # print(f"Warning (OperationalError): {e}") # Décommenter pour debug
         pass
