@@ -7,7 +7,8 @@ from .models import (
     ForumChannel, 
     ForumPost, 
     Course, 
-    Event
+    Event,
+    ForumAttachment,
 )
 
 # Importe le module de signaux pour s'assurer que les récepteurs sont chargés au démarrage de l'application.

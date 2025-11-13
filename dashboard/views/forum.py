@@ -3,7 +3,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .auth import get_session_user_data
 # Ajouts d'import pour les modèles
-from ..models import Student, ForumChannel, ForumPost
+from ..models import Student, ForumChannel, ForumPost, ForumAttachment
+# --- Ajout: timezone pour formater en heure de Paris ---
+from django.utils import timezone
+import mimetypes
 
 
 def forum_view(request):
@@ -35,12 +38,15 @@ def forum_view(request):
     # Gestion de l'envoi d'un message
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
-        if content:
-            ForumPost.objects.create(channel=channel, author=student, content=content)
+        if content or request.FILES.getlist('attachments'):
+            post = ForumPost.objects.create(channel=channel, author=student, content=content)
+            # Gérer les pièces jointes
+            for f in request.FILES.getlist('attachments'):
+                ForumAttachment.objects.create(post=post, file=f, original_name=getattr(f, 'name', ''))
         return redirect('dashboard:forum')
 
     # Récupération des posts du canal
-    posts = channel.posts.select_related('author').order_by('posted_at')
+    posts = channel.posts.select_related('author').prefetch_related('attachments').order_by('posted_at')
 
     context = {
         'user': user_data,
@@ -71,17 +77,27 @@ def forum_posts_json(request):
         defaults={"description": f"Canal de discussion pour la promotion {channel_name}."}
     )
 
-    posts_qs = channel.posts.select_related('author').order_by('posted_at')
+    posts_qs = channel.posts.select_related('author').prefetch_related('attachments').order_by('posted_at')
 
     posts = [
         {
             "id": p.id,
             "content": p.content,
-            "posted_at": p.posted_at.strftime('%d/%m/%Y %H:%M'),
+            # Formate en heure locale (Europe/Paris via TIME_ZONE)
+            "posted_at": timezone.localtime(p.posted_at).strftime('%d/%m/%Y %H:%M'),
             "author": {
                 "student_id": p.author.student_id,
                 "full_name": p.author.full_name,
             },
+            "attachments": [
+                {
+                    "name": (att.original_name or att.file.name.split('/')[-1]),
+                    "url": (att.file.url if hasattr(att.file, 'url') else ''),
+                    "content_type": (mimetypes.guess_type(att.file.name)[0] or ''),
+                    "size": getattr(att.file, 'size', None),
+                }
+                for att in p.attachments.all()
+            ]
         }
         for p in posts_qs
     ]

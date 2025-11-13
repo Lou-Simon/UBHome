@@ -100,3 +100,18 @@ class ForumPost(models.Model):
         verbose_name = "Post de Forum"
         verbose_name_plural = "Posts de Forum"
         ordering = ['posted_at']
+
+# --- 4.bis. Pièces jointes des posts ---
+class ForumAttachment(models.Model):
+    """Fichier joint à un message de forum."""
+    post = models.ForeignKey(ForumPost, related_name='attachments', on_delete=models.CASCADE, verbose_name="Post")
+    file = models.FileField(upload_to='forum_attachments/', verbose_name="Fichier")
+    original_name = models.CharField(max_length=255, blank=True, verbose_name="Nom d'origine")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Ajouté le")
+
+    def __str__(self):
+        return self.original_name or (self.file.name.split('/')[-1] if self.file else 'Pièce jointe')
+
+    class Meta:
+        verbose_name = "Pièce jointe de Forum"
+        verbose_name_plural = "Pièces jointes de Forum"

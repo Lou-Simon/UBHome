@@ -1,3 +1,4 @@
+{% load tz %}
 <!DOCTYPE html>
 <html class="light" lang="fr">
 
@@ -112,10 +113,11 @@
                 <p class="font-bold {% if post.author.student_id == user.student_id %} text-primary dark:text-accent {% else %} text-heading-light dark:text-heading-dark {% endif %} text-sm">
                   {% if post.author.student_id == user.student_id %}Vous{% else %}{{ post.author.full_name }}{% endif %}
                 </p>
-                <p class="text-xs text-subtle-light dark:text-subtle-dark">{{ post.posted_at|date:"d/m/Y H:i" }}</p>
+                <p class="text-xs text-subtle-light dark:text-subtle-dark">{{ post.posted_at|localtime|date:"d/m/Y H:i" }}</p>
               </div>
               <div class="mt-1 p-3 rounded-lg {% if post.author.student_id == user.student_id %} bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none {% else %} bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none {% endif %}">
                 <p class="text-sm">{{ post.content }}</p>
+                <!-- Preview des pièces jointes côté client via JS (posts.json) -->
               </div>
             </div>
             {% if post.author.student_id == user.student_id %}
@@ -130,17 +132,26 @@
       <div
         class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
         <div class="relative">
-          <form method="post" class="relative" id="forumForm">
+          <form method="post" class="relative" id="forumForm" enctype="multipart/form-data">
             {% csrf_token %}
             <textarea name="content" id="messageInput"
               class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
               placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
+
+            <!-- Input fichier caché -->
+            <input type="file" id="attachmentsInput" name="attachments" multiple class="hidden" />
+            <!-- Liste des fichiers sélectionnés -->
+            <div id="selectedFiles" class="mt-2 flex flex-wrap gap-2"></div>
+
+            <!-- Petit panneau d'emojis -->
+            <div id="emojiPanel" class="hidden absolute bottom-14 right-24 z-20 p-2 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark shadow-xl max-w-[240px] flex flex-wrap gap-1"></div>
+
             <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <button type="button"
+              <button id="emojiBtn" type="button"
                 class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
               </button>
-              <button type="button"
+              <button id="attachBtn" type="button"
                 class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
               </button>
@@ -165,7 +176,145 @@
       const input = document.getElementById('messageInput');
       const fetchUrl = '{% url "dashboard:forum_posts_json" %}';
 
+      // Nouveaux éléments: pièces jointes et emojis
+      const attachBtn = document.getElementById('attachBtn');
+      const emojiBtn = document.getElementById('emojiBtn');
+      const attachInput = document.getElementById('attachmentsInput');
+      const selectedFiles = document.getElementById('selectedFiles');
+      const emojiPanel = document.getElementById('emojiPanel');
+
+      function formatBytes(bytes) {
+        if (!bytes && bytes !== 0) return '';
+        const sizes = ['o','Ko','Mo','Go','To'];
+        if (bytes === 0) return '0 o';
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return parseFloat((bytes / Math.pow(1024, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+      function isImageType(t) { return typeof t === 'string' && t.startsWith('image/'); }
+      function iconForType(t) {
+        if (!t) return 'attach_file';
+        if (t.startsWith('image/')) return 'image';
+        if (t === 'application/pdf') return 'picture_as_pdf';
+        if (t.startsWith('video/')) return 'movie';
+        if (t.startsWith('audio/')) return 'music_note';
+        if (t.indexOf('zip') !== -1 || t.indexOf('compressed') !== -1) return 'folder_zip';
+        if (t.startsWith('text/')) return 'description';
+        return 'attach_file';
+      }
+
+      function fileId(f) { return [f.name, f.size, f.lastModified].join('|'); }
+
+      function renderSelectedFiles() {
+        selectedFiles.innerHTML = '';
+        if (!attachInput.files || attachInput.files.length === 0) return;
+        Array.from(attachInput.files).forEach((f) => {
+          const id = fileId(f);
+          const isImg = isImageType(f.type);
+          const card = document.createElement('div');
+          card.className = 'relative border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-gray-800 overflow-hidden flex items-center gap-3 p-2 max-w-xs';
+          card.dataset.id = id;
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.dataset.action = 'remove-file';
+          removeBtn.dataset.id = id;
+          removeBtn.className = 'absolute top-1 right-1 size-6 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600';
+          removeBtn.innerHTML = '<span class="material-symbols-outlined text-xs">close</span>';
+          card.appendChild(removeBtn);
+
+          if (isImg) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(f);
+            img.alt = f.name;
+            img.className = 'h-16 w-16 object-cover rounded-md border border-border-light dark:border-border-dark';
+            img.onload = () => URL.revokeObjectURL(img.src);
+            card.appendChild(img);
+          } else {
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined text-2xl text-gray-500';
+            icon.textContent = iconForType(f.type);
+            card.appendChild(icon);
+          }
+
+          const meta = document.createElement('div');
+          meta.className = 'flex-1 min-w-0';
+          const name = document.createElement('p');
+          name.className = 'text-xs font-medium truncate';
+          name.textContent = f.name;
+          const size = document.createElement('p');
+          size.className = 'text-[11px] text-subtle-light dark:text-subtle-dark';
+          size.textContent = formatBytes(f.size);
+          meta.appendChild(name);
+          meta.appendChild(size);
+          card.appendChild(meta);
+
+          selectedFiles.appendChild(card);
+        });
+      }
+
+      function removeFileById(id) {
+        const dt = new DataTransfer();
+        Array.from(attachInput.files).forEach(f => {
+          if (fileId(f) !== id) dt.items.add(f);
+        });
+        attachInput.files = dt.files;
+        renderSelectedFiles();
+      }
+
+      selectedFiles.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="remove-file"]');
+        if (!btn) return;
+        removeFileById(btn.dataset.id);
+      });
+
+      // Ouvre le sélecteur de fichiers
+      attachBtn?.addEventListener('click', () => attachInput.click());
+
+      // Affiche les fichiers sélectionnés avec preview
+      attachInput?.addEventListener('change', renderSelectedFiles);
+
+      // Gestion du panneau d'emojis
+      function insertAtCursor(textarea, text) {
+        const start = textarea.selectionStart ?? textarea.value.length;
+        const end = textarea.selectionEnd ?? textarea.value.length;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + text + after;
+        const pos = start + text.length;
+        textarea.selectionStart = textarea.selectionEnd = pos;
+        textarea.dispatchEvent(new Event('input'));
+      }
+
+      const emojis = ['😀','😁','😂','😊','😍','🤔','👍','🎉','🙏','🔥','💡','✅','😎','🙌','📌'];
+      if (emojiPanel) {
+        emojiPanel.innerHTML = '';
+        emojis.forEach(e => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-1 text-xl rounded hover:bg-gray-100 dark:hover:bg-gray-700';
+          b.textContent = e;
+          b.addEventListener('click', () => { insertAtCursor(input, e); emojiPanel.classList.add('hidden'); input.focus(); });
+          emojiPanel.appendChild(b);
+        });
+      }
+
+      emojiBtn?.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        emojiPanel.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!emojiPanel || emojiPanel.classList.contains('hidden')) return;
+        if (!emojiPanel.contains(e.target) && e.target !== emojiBtn) {
+          emojiPanel.classList.add('hidden');
+        }
+      });
+
       function renderPosts(data) {
+        const scroller = postsContainer.parentElement;
+        const wasAtBottom = scroller ? (scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight) < 4 : false;
+        const prevScrollTop = scroller ? scroller.scrollTop : 0;
+
         if (data.channel) {
           if (channelNameEl) channelNameEl.textContent = data.channel.name;
           if (channelDescEl) channelDescEl.textContent = data.channel.description || '';
@@ -177,6 +326,8 @@
           p.className = 'text-sm text-subtle-light dark:text-subtle-dark';
           p.textContent = 'Aucun message pour le moment. Soyez le premier à écrire !';
           postsContainer.appendChild(p);
+          // Ajuste le scroll selon la position précédente
+          if (scroller) scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
           return;
         }
         data.posts.forEach((post) => {
@@ -217,6 +368,41 @@
           text.textContent = post.content;
           bubble.appendChild(text);
 
+          // Affichage (optionnel) des pièces jointes
+          if (post.attachments && post.attachments.length) {
+            const attWrap = document.createElement('div');
+            attWrap.className = 'mt-2 flex flex-col gap-2';
+            post.attachments.forEach(a => {
+              const isImg = isImageType(a.content_type);
+              if (isImg && a.url) {
+                const aLink = document.createElement('a');
+                aLink.href = a.url; aLink.target = '_blank'; aLink.rel = 'noreferrer';
+                const img = document.createElement('img');
+                img.src = a.url; img.alt = a.name || 'image';
+                img.className = 'max-h-64 max-w-xs object-cover rounded-lg border border-border-light dark:border-border-dark hover:opacity-95 transition';
+                aLink.appendChild(img);
+                attWrap.appendChild(aLink);
+              } else {
+                const card = document.createElement('a');
+                card.href = a.url || '#'; card.target = '_blank'; card.rel = 'noreferrer';
+                card.className = 'flex items-center gap-3 p-2 rounded-lg border border-border-light dark:border-border-dark bg-gray-50 dark:bg-white/5 max-w-sm hover:bg-gray-100/70 dark:hover:bg-white/10 transition';
+                const icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined text-2xl';
+                icon.textContent = iconForType(a.content_type || '');
+                const meta = document.createElement('div');
+                meta.className = 'flex-1 min-w-0';
+                const n = document.createElement('p'); n.className = 'text-xs font-medium truncate'; n.textContent = a.name || 'Pièce jointe';
+                const s = document.createElement('p'); s.className = 'text-[11px] text-subtle-light dark:text-subtle-dark'; s.textContent = formatBytes(a.size);
+                meta.appendChild(n); meta.appendChild(s);
+                card.appendChild(icon); card.appendChild(meta);
+                const dl = document.createElement('span'); dl.className = 'material-symbols-outlined text-lg text-subtle-light dark:text-subtle-dark'; dl.textContent = 'download';
+                card.appendChild(dl);
+                attWrap.appendChild(card);
+              }
+            });
+            bubble.appendChild(attWrap);
+          }
+
           contentCol.appendChild(header);
           contentCol.appendChild(bubble);
 
@@ -230,8 +416,10 @@
 
           postsContainer.appendChild(wrapper);
         });
-        // Scroll to bottom to see latest
-        postsContainer.parentElement.scrollTop = postsContainer.parentElement.scrollHeight;
+        // Ajuste le scroll: on reste où on était, et on ne va en bas que si l'utilisateur y était déjà
+        if (scroller) {
+          scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
+        }
       }
 
       async function refreshPosts() {
@@ -253,15 +441,14 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const content = (input.value || '').trim();
-        if (!content) return;
+        // Autoriser l'envoi si contenu OU fichiers
+        if (!content && (!attachInput.files || attachInput.files.length === 0)) return;
         try {
-          const formData = new FormData(form); // includes csrfmiddlewaretoken & content
-          const res = await fetch(window.location.pathname, {
-            method: 'POST',
-            body: formData
-          });
+          const formData = new FormData(form); // inclut csrf + content + files
+          const res = await fetch(window.location.pathname, { method: 'POST', body: formData });
           if (res.ok) {
             input.value = '';
+            if (attachInput) { attachInput.value = ''; selectedFiles.innerHTML = ''; }
             refreshPosts();
           }
         } catch (_) {}
