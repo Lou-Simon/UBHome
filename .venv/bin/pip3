@@ -1,4 +1,4 @@
-#!/home/datek/Bureau/M1/Archi/UBHome/.venv/bin/python3
+#!/Users/simondumas/Desktop/UBO/M1/ProjetIHM_MVC/.venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

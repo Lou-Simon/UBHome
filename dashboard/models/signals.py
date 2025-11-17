@@ -1,12 +1,12 @@
-
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.db.utils import OperationalError
-# Importe tous les modèles
+from datetime import timedelta, datetime, time 
+from django.utils import timezone
 from .models import Student, ForumChannel, Course, Email, ForumPost, Event 
-# Pas besoin d'importer le modèle séparément si tout est dans models.py
+import random # Ajout de l'import pour une potentielle future diversification des données
 
-# Contient toutes vos données initiales (assurez-vous d'inclure la liste complète)
+# --- DONNÉES ÉTUDIANTS (Gardées inchangées) ---
 INITIAL_STUDENTS_DATA = [
             
             # --- L1 ISI ---
@@ -87,8 +87,6 @@ INITIAL_STUDENTS_DATA = [
             {"student_id": "21207105", "email": "robin.lucas@hub.fr", "full_name": "Robin Lucas", "year": "M2 LSE", "password_clear": "S5k&bP9m"}
 ]
 
-# --- NOUVELLES DONNÉES INITIALES ---
-
 INITIAL_CHANNELS_DATA = [
     {"name": "General", "description": "Discussions générales sur la vie étudiante."},
     {"name": "L1 ISI", "description": "Discussions pour les étudiants L1 Informatique Scientifique et Ingénierie."},
@@ -102,22 +100,253 @@ INITIAL_CHANNELS_DATA = [
     {"name": "M2 LSE", "description": "Master 2 Logistique et Systèmes d'Entreprise."},
 ]
 
+# --- NOUVELLES DONNÉES DE COURS PLUS DIVERSES (Minimum 5 par filière) ---
 INITIAL_COURSES_DATA = [
-    {"name": "Développement Web Avancé", "teacher": "M. Dupont"},
-    {"name": "Intelligence Artificielle", "teacher": "Mme. Lecoeur"},
+    # Cours L1
+    {"name": "Introduction à l'Algorithmique", "teacher": "Mme. Duval"},
     {"name": "Base de Données SQL", "teacher": "M. Petit"},
+    {"name": "Architecture des Ordinateurs", "teacher": "M. Leblanc"},
+    {"name": "Mathématiques Discrètes", "teacher": "Mme. Dubois"},
+    {"name": "Bureautique et Outils", "teacher": "M. Moreau"},
+    
+    # Cours L2/L3 IFA
+    {"name": "Programmation Orientée Objet", "teacher": "Mme. Bernard"},
+    {"name": "Réseaux et Sécurité", "teacher": "M. Martin"},
+    {"name": "Programmation Fonctionnelle", "teacher": "M. Leroy"},
+    {"name": "Système d'exploitation (OS)", "teacher": "M. Michel"},
+    {"name": "Développement Web (Front-end)", "teacher": "M. Dupont"}, # L3
+    {"name": "Conception BDD Avancée", "teacher": "M. Petit"}, # L3
+    {"name": "Cryptographie", "teacher": "M. Martin"}, # L3
+    {"name": "POO Avancée (Java/C#)", "teacher": "Mme. Bernard"}, # L3
+
+    # Cours M1 ILIADE
+    {"name": "Développement Web Avancé (Django)", "teacher": "M. Dupont"},
+    {"name": "Intelligence Artificielle et ML", "teacher": "Mme. Lecoeur"},
+    {"name": "Génie Logiciel (UML/Agile)", "teacher": "M. Simon"},
+    {"name": "Cloud Computing", "teacher": "M. Guerin"},
+    {"name": "Cybersécurité", "teacher": "M. Laurent"},
+    
+    # Cours M1 SIIA
+    {"name": "Architecture d'Entreprise", "teacher": "M. Lefebvre"},
+    {"name": "Ingénierie des Exigences", "teacher": "Mme. Marchand"},
+    {"name": "Management de Projet", "teacher": "M. Dubois"},
+    {"name": "Analyse Décisionnelle", "teacher": "Mme. Morin"},
+    {"name": "Méthodes Agiles (Scrum)", "teacher": "M. Lambert"},
+    
+    # Cours M2 TILL-A
+    {"name": "Recherche Opérationnelle", "teacher": "Mme. Martin"},
+    {"name": "Projet de Fin d'Études", "teacher": "M. Richard"},
+    {"name": "Modélisation Stochastique", "teacher": "M. Robert"},
+    {"name": "Théorie de l'Information", "teacher": "Mme. Thomas"},
+    {"name": "Optimisation Numérique", "teacher": "M. Dubois"},
+
+    # Cours M2 ILIADE
+    {"name": "Deep Learning", "teacher": "Mme. Lecoeur"},
+    {"name": "Vision par Ordinateur", "teacher": "M. Simon"},
+    {"name": "Développement Mobile", "teacher": "M. Dupont"},
+    
+    # Cours Transverses
     {"name": "Anglais Technique", "teacher": "Mme. Smith"},
+    {"name": "Projet Annuel", "teacher": "Mme. Rossi"},
 ]
 
-# --- AJOUT DE L'EMAIL ET DU POST INITIAL ---
-
-def create_initial_content(students, channels, courses):
-    """Crée un email, un post et un événement initial pour peupler la BDD."""
+def generate_weekly_events(all_courses, start_date_aware):
+    """Génère des événements récurrents pour plusieurs semaines avec une rotation hebdomadaire des jours."""
     
+    # 0=Lundi, 1=Mardi, ..., 6=Dimanche
+    SCHEDULE_DATA = [
+        # L1 (5 cours)
+        {"day_of_week": 0, "course_name": "Introduction à l'Algorithmique", "title": "CM Algo", "start_hour": 9, "end_hour": 12, "location": "Amphi A"},
+        {"day_of_week": 1, "course_name": "Base de Données SQL", "title": "TD BDD SQL", "start_hour": 14, "end_hour": 17, "location": "Salle 101"},
+        {"day_of_week": 2, "course_name": "Architecture des Ordinateurs", "title": "CM Architecture", "start_hour": 9, "end_hour": 12, "location": "Amphi B"},
+        {"day_of_week": 3, "course_name": "Mathématiques Discrètes", "title": "TD Maths", "start_hour": 14, "end_hour": 16, "location": "Salle 205"},
+        {"day_of_week": 4, "course_name": "Bureautique et Outils", "title": "TP Bureautique", "start_hour": 10, "end_hour": 12, "location": "Salle Info 1"},
+        
+        # L2 IFA (5 cours)
+        {"day_of_week": 0, "course_name": "Programmation Orientée Objet", "title": "CM POO", "start_hour": 14, "end_hour": 17, "location": "Amphi C"},
+        {"day_of_week": 1, "course_name": "Réseaux et Sécurité", "title": "TD Réseaux", "start_hour": 9, "end_hour": 12, "location": "Salle 202"},
+        {"day_of_week": 2, "course_name": "Programmation Fonctionnelle", "title": "CM Fonctionnelle", "start_hour": 14, "end_hour": 16, "location": "Salle 203"},
+        {"day_of_week": 3, "course_name": "Système d'exploitation (OS)", "title": "TD OS", "start_hour": 9, "end_hour": 12, "location": "Amphi D"},
+        {"day_of_week": 4, "course_name": "Anglais Technique", "title": "Anglais L2", "start_hour": 14, "end_hour": 16, "location": "Salle 301"},
+        
+        # L3 IFA (5 cours)
+        {"day_of_week": 0, "course_name": "Développement Web (Front-end)", "title": "CM Web Front", "start_hour": 9, "end_hour": 12, "location": "Amphi D"},
+        {"day_of_week": 1, "course_name": "Conception BDD Avancée", "title": "TD BDD Avancée", "start_hour": 14, "end_hour": 17, "location": "Salle 302"},
+        {"day_of_week": 2, "course_name": "Cryptographie", "title": "CM Crypto", "start_hour": 9, "end_hour": 11, "location": "Salle 303"},
+        {"day_of_week": 3, "course_name": "POO Avancée (Java/C#)", "title": "TP POO Avancée", "start_hour": 14, "end_hour": 17, "location": "Salle Info 6"},
+        {"day_of_week": 4, "course_name": "Génie Logiciel (UML/Agile)", "title": "CM Génie Logiciel", "start_hour": 9, "end_hour": 12, "location": "Amphi A"},
+
+        # M1 ILIADE (5 cours) - Le profil de Simon Dumas
+        {"day_of_week": 0, "course_name": "Développement Web Avancé (Django)", "title": "CM Dev Web Avancé", "start_hour": 9, "end_hour": 12, "location": "Amphi A"},
+        {"day_of_week": 1, "course_name": "Intelligence Artificielle et ML", "title": "TD IA & ML", "start_hour": 9, "end_hour": 12, "location": "Salle 402"},
+        {"day_of_week": 2, "course_name": "Génie Logiciel (UML/Agile)", "title": "CM Génie Logiciel", "start_hour": 14, "end_hour": 17, "location": "Salle 403"},
+        {"day_of_week": 3, "course_name": "Cloud Computing", "title": "CM Cloud", "start_hour": 9, "end_hour": 12, "location": "Amphi B"},
+        {"day_of_week": 4, "course_name": "Cybersécurité", "title": "TD Cyber", "start_hour": 14, "end_hour": 16, "location": "Salle 405"},
+        
+        # M1 SIIA (5 cours)
+        {"day_of_week": 0, "course_name": "Architecture d'Entreprise", "title": "CM Archi Ent.", "start_hour": 14, "end_hour": 17, "location": "Amphi E"},
+        {"day_of_week": 1, "course_name": "Ingénierie des Exigences", "title": "TD Exigences", "start_hour": 9, "end_hour": 12, "location": "Salle 501"},
+        {"day_of_week": 2, "course_name": "Management de Projet", "title": "CM Management", "start_hour": 9, "end_hour": 12, "location": "Amphi C"},
+        {"day_of_week": 3, "course_name": "Analyse Décisionnelle", "title": "TD Décisionnel", "start_hour": 14, "end_hour": 17, "location": "Salle 502"},
+        {"day_of_week": 4, "course_name": "Méthodes Agiles (Scrum)", "title": "TP Scrum", "start_hour": 9, "end_hour": 12, "location": "Salle Info 7"},
+        
+        # M2 TILL-A (5 cours)
+        {"day_of_week": 0, "course_name": "Recherche Opérationnelle", "title": "CM RO", "start_hour": 9, "end_hour": 12, "location": "Amphi F"},
+        {"day_of_week": 1, "course_name": "Modélisation Stochastique", "title": "CM Stochastique", "start_hour": 14, "end_hour": 17, "location": "Salle 601"},
+        {"day_of_week": 2, "course_name": "Théorie de l'Information", "title": "TD Info", "start_hour": 9, "end_hour": 12, "location": "Amphi E"},
+        {"day_of_week": 3, "course_name": "Optimisation Numérique", "title": "CM Optimisation", "start_hour": 14, "end_hour": 17, "location": "Salle 602"},
+        {"day_of_week": 4, "course_name": "Projet de Fin d'Études", "title": "Suivi PFE", "start_hour": 9, "end_hour": 11, "location": "Bureau R1"},
+        
+        # Événement unique: Examen (L1 Algo)
+        # On ne crée l'événement unique que pour la première semaine
+        {"day_of_week": 2, "course_name": "Introduction à l'Algorithmique", "title": "Examen - Intro Algo", "start_hour": 14, "end_hour": 17, "location": "Salle 103", "is_single": True},
+    ]
+    
+    events_to_create = []
+    
+    # Obtenir la date du Lundi de la semaine en cours
+    date_lundi = start_date_aware.date() + timedelta(days=-start_date_aware.weekday())
+    
+    # Générer 6 semaines de données hebdomadaires (couvre largement jusqu'à début Décembre)
+    target_date = date_lundi + timedelta(weeks=6)
+
+    current_date = date_lundi
+    week_count = 0 # Compteur pour alterner les emplois du temps
+    
+    while current_date < target_date:
+        
+        # Décalage de jour : 0 (Semaine 0, 2, 4...) ou 1 (Semaine 1, 3, 5...)
+        # Cela crée une rotation de 1 jour sur les semaines impaires
+        day_shift = week_count % 2 
+        
+        # Pour chaque semaine, on parcourt l'emploi du temps
+        for schedule in SCHEDULE_DATA:
+            
+            # Gestion de l'examen: NE JAMAIS LE DÉCALER et NE LE CRÉER QUE LA PREMIÈRE SEMAINE
+            if schedule.get("is_single"):
+                if current_date != date_lundi: 
+                    continue 
+                # L'examen se passe au jour initial (pas de shift)
+                final_day_of_week = schedule["day_of_week"]
+            else:
+                # Appliquer le décalage cyclique (0=Lundi à 4=Vendredi)
+                initial_day = schedule["day_of_week"]
+                final_day_of_week = (initial_day + day_shift) % 5 
+                
+                # On ne veut pas d'événements le week-end (5 et 6). 
+                # Si le jour initial était 4 (Vendredi) et le shift est de 1, 
+                # il passe à 0 (Lundi). Ceci est géré par le % 5.
+
+            # Calculer la date de l'événement dans la semaine
+            event_day_date = current_date + timedelta(days=final_day_of_week)
+            
+            try:
+                course = all_courses.get(name=schedule["course_name"])
+                
+                # Créer le datetime aware pour le début et la fin
+                start_time_local = timezone.make_aware(datetime.combine(event_day_date, time(schedule["start_hour"], 0)))
+                end_time_local = timezone.make_aware(datetime.combine(event_day_date, time(schedule["end_hour"], 0)))
+                
+                events_to_create.append(Event(
+                    course=course,
+                    title=schedule["title"],
+                    location=schedule["location"],
+                    start_time=start_time_local,
+                    end_time=end_time_local
+                ))
+            except Course.DoesNotExist:
+                print(f"ATTENTION: Cours non trouvé pour l'événement : {schedule['course_name']}")
+                pass
+        
+        # Passer à la semaine suivante
+        current_date += timedelta(weeks=1)
+        week_count += 1
+
+    Event.objects.bulk_create(events_to_create)
+    print(f"✅ {len(events_to_create)} événements hebdomadaires créés avec rotation jusqu'à {target_date.strftime('%d/%m')}.")
+
+
+def create_initial_content(all_students, all_channels, all_courses):
+    """Crée l'inscription aux cours, l'email, le post et les événements initiaux."""
+    
+    # --- 1. Logique d'inscription des étudiants (Mise à jour pour 5+ cours) ---
+    for student in all_students:
+        try:
+            # Récupère le nom complet du cours pour la filière
+            if 'L1' in student.year:
+                courses_to_enroll = [
+                    "Introduction à l'Algorithmique", 
+                    "Base de Données SQL", 
+                    "Architecture des Ordinateurs", 
+                    "Mathématiques Discrètes",
+                    "Bureautique et Outils"
+                ]
+            elif 'L2 IFA' in student.year:
+                courses_to_enroll = [
+                    "Programmation Orientée Objet", 
+                    "Réseaux et Sécurité",
+                    "Programmation Fonctionnelle",
+                    "Système d'exploitation (OS)",
+                    "Anglais Technique"
+                ]
+            elif 'L3 IFA' in student.year:
+                courses_to_enroll = [
+                    "Développement Web (Front-end)",
+                    "Conception BDD Avancée",
+                    "Cryptographie",
+                    "POO Avancée (Java/C#)",
+                    "Génie Logiciel (UML/Agile)"
+                ]
+            elif 'M1 ILIADE' in student.year:
+                courses_to_enroll = [
+                    "Développement Web Avancé (Django)", 
+                    "Intelligence Artificielle et ML", 
+                    "Génie Logiciel (UML/Agile)",
+                    "Cloud Computing",
+                    "Cybersécurité"
+                ]
+            elif 'M1 SIIA' in student.year:
+                courses_to_enroll = [
+                    "Architecture d'Entreprise",
+                    "Ingénierie des Exigences",
+                    "Management de Projet",
+                    "Analyse Décisionnelle",
+                    "Méthodes Agiles (Scrum)"
+                ]
+            elif 'M2 TILL-A' in student.year:
+                courses_to_enroll = [
+                    "Recherche Opérationnelle", 
+                    "Projet de Fin d'Études", 
+                    "Modélisation Stochastique",
+                    "Théorie de l'Information",
+                    "Optimisation Numérique"
+                ]
+            elif 'M2 ILIADE' in student.year:
+                 courses_to_enroll = [
+                    "Deep Learning",
+                    "Vision par Ordinateur",
+                    "Développement Mobile",
+                    "Génie Logiciel (UML/Agile)",
+                    "Cloud Computing"
+                ]
+            else:
+                courses_to_enroll = ["Anglais Technique"] # Minimum
+            
+            # Inscrit l'étudiant aux cours
+            course_objects = [all_courses.get(name=name) for name in courses_to_enroll if all_courses.filter(name=name).exists()]
+            if course_objects:
+                student.enrolled_courses.add(*course_objects)
+
+        except Course.DoesNotExist: 
+            pass
+        
+    
+    # --- 2. Contenu initial (Email, Post) ---
+
     # Email : Simon (M1 ILIADE) envoie à Lou (M1 ILIADE)
     try:
-        sender = students.get(full_name="Simon Dumas")
-        recipient = students.get(full_name="Lou Simon")
+        sender = all_students.get(full_name="Simon Dumas")
+        recipient = all_students.get(full_name="Lou Simon")
         Email.objects.create(
             sender=sender,
             recipient=recipient,
@@ -125,33 +354,30 @@ def create_initial_content(students, channels, courses):
             body="Bonjour Lou, content de voir que la messagerie fonctionne après la refactorisation ! À bientôt."
         )
     except Student.DoesNotExist:
-        pass # Ignorer si les étudiants initiaux ne sont pas là
+        pass 
     
     # Forum Post : Maël (M1 ILIADE) post dans le canal M1 ILIADE
     try:
-        author = students.get(full_name="Maël Bogaër")
-        channel = channels.get(name="M1 ILIADE")
+        author = all_students.get(full_name="Maël Bogaër")
+        channel = all_channels.get(name="M1 ILIADE")
         ForumPost.objects.create(
             channel=channel,
             author=author,
             content="Bonjour à tous les M1 ILIADE ! N'hésitez pas à poster vos questions sur les TP ici. Bon courage pour les premiers modules !"
         )
-    except Student.DoesNotExist or ForumChannel.DoesNotExist:
+    except (Student.DoesNotExist, ForumChannel.DoesNotExist):
         pass
 
-    # Événement : Examen de Développement Web Avancé
+    # --- 3. Ajout d'événements (Calendrier) ---
+    
+    # 1. Obtenir le datetime aware actuel
+    start_date_aware = timezone.now()
+    
+    # 2. Générer les événements récurrents
     try:
-        dev_web = courses.get(name="Développement Web Avancé")
-        Event.objects.create(
-            course=dev_web,
-            title="Examen - Développement Web Avancé",
-            description="Examen final portant sur les frameworks Django et React.",
-            # Utilisation d'une date proche (à ajuster si besoin)
-            start_time='2025-11-20 09:00:00',
-            end_time='2025-11-20 12:00:00',
-            location="Amphi B"
-        )
-    except Course.DoesNotExist:
+        generate_weekly_events(all_courses, start_date_aware)
+        
+    except Course.DoesNotExist: 
         pass
 
 
@@ -181,21 +407,23 @@ def create_initial_data(sender, **kwargs):
         # Récupération des canaux pour les FK
         all_channels = ForumChannel.objects.all()
 
-        # 3. Insertion des Cours
-        if not Course.objects.exists():
+        # 3. Insertion des Cours (MIS À JOUR)
+        if Course.objects.count() != len(INITIAL_COURSES_DATA):
+            # Suppression et recréation si le nombre ne correspond pas à la nouvelle liste
+            Course.objects.all().delete()
             for data in INITIAL_COURSES_DATA:
                 Course.objects.create(**data)
-            print("✅ Cours initiaux insérés.")
+            print("✅ Cours initiaux (mis à jour) insérés.")
             
         # Récupération des cours pour les FK
         all_courses = Course.objects.all()
 
-        # 4. Insertion du Contenu Initial (Emails, Posts, Events)
+        # 4. Insertion du Contenu Initial et Inscriptions
+        # Si la base est prête (Étudiants, Canaux, Cours existent), mais pas les Emails (le contenu initial)
         if all_students.exists() and all_channels.exists() and all_courses.exists() and not Email.objects.exists():
              create_initial_content(all_students, all_channels, all_courses)
-             print("✅ Contenu initial (Email, Post, Event) inséré.")
+             print("✅ Contenu initial (Email, Post, Events et Inscriptions) inséré.")
              
     except OperationalError as e:
-        # Ceci gère le cas où la BDD n'est pas encore complètement créée au moment du signal
-        # print(f"Warning (OperationalError): {e}") # Décommenter pour debug
+        # Gère le cas où la BDD n'est pas encore complètement créée 
         pass

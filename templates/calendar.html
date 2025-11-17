@@ -9,12 +9,30 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C753", "background-light": "#f8f7f6", "background-dark": "#221d10"}, fontFamily: {display: "Lexend"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C753", "background-light": "#f8f7f6", "background-dark": "#221d10",
+        /* Couleurs supplémentaires pour les événements */
+        course_teal: "#2dd4bf", /* Teinte Turquoise/Cyan */
+        course_indigo: "#4f46e5", /* Teinte Indigo */
+        }, fontFamily: {display: "Lexend"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
 <style>
  .material-symbols-outlined {
 font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 font-size: 24px;
 }
+/* Définition des styles de couleur basés sur le code injecté par la vue */
+.event-color-primary { background-color: rgba(244, 199, 83, 0.2); border-left-color: #F4C753; }
+.event-color-teal { background-color: rgba(45, 212, 191, 0.1); border-left-color: #2dd4bf; }
+.event-color-indigo { background-color: rgba(79, 70, 229, 0.1); border-left-color: #4f46e5; }
+.event-color-red { background-color: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; }
+
+.text-color-primary { color: #F4C753; }
+.text-color-teal { color: #2dd4bf; }
+.text-color-indigo { color: #4f46e5; }
+.text-color-red { color: #ef4444; }
+
+/* Correction des couleurs de texte pour le dark mode */
+.dark .event-color-primary { background-color: rgba(244, 199, 83, 0.2); }
+.dark .text-color-primary { color: #F4C753; }
 </style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
@@ -80,62 +98,61 @@ font-size: 24px;
 <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
 <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
 <div class="flex items-center gap-4">
-<button class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
-<span class="material-symbols-outlined text-base">chevron_left</span>
-</button>
-<h2 class="text-lg font-semibold text-[#111318] dark:text-white">15 - 19 Avril 2024</h2>
-<button class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
-<span class="material-symbols-outlined text-base">chevron_right</span>
-</button>
+    <a class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white" 
+       href="{% url 'dashboard:calendar' %}?date={{ prev_week_date }}">
+        <span class="material-symbols-outlined text-base">chevron_left</span>
+    </a>
+    
+    <h2 class="text-lg font-semibold text-[#111318] dark:text-white">{{ current_week_label }}</h2>
+    
+    <a class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white" 
+       href="{% url 'dashboard:calendar' %}?date={{ next_week_date }}">
+        <span class="material-symbols-outlined text-base">chevron_right</span>
+    </a>
 </div>
-<button class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800">Aujourd'hui</button>
+    <a class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800" 
+       href="{% url 'dashboard:calendar' %}">Aujourd'hui</a>
 </div>
-<div class="grid grid-cols-5 divide-x divide-slate-200 dark:divide-slate-800">
-<div class="flex flex-col">
-<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-<p class="text-sm font-semibold text-[#111318] dark:text-white">Lundi</p>
-<p class="text-xs text-[#616f89] dark:text-slate-400">15</p>
-</div>
-<div class="p-4 h-[500px] relative">
-<div class="absolute top-1/4 left-4 right-4 bg-primary/20 p-3 rounded-lg border-l-4 border-primary">
-<p class="text-sm font-bold text-primary">TD de Physique</p>
-<p class="text-xs text-primary/80">10:00 - 12:00</p>
-</div>
-</div>
-</div>
-<div class="flex flex-col">
-<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-<p class="text-sm font-semibold text-[#111318] dark:text-white">Mardi</p>
-<p class="text-xs text-[#616f89] dark:text-slate-400">16</p>
-</div>
-<div class="p-4 h-[500px]"></div>
-</div>
-<div class="flex flex-col">
-<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-<p class="text-sm font-semibold text-[#111318] dark:text-white">Mercredi</p>
-<p class="text-xs text-[#616f89] dark:text-slate-400">17</p>
-</div>
-<div class="p-4 h-[500px] relative">
-<div class="absolute top-1/2 left-4 right-4 bg-red-500/10 dark:bg-red-500/20 p-3 rounded-lg border-l-4 border-red-500">
-<p class="text-sm font-bold text-red-600 dark:text-red-400">Examen de Mathématiques</p>
-<p class="text-xs text-red-500/80 dark:text-red-400/80">14:00 - 16:00</p>
-</div>
-</div>
-</div>
-<div class="flex flex-col">
-<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-<p class="text-sm font-semibold text-[#111318] dark:text-white">Jeudi</p>
-<p class="text-xs text-[#616f89] dark:text-slate-400">18</p>
-</div>
-<div class="p-4 h-[500px]"></div>
-</div>
-<div class="flex flex-col">
-<div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-<p class="text-sm font-semibold text-[#111318] dark:text-white">Vendredi</p>
-<p class="text-xs text-[#616f89] dark:text-slate-400">19</p>
-</div>
-<div class="p-4 h-[500px]"></div>
-</div>
+<div class="grid grid-cols-[50px_repeat(5,1fr)] divide-x divide-slate-200 dark:divide-slate-800">
+    
+    <div class="flex flex-col">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 h-[72px] bg-slate-50 dark:bg-slate-800"></div>
+        <div class="flex flex-col relative h-[1000px] divide-y divide-dashed divide-slate-300 dark:divide-slate-700">
+            {% for hour in hours %} 
+            <div class="relative h-[100px]">
+                <span class="absolute -top-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">{{ hour }}:00</span>
+            </div>
+            {% endfor %}
+            <span class="absolute -bottom-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">18:00</span>
+        </div>
+    </div>
+
+    {% for day in week_days %}
+    <div class="flex flex-col">
+        <div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
+            <p class="text-sm font-semibold text-[#111318] dark:text-white">{{ day.day_name }}</p>
+            <p class="text-xs text-[#616f89] dark:text-slate-400">{{ day.date|date:"d" }}</p>
+        </div>
+        <div class="p-4 h-[1000px] relative">
+            
+            {% for event in day.events %}
+            <div class="absolute left-4 right-4 p-3 rounded-lg border-l-4 border-l-[4px] 
+                        event-color-{{ event.color_code }}"
+                style="top: {{ event.total_start_offset }}px; height: {{ event.height }}px;">
+                
+                <p class="text-sm font-bold text-color-{{ event.color_code }}">
+                    {{ event.course.name }}
+                </p>
+                <p class="text-xs text-color-{{ event.color_code }}/80">
+                    {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }} / {{ event.location }}
+                </p>
+            </div>
+            {% endfor %}
+            
+        </div>
+    </div>
+    {% endfor %}
+    
 </div>
 </div>
 </div>

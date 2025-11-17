@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone # 👈 NÉCESSAIRE pour gérer les fuseaux horaires (Timezone-Aware)
 
 # --- 1. Modèle Étudiant (L'utilisateur) ---
 class Student(models.Model):
@@ -35,7 +36,7 @@ class Course(models.Model):
         verbose_name_plural = "Cours"
 
 class Event(models.Model):
-    """Modèle représentant un événement ponctuel (examen, RDV). De nouveaux événements peuvent être ajoutés dynamiquement."""
+    """Modèle représentant un événement ponctuel (examen, RDV)."""
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cours Associé")
     title = models.CharField(max_length=255, verbose_name="Titre de l'Événement")
     description = models.TextField(blank=True, verbose_name="Description")
@@ -51,11 +52,43 @@ class Event(models.Model):
         verbose_name_plural = "Événements"
         ordering = ['start_time']
 
+    # ------------------------------------------------------------------
+    # PROPRIÉTÉS AJOUTÉES POUR LE CALCUL DE POSITION DANS CALENDAR.HTML
+    # ------------------------------------------------------------------
+    
+    @property
+    def top_position_px(self):
+        """Calcule la position verticale (top) en pixels pour l'événement.
+        Base : 8h = 0px. Échelle : 100px par heure."""
+        
+        start_time_local = timezone.localtime(self.start_time)
+
+        start_hour = start_time_local.hour
+        
+        # Si l'événement commence avant 8h (début de la grille)
+        if start_hour < 8:
+            return 0
+        
+        # Chaque minute vaut (100px / 60min) ≈ 1.666px
+        start_minute_offset = start_time_local.minute * (100 / 60)
+        
+        # Calcul : (Heure de début - 8h) * 100px/heure + offset minutes
+        return int((start_hour - 8) * 100 + start_minute_offset)
+
+    @property
+    def height_px(self):
+        """Calcule la hauteur en pixels pour l'événement. 100px par heure."""
+        duration = self.end_time - self.start_time
+        # Duration en minutes * (100px / 60min)
+        total_minutes = duration.total_seconds() / 60
+        
+        return int(total_minutes * (100 / 60))
+        
 # -----------------------------------------------------------------------------
 
 # --- 3. Modèle Messagerie (Emails) ---
 class Email(models.Model):
-    """Modèle pour stocker un email. De nouveaux emails peuvent être créés à l'envoi."""
+    """Modèle pour stocker un email."""
     sender = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sent_emails', verbose_name="Expéditeur")
     recipient = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='received_emails', verbose_name="Destinataire")
     subject = models.CharField(max_length=255, verbose_name="Objet")
@@ -75,7 +108,7 @@ class Email(models.Model):
 
 # --- 4. Modèles Forum (Channel & Post) ---
 class ForumChannel(models.Model):
-    """Modèle représentant un canal de discussion (par filière). De nouveaux canaux peuvent être créés par un administrateur."""
+    """Modèle représentant un canal de discussion (par filière)."""
     name = models.CharField(max_length=100, unique=True, verbose_name="Nom du Canal")
     description = models.TextField(blank=True, verbose_name="Description")
     
@@ -87,7 +120,7 @@ class ForumChannel(models.Model):
         verbose_name_plural = "Canaux de Forum"
 
 class ForumPost(models.Model):
-    """Modèle représentant un message posté. De nouveaux messages sont créés par les utilisateurs."""
+    """Modèle représentant un message posté."""
     channel = models.ForeignKey(ForumChannel, on_delete=models.CASCADE, related_name='posts', verbose_name="Canal")
     author = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='forum_posts', verbose_name="Auteur")
     content = models.TextField(verbose_name="Contenu du Message")
