@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html class="light" lang="fr">
 <head>
@@ -41,7 +42,7 @@ font-size: 24px;
 <aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
 <div class="flex flex-col gap-6">
 <div class="flex items-center gap-3 px-3">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6WFHIxSxSg6tfUqACZVyKdDKLs2EPbYRQqDySuXw-YLfWNFgSYM2IRtLk_jDTPDS-AWl69gkmekx9U2yuZRkKmlNbmsxDBzOGzWXyYRb8IvhQUWwmxePbCWhiZU3q54lDovyxQgsit7PfNL1Bk_5u85hodKzsBHLvDn2ugoiuvSBhejXyUm-EMpF0Iw0sS-Gv-gwoVRvfNm2DxYO5Qq59Dqtz6xtedepFcheufkMFtrWsEOWFyjCUS-mdKWCUWpV05rgx_H8TB137");'></div>
+<img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
 <div class="flex flex-col">
 <h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
 <p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>

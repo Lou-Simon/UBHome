@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html class="light" lang="fr"><head>
 <meta charset="utf-8"/>
@@ -50,7 +51,7 @@
 <div class="flex h-screen w-full">
 <aside class="flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
 <div class="flex items-center gap-3 mb-8">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBXThS4nBxn71ZEb3oCyF6kjsHNECRII5cEvAImXdZVIiaindSPacPMauCHZ1jfAjARiCmktMGZ1ZH2lH7CLgBhQNoeXzgBdX7EKLigQ8UuYuLCeY-0O7nEDYrfmms4PU_lmqVygg90S_xGg7Ubfrpcziwm_EQCYrVFB7n0ITPoeRK-hjKAvLWfBmYTUAlLm40HI88BuUOFcLAqDBDaCcFY9fDahWVpLZNAbHGVCXZzFBuAnYdTYujb5EHZLkiFfpaRKf63uHs97Ly");'></div>
+<img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
 <h1 class="text-gray-900 dark:text-white text-lg font-bold">Hub Étudiant UBO</h1>
 </div>
 <nav class="flex flex-col gap-1 flex-1">

@@ -1,4 +1,5 @@
 {% load tz %}
+{% load static %}
 <!DOCTYPE html>
 <html class="light" lang="fr">
 
@@ -54,9 +55,7 @@
       class="flex flex-col w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark p-4 shrink-0">
       <div class="flex-grow flex flex-col gap-4">
         <div class="flex gap-3 items-center mb-4">
-          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO Hub"
-            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAMoWVzZSu5gTtXlcSgBeGTNSuaM0zSXIJhs9M_Gnh0ddFPsuqsBU7_qhyyV6wgV8Jz094uZ6R6wvyBkzxXcYkphVYnEWlgapSYayV6KLism8S0orQq4IxUGhobqRsakY-oRzKfJkeCInZrbT3yFSs6s7vnNq2Udp62Vdy88CK3ekqrpumhuhLSbWkosgJyQUQvJNcS5eGnU69uYDOkWY36g_jvEZhbuMrRdOAhG61qQ4xm4jgcXih53KgqsELZMQ2Ok1rdIXz0L7pF");'>
-          </div>
+          <img src="{% static 'images/images.png' %}" alt="Logo UBO Hub" class="size-10"/> 
           <div class="flex flex-col">
             <h1 class="text-heading-light dark:text-heading-dark text-base font-bold leading-normal">UBO Hub</h1>
             <p class="text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">Espace Étudiant</p>
@@ -117,8 +116,7 @@
               </div>
               <div class="mt-1 p-3 rounded-lg {% if post.author.student_id == user.student_id %} bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none {% else %} bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none {% endif %}">
                 <p class="text-sm">{{ post.content }}</p>
-                <!-- Preview des pièces jointes côté client via JS (posts.json) -->
-              </div>
+                </div>
             </div>
             {% if post.author.student_id == user.student_id %}
               <div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
@@ -138,12 +136,9 @@
               class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
               placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
 
-            <!-- Input fichier caché -->
             <input type="file" id="attachmentsInput" name="attachments" multiple class="hidden" />
-            <!-- Liste des fichiers sélectionnés -->
             <div id="selectedFiles" class="mt-2 flex flex-wrap gap-2"></div>
 
-            <!-- Petit panneau d'emojis -->
             <div id="emojiPanel" class="hidden absolute bottom-14 right-24 z-20 p-2 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark shadow-xl max-w-[240px] flex flex-wrap gap-1"></div>
 
             <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
