@@ -29,7 +29,7 @@ def get_session_user_data(request):
 def login_view(request):
     """Gère la connexion."""
     if request.session.get('student_id'):
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
         
     if request.method == 'POST':
         try:
@@ -42,7 +42,7 @@ def login_view(request):
         try:
             student = Student.objects.get(student_id=student_id)
             
-            if student.password_clear == password:
+            if student.password == password:
                 request.session['student_id'] = student.student_id
                 return JsonResponse({
                     "full_name": student.full_name,

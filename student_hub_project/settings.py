@@ -30,6 +30,10 @@ ROOT_URLCONF = 'student_hub_project.urls'
 # Configuration des fichiers statiques (CSS, JS, images, etc.)
 STATIC_URL = 'static/'
 
+# --- AJOUT: configuration des médias (upload des pièces jointes) ---
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # AUTORISER LES HÔTES LOCAUX POUR LE DÉVELOPPEMENT :
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
@@ -82,6 +86,10 @@ TEMPLATES = [
     },
 ]
 # ...
+
+# --- Fuseau horaire: Europe/Paris ---
+TIME_ZONE = 'Europe/Paris'
+USE_TZ = True
 
 # Ajoutez ceci à la fin du fichier si vous ne le trouvez pas :
 # Redirige les utilisateurs connectés vers la route 'dashboard'

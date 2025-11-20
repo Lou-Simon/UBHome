@@ -1,155 +1,455 @@
+{% load tz %}
+{% load static %}
 <!DOCTYPE html>
-<html class="light" lang="fr"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Forum - UBHome</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#005A9E", // UBO Blue
-              "background-light": "#F8F9FA",
-              "background-dark": "#101922",
-              "accent": "#FFD700", // UBO Yellow
-              "text-light": "#333333",
-              "text-dark": "#E5E7EB",
-              "heading-light": "#000000",
-              "heading-dark": "#FFFFFF",
-              "subtle-light": "#6B7280",
-              "subtle-dark": "#9CA3AF",
-              "border-light": "#E5E7EB",
-              "border-dark": "#374151",
-              "card-light": "#FFFFFF",
-              "card-dark": "#1F2937",
-              "active-light": "#EBF3FB", // Light blue for active nav item
-              "active-dark": "#1E3A8A",
-            },
-            fontFamily: {
-              "display": ["Lexend", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+<html class="light" lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Forum - UBHome</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#005A9E", // UBO Blue
+            "background-light": "#F8F9FA",
+            "background-dark": "#101922",
+            "accent": "#FFD700", // UBO Yellow
+            "text-light": "#333333",
+            "text-dark": "#E5E7EB",
+            "heading-light": "#000000",
+            "heading-dark": "#FFFFFF",
+            "subtle-light": "#6B7280",
+            "subtle-dark": "#9CA3AF",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+            "card-light": "#FFFFFF",
+            "card-dark": "#1F2937",
+            "active-light": "#EBF3FB", // Light blue for active nav item
+            "active-dark": "#1E3A8A",
           },
+          fontFamily: {
+            "display": ["Lexend", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
         },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            font-size: 24px;
-        }
-    </style>
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 24px;
+    }
+  </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
-<div class="flex h-screen w-full">
-<aside class="flex flex-col w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark p-4 shrink-0">
-<div class="flex-grow flex flex-col gap-4">
-<div class="flex gap-3 items-center mb-4">
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO Hub" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAMoWVzZSu5gTtXlcSgBeGTNSuaM0zSXIJhs9M_Gnh0ddFPsuqsBU7_qhyyV6wgV8Jz094uZ6R6wvyBkzxXcYkphVYnEWlgapSYayV6KLism8S0orQq4IxUGhobqRsakY-oRzKfJkeCInZrbT3yFSs6s7vnNq2Udp62Vdy88CK3ekqrpumhuhLSbWkosgJyQUQvJNcS5eGnU69uYDOkWY36g_jvEZhbuMrRdOAhG61qQ4xm4jgcXih53KgqsELZMQ2Ok1rdIXz0L7pF");'></div>
-<div class="flex flex-col">
-<h1 class="text-heading-light dark:text-heading-dark text-base font-bold leading-normal">UBO Hub</h1>
-<p class="text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">Espace Étudiant</p>
-</div>
-</div>
-<nav class="flex flex-col gap-2">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-active-light dark:hover:bg-active-dark/50" href="{% url 'dashboard:dashboard' %}">
-<span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">home</span>
-<p class="text-sm font-medium">Accueil</p>
-</a>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark" data-current-student-id="{{ user.student_id }}">
+  <div class="flex h-screen w-full">
+    <aside
+      class="flex flex-col w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark p-4 shrink-0">
+      <div class="flex-grow flex flex-col gap-4">
+        <div class="flex gap-3 items-center mb-4">
+          <img src="{% static 'images/images.png' %}" alt="Logo UBO Hub" class="size-10"/> 
+          <div class="flex flex-col">
+            <h1 class="text-heading-light dark:text-heading-dark text-base font-bold leading-normal">UBO Hub</h1>
+            <p class="text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">Espace Étudiant</p>
+          </div>
+        </div>
+        <nav class="flex flex-col gap-2">
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-active-light dark:hover:bg-active-dark/50"
+            href="{% url 'dashboard:dashboard' %}">
+            <span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">home</span>
+            <p class="text-sm font-medium">Accueil</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            href="{% url 'dashboard:calendar' %}">
+            <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
+            <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            href="{% url 'dashboard:chat' %}">
+            <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
+            <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
+          </a>
 
 
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark"
+            href="{% url 'dashboard:forum' %}">
+            <span class="material-symbols-outlined text-primary dark:text-white">forum</span>
+            <p class="text-primary dark:text-white text-sm font-bold">Forum</p>
+          </a>
+        </nav>
+      </div>
+      <a class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+        href="{% url 'dashboard:logout' %}">
+        <span class="truncate">Se déconnecter</span>
+      </a>
+    </aside>
+    <main class="flex-1 flex flex-col h-screen">
+      <div class="flex-grow flex flex-col p-6 overflow-y-auto">
+        <header class="mb-6">
+          <h1
+            class="text-heading-light dark:text-heading-dark text-3xl font-black tracking-tight flex items-center gap-3">
+            <span class="material-symbols-outlined text-accent" style="font-size: 32px;">tag</span>
+            <span id="channelName">{{ channel.name }}</span>
+          </h1>
+          <p id="channelDesc" class="text-subtle-light dark:text-subtle-dark text-base font-normal">{{ channel.description }}</p>
+        </header>
+        <div id="postsContainer" class="flex-grow space-y-6">
+          {% for post in posts %}
+          <div class="flex items-start gap-3 max-w-lg {% if post.author.student_id == user.student_id %} ml-auto justify-end{% endif %}">
+            {% if post.author.student_id != user.student_id %}
+              <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+            {% endif %}
+            <div class="flex flex-col {% if post.author.student_id == user.student_id %} items-end{% endif %}">
+              <div class="flex items-baseline gap-2">
+                <p class="font-bold {% if post.author.student_id == user.student_id %} text-primary dark:text-accent {% else %} text-heading-light dark:text-heading-dark {% endif %} text-sm">
+                  {% if post.author.student_id == user.student_id %}Vous{% else %}{{ post.author.full_name }}{% endif %}
+                </p>
+                <p class="text-xs text-subtle-light dark:text-subtle-dark">{{ post.posted_at|localtime|date:"d/m/Y H:i" }}</p>
+              </div>
+              <div class="mt-1 p-3 rounded-lg {% if post.author.student_id == user.student_id %} bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none {% else %} bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none {% endif %}">
+                <p class="text-sm">{{ post.content }}</p>
+                </div>
+            </div>
+            {% if post.author.student_id == user.student_id %}
+              <div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="text-sm text-subtle-light dark:text-subtle-dark">Aucun message pour le moment. Soyez le premier à écrire !</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div
+        class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+        <div class="relative">
+          <form method="post" class="relative" id="forumForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea name="content" id="messageInput"
+              class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
+              placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
 
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark" href="{% url 'dashboard:forum' %}">
-<span class="material-symbols-outlined text-primary dark:text-white">forum</span>
-<p class="text-primary dark:text-white text-sm font-bold">Forum</p>
-</a>
-</nav>
-</div>
-<a class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
-   href="{% url 'dashboard:logout' %}">
-<span class="truncate">Se déconnecter</span>
-</a>
-</aside>
-<main class="flex-1 flex flex-col h-screen">
-<div class="flex-grow flex flex-col p-6 overflow-y-auto">
-<header class="mb-6">
-<h1 class="text-heading-light dark:text-heading-dark text-3xl font-black tracking-tight flex items-center gap-3">
-<span class="material-symbols-outlined text-accent" style="font-size: 32px;">tag</span>
-<span>Licence Info - S3</span>
-</h1>
-<p class="text-subtle-light dark:text-subtle-dark text-base font-normal">Canal de discussion pour les étudiants en troisième semestre de Licence Informatique.</p>
-</header>
-<div class="flex-grow space-y-6">
-<div class="flex items-start gap-3 max-w-lg">
-<div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
-<div class="flex flex-col">
-<div class="flex items-baseline gap-2">
-<p class="font-bold text-heading-light dark:text-heading-dark text-sm">Léa Martin</p>
-<p class="text-xs text-subtle-light dark:text-subtle-dark">17:40</p>
-</div>
-<div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-<p class="text-sm">Salut tout le monde ! J'ai une question sur le partiel d'Algèbre Linéaire S2. Est-ce que quelqu'un sait si les démonstrations du cours sont à connaître par cœur ?</p>
-</div>
-</div>
-</div>
-<div class="flex items-start gap-3 max-w-lg ml-auto justify-end">
-<div class="flex flex-col items-end">
-<div class="flex items-baseline gap-2">
-<p class="font-bold text-primary dark:text-accent text-sm">Vous</p>
-<p class="text-xs text-subtle-light dark:text-subtle-dark">17:42</p>
-</div>
-<div class="bg-primary dark:bg-accent p-3 rounded-lg rounded-tr-none mt-1">
-<p class="text-sm text-white dark:text-primary">Salut Léa ! Le prof a dit en amphi que les démos ne seraient pas demandées, il faut surtout comprendre la méthode.</p>
-</div>
-</div>
-<div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
-</div>
-<div class="flex items-start gap-3 max-w-lg">
-<div class="size-10 rounded-full bg-green-200 dark:bg-green-900 flex-shrink-0"></div>
-<div class="flex flex-col">
-<div class="flex items-baseline gap-2">
-<p class="font-bold text-heading-light dark:text-heading-dark text-sm">Yanis Dubois</p>
-<p class="text-xs text-subtle-light dark:text-subtle-dark">17:45</p>
-</div>
-<div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-<p class="text-sm">Ah super, merci pour l'info ! J'étais en train de galérer dessus. Ça me rassure.</p>
-</div>
-</div>
-</div>
-<div class="flex items-start gap-3 max-w-lg">
-<div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
-<div class="flex flex-col">
-<div class="flex items-baseline gap-2">
-<p class="font-bold text-heading-light dark:text-heading-dark text-sm">Léa Martin</p>
-<p class="text-xs text-subtle-light dark:text-subtle-dark">17:46</p>
-</div>
-<div class="bg-card-light dark:bg-card-dark p-3 rounded-lg rounded-tl-none mt-1">
-<p class="text-sm">Ouf, merci beaucoup ! Je vais pouvoir me concentrer sur les exercices alors.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
-<div class="relative">
-<textarea class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none" placeholder="Écrire un message dans #licence-info-s3..." rows="1"></textarea>
-<div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-<button class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-<span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
-</button>
-<button class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-<span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
-</button>
-<button class="h-9 px-4 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold text-sm transition-colors">
-<span class="material-symbols-outlined" style="font-size: 20px;">send</span>
-</button>
-</div>
-</div>
-</div>
-</main>
-</div>
-</body></html>
+            <input type="file" id="attachmentsInput" name="attachments" multiple class="hidden" />
+            <div id="selectedFiles" class="mt-2 flex flex-wrap gap-2"></div>
+
+            <div id="emojiPanel" class="hidden absolute bottom-14 right-24 z-20 p-2 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark shadow-xl max-w-[240px] flex flex-wrap gap-1"></div>
+
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button id="emojiBtn" type="button"
+                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
+              </button>
+              <button id="attachBtn" type="button"
+                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
+              </button>
+              <button type="submit" id="sendBtn"
+                class="h-9 px-4 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold text-sm transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const postsContainer = document.getElementById('postsContainer');
+      const currentStudentId = document.body.dataset.currentStudentId;
+      const channelNameEl = document.getElementById('channelName');
+      const channelDescEl = document.getElementById('channelDesc');
+      const form = document.getElementById('forumForm');
+      const input = document.getElementById('messageInput');
+      const fetchUrl = '{% url "dashboard:forum_posts_json" %}';
+
+      // Nouveaux éléments: pièces jointes et emojis
+      const attachBtn = document.getElementById('attachBtn');
+      const emojiBtn = document.getElementById('emojiBtn');
+      const attachInput = document.getElementById('attachmentsInput');
+      const selectedFiles = document.getElementById('selectedFiles');
+      const emojiPanel = document.getElementById('emojiPanel');
+
+      function formatBytes(bytes) {
+        if (!bytes && bytes !== 0) return '';
+        const sizes = ['o','Ko','Mo','Go','To'];
+        if (bytes === 0) return '0 o';
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return parseFloat((bytes / Math.pow(1024, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+      function isImageType(t) { return typeof t === 'string' && t.startsWith('image/'); }
+      function iconForType(t) {
+        if (!t) return 'attach_file';
+        if (t.startsWith('image/')) return 'image';
+        if (t === 'application/pdf') return 'picture_as_pdf';
+        if (t.startsWith('video/')) return 'movie';
+        if (t.startsWith('audio/')) return 'music_note';
+        if (t.indexOf('zip') !== -1 || t.indexOf('compressed') !== -1) return 'folder_zip';
+        if (t.startsWith('text/')) return 'description';
+        return 'attach_file';
+      }
+
+      function fileId(f) { return [f.name, f.size, f.lastModified].join('|'); }
+
+      function renderSelectedFiles() {
+        selectedFiles.innerHTML = '';
+        if (!attachInput.files || attachInput.files.length === 0) return;
+        Array.from(attachInput.files).forEach((f) => {
+          const id = fileId(f);
+          const isImg = isImageType(f.type);
+          const card = document.createElement('div');
+          card.className = 'relative border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-gray-800 overflow-hidden flex items-center gap-3 p-2 max-w-xs';
+          card.dataset.id = id;
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.dataset.action = 'remove-file';
+          removeBtn.dataset.id = id;
+          removeBtn.className = 'absolute top-1 right-1 size-6 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600';
+          removeBtn.innerHTML = '<span class="material-symbols-outlined text-xs">close</span>';
+          card.appendChild(removeBtn);
+
+          if (isImg) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(f);
+            img.alt = f.name;
+            img.className = 'h-16 w-16 object-cover rounded-md border border-border-light dark:border-border-dark';
+            img.onload = () => URL.revokeObjectURL(img.src);
+            card.appendChild(img);
+          } else {
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined text-2xl text-gray-500';
+            icon.textContent = iconForType(f.type);
+            card.appendChild(icon);
+          }
+
+          const meta = document.createElement('div');
+          meta.className = 'flex-1 min-w-0';
+          const name = document.createElement('p');
+          name.className = 'text-xs font-medium truncate';
+          name.textContent = f.name;
+          const size = document.createElement('p');
+          size.className = 'text-[11px] text-subtle-light dark:text-subtle-dark';
+          size.textContent = formatBytes(f.size);
+          meta.appendChild(name);
+          meta.appendChild(size);
+          card.appendChild(meta);
+
+          selectedFiles.appendChild(card);
+        });
+      }
+
+      function removeFileById(id) {
+        const dt = new DataTransfer();
+        Array.from(attachInput.files).forEach(f => {
+          if (fileId(f) !== id) dt.items.add(f);
+        });
+        attachInput.files = dt.files;
+        renderSelectedFiles();
+      }
+
+      selectedFiles.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="remove-file"]');
+        if (!btn) return;
+        removeFileById(btn.dataset.id);
+      });
+
+      // Ouvre le sélecteur de fichiers
+      attachBtn?.addEventListener('click', () => attachInput.click());
+
+      // Affiche les fichiers sélectionnés avec preview
+      attachInput?.addEventListener('change', renderSelectedFiles);
+
+      // Gestion du panneau d'emojis
+      function insertAtCursor(textarea, text) {
+        const start = textarea.selectionStart ?? textarea.value.length;
+        const end = textarea.selectionEnd ?? textarea.value.length;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + text + after;
+        const pos = start + text.length;
+        textarea.selectionStart = textarea.selectionEnd = pos;
+        textarea.dispatchEvent(new Event('input'));
+      }
+
+      const emojis = ['😀','😁','😂','😊','😍','🤔','👍','🎉','🙏','🔥','💡','✅','😎','🙌','📌'];
+      if (emojiPanel) {
+        emojiPanel.innerHTML = '';
+        emojis.forEach(e => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-1 text-xl rounded hover:bg-gray-100 dark:hover:bg-gray-700';
+          b.textContent = e;
+          b.addEventListener('click', () => { insertAtCursor(input, e); emojiPanel.classList.add('hidden'); input.focus(); });
+          emojiPanel.appendChild(b);
+        });
+      }
+
+      emojiBtn?.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        emojiPanel.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!emojiPanel || emojiPanel.classList.contains('hidden')) return;
+        if (!emojiPanel.contains(e.target) && e.target !== emojiBtn) {
+          emojiPanel.classList.add('hidden');
+        }
+      });
+
+      function renderPosts(data) {
+        const scroller = postsContainer.parentElement;
+        const wasAtBottom = scroller ? (scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight) < 4 : false;
+        const prevScrollTop = scroller ? scroller.scrollTop : 0;
+
+        if (data.channel) {
+          if (channelNameEl) channelNameEl.textContent = data.channel.name;
+          if (channelDescEl) channelDescEl.textContent = data.channel.description || '';
+        }
+        // Clear container
+        postsContainer.innerHTML = '';
+        if (!data.posts || data.posts.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-sm text-subtle-light dark:text-subtle-dark';
+          p.textContent = 'Aucun message pour le moment. Soyez le premier à écrire !';
+          postsContainer.appendChild(p);
+          // Ajuste le scroll selon la position précédente
+          if (scroller) scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
+          return;
+        }
+        data.posts.forEach((post) => {
+          const isMine = post.author.student_id === currentStudentId;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'flex items-start gap-3 max-w-lg' + (isMine ? ' ml-auto justify-end' : '');
+
+          if (!isMine) {
+            const avatar = document.createElement('div');
+            avatar.className = 'size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0';
+            wrapper.appendChild(avatar);
+          }
+
+          const contentCol = document.createElement('div');
+          contentCol.className = 'flex flex-col' + (isMine ? ' items-end' : '');
+
+          const header = document.createElement('div');
+          header.className = 'flex items-baseline gap-2';
+
+          const name = document.createElement('p');
+          name.className = 'font-bold text-sm ' + (isMine ? 'text-primary dark:text-accent' : 'text-heading-light dark:text-heading-dark');
+          name.textContent = isMine ? 'Vous' : post.author.full_name;
+
+          const date = document.createElement('p');
+          date.className = 'text-xs text-subtle-light dark:text-subtle-dark';
+          date.textContent = post.posted_at;
+
+          header.appendChild(name);
+          header.appendChild(date);
+
+          const bubble = document.createElement('div');
+          bubble.className = 'mt-1 p-3 rounded-lg text-sm ' + (isMine
+            ? 'bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none'
+            : 'bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none');
+
+          const text = document.createElement('p');
+          text.className = 'text-sm';
+          text.textContent = post.content;
+          bubble.appendChild(text);
+
+          // Affichage (optionnel) des pièces jointes
+          if (post.attachments && post.attachments.length) {
+            const attWrap = document.createElement('div');
+            attWrap.className = 'mt-2 flex flex-col gap-2';
+            post.attachments.forEach(a => {
+              const isImg = isImageType(a.content_type);
+              if (isImg && a.url) {
+                const aLink = document.createElement('a');
+                aLink.href = a.url; aLink.target = '_blank'; aLink.rel = 'noreferrer';
+                const img = document.createElement('img');
+                img.src = a.url; img.alt = a.name || 'image';
+                img.className = 'max-h-64 max-w-xs object-cover rounded-lg border border-border-light dark:border-border-dark hover:opacity-95 transition';
+                aLink.appendChild(img);
+                attWrap.appendChild(aLink);
+              } else {
+                const card = document.createElement('a');
+                card.href = a.url || '#'; card.target = '_blank'; card.rel = 'noreferrer';
+                card.className = 'flex items-center gap-3 p-2 rounded-lg border border-border-light dark:border-border-dark bg-gray-50 dark:bg-white/5 max-w-sm hover:bg-gray-100/70 dark:hover:bg-white/10 transition';
+                const icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined text-2xl';
+                icon.textContent = iconForType(a.content_type || '');
+                const meta = document.createElement('div');
+                meta.className = 'flex-1 min-w-0';
+                const n = document.createElement('p'); n.className = 'text-xs font-medium truncate'; n.textContent = a.name || 'Pièce jointe';
+                const s = document.createElement('p'); s.className = 'text-[11px] text-subtle-light dark:text-subtle-dark'; s.textContent = formatBytes(a.size);
+                meta.appendChild(n); meta.appendChild(s);
+                card.appendChild(icon); card.appendChild(meta);
+                const dl = document.createElement('span'); dl.className = 'material-symbols-outlined text-lg text-subtle-light dark:text-subtle-dark'; dl.textContent = 'download';
+                card.appendChild(dl);
+                attWrap.appendChild(card);
+              }
+            });
+            bubble.appendChild(attWrap);
+          }
+
+          contentCol.appendChild(header);
+          contentCol.appendChild(bubble);
+
+          wrapper.appendChild(contentCol);
+
+          if (isMine) {
+            const meAvatar = document.createElement('div');
+            meAvatar.className = 'size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0';
+            wrapper.appendChild(meAvatar);
+          }
+
+          postsContainer.appendChild(wrapper);
+        });
+        // Ajuste le scroll: on reste où on était, et on ne va en bas que si l'utilisateur y était déjà
+        if (scroller) {
+          scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
+        }
+      }
+
+      async function refreshPosts() {
+        try {
+          const res = await fetch(fetchUrl, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) return;
+          const data = await res.json();
+          renderPosts(data);
+        } catch (e) {
+          // ignore network errors silently for polling
+        }
+      }
+
+      // Initial load + polling every 1s
+      refreshPosts();
+      setInterval(refreshPosts, 1000);
+
+      // Intercept form submit to avoid full reload
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = (input.value || '').trim();
+        // Autoriser l'envoi si contenu OU fichiers
+        if (!content && (!attachInput.files || attachInput.files.length === 0)) return;
+        try {
+          const formData = new FormData(form); // inclut csrf + content + files
+          const res = await fetch(window.location.pathname, { method: 'POST', body: formData });
+          if (res.ok) {
+            input.value = '';
+            if (attachInput) { attachInput.value = ''; selectedFiles.innerHTML = ''; }
+            refreshPosts();
+          }
+        } catch (_) {}
+      });
+    })();
+  </script>
+</body>
+
+</html>
