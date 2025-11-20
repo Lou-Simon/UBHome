@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html class="light" lang="fr">
 <head>
@@ -10,155 +9,392 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C753", "background-light": "#f8f7f6", "background-dark": "#221d10",
-        /* Couleurs supplémentaires pour les événements */
-        course_teal: "#2dd4bf", /* Teinte Turquoise/Cyan */
-        course_indigo: "#4f46e5", /* Teinte Indigo */
-        }, fontFamily: {display: "Lexend"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<script id="tailwind-config">
+// Mise à jour de la configuration Tailwind pour inclure toutes les nuances de 'primary'
+tailwind.config = {
+    darkMode: "class", 
+    theme: {
+        extend: {
+            colors: {
+                // CORRECTION COULEURS DES ÉVÉNEMENTS PERSONNELS : Définition complète de la palette 'primary'
+                primary: { 
+                    50: '#fffbeb',
+                    100: '#fef3c7',
+                    200: '#fde68a',
+                    300: '#fcd34d',
+                    400: '#fbbf24',
+                    500: '#F4C753', // Votre couleur principale
+                    600: '#d97706',
+                    700: '#b45309',
+                    800: '#92400e',
+                    900: '#78350f',
+                },
+                "background-light": "#f8f7f6", 
+                "background-dark": "#221d10", 
+                // CORRECTION COULEURS DES COURS (pour classes dynamiques)
+                "teal": { 50: '#f0fdfa', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#134e4a' },
+                "indigo": { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' },
+                "red": { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 900: '#7f1d1d' }
+            }, 
+            fontFamily: {
+                display: "Lexend"
+            }, 
+            borderRadius: {
+                DEFAULT: "0.25rem", 
+                lg: "0.5rem", 
+                xl: "0.75rem", 
+                full: "9999px"
+            }
+        }
+    }
+};
+</script>
 <style>
  .material-symbols-outlined {
 font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 font-size: 24px;
 }
-/* Définition des styles de couleur basés sur le code injecté par la vue */
-.event-color-primary { background-color: rgba(244, 199, 83, 0.2); border-left-color: #F4C753; }
-.event-color-teal { background-color: rgba(45, 212, 191, 0.1); border-left-color: #2dd4bf; }
-.event-color-indigo { background-color: rgba(79, 70, 229, 0.1); border-left-color: #4f46e5; }
-.event-color-red { background-color: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; }
+/* Style pour la grille du calendrier */
+.calendar-grid {
+    display: grid;
+    grid-template-rows: repeat({{ hours|length }}, 100px); /* Hauteur des cellules basée sur le nombre d'heures */
+    grid-gap: 0;
+    position: relative;
+    padding: 0 0 100px 0; /* Espace pour la dernière heure */
+}
 
-.text-color-primary { color: #F4C753; }
-.text-color-teal { color: #2dd4bf; }
-.text-color-indigo { color: #4f46e5; }
-.text-color-red { color: #ef4444; }
-
-/* Correction des couleurs de texte pour le dark mode */
-.dark .event-color-primary { background-color: rgba(244, 199, 83, 0.2); }
-.dark .text-color-primary { color: #F4C753; }
+/* Positionnement des événements dans la grille */
+.event-item {
+    position: absolute;
+    width: calc(100% - 8px); /* 4px de chaque côté */
+    padding: 8px;
+    z-index: 10;
+}
 </style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-<div class="flex h-full min-h-screen">
-<aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
-<div class="flex flex-col gap-6">
-<div class="flex items-center gap-3 px-3">
-<img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
-<div class="flex flex-col">
-<h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
-<p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
-</div>
-</div>
-<nav class="flex flex-col gap-2">
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-       href="{% url 'dashboard:dashboard' %}"> 
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">home</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Accueil</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" 
-       href="{% url 'dashboard:calendar' %}">
-        <span class="material-symbols-outlined text-primary dark:text-primary">calendar_month</span>
-        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Calendrier</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-    href="{% url 'dashboard:chat' %}">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:forum' %}">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
-    </a>
-</nav>
-</div>
-<div class="flex flex-col gap-1">
-</div>
-</aside>
-<main class="flex-1 p-8">
-<div class="flex flex-col gap-8">
-<header class="flex items-center justify-between gap-4">
-<div class="flex flex-col gap-1">
-    <h1 class="text-[#111318] dark:text-white text-3xl font-bold leading-tight tracking-tight">Calendrier</h1>
-    <p class="text-[#616f89] dark:text-slate-400 text-base font-normal leading-normal">Votre emploi du temps de la semaine.</p>
-</div>
-<div class="flex items-center gap-4">
-    <button class="p-2.5 text-[#616f89] dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-        <span class="material-symbols-outlined">notifications</span>
-    </button>
-    
-    <a class="p-2.5 text-[#111318] dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" 
-       href="{% url 'dashboard:profile' %}">
-        <span class="material-symbols-outlined">account_circle</span>
-    </a>
 
-    <a class="p-2.5 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-slate-800 border border-red-200 dark:border-red-700 bg-white dark:bg-slate-900" 
-       href="{% url 'dashboard:logout' %}">
-        <span class="material-symbols-outlined">logout</span>
-    </a>
-</div>
-</header>
-<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-<div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-<div class="flex items-center gap-4">
-    <a class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white" 
-       href="{% url 'dashboard:calendar' %}?date={{ prev_week_date }}">
-        <span class="material-symbols-outlined text-base">chevron_left</span>
-    </a>
+    <div class="hidden">
+        <div class="bg-primary-50 dark:bg-primary-900/30 border-primary-500 text-primary-700 dark:text-primary-400 text-primary-600/80"></div>
+        <div class="bg-teal-50 dark:bg-teal-900/30 border-teal-500 text-teal-700 dark:text-teal-400 text-teal-600/80"></div>
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-400 text-indigo-600/80"></div>
+        <div class="bg-red-50 dark:bg-red-900/30 border-red-500 text-red-700 dark:text-red-400 text-red-600/80"></div>
+    </div> 
     
-    <h2 class="text-lg font-semibold text-[#111318] dark:text-white">{{ current_week_label }}</h2>
-    
-    <a class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white" 
-       href="{% url 'dashboard:calendar' %}?date={{ next_week_date }}">
-        <span class="material-symbols-outlined text-base">chevron_right</span>
-    </a>
-</div>
-    <a class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800" 
-       href="{% url 'dashboard:calendar' %}">Aujourd'hui</a>
-</div>
-<div class="grid grid-cols-[50px_repeat(5,1fr)] divide-x divide-slate-200 dark:divide-slate-800">
-    
-    <div class="flex flex-col">
-        <div class="p-4 border-b border-slate-200 dark:border-slate-800 h-[72px] bg-slate-50 dark:bg-slate-800"></div>
-        <div class="flex flex-col relative h-[1000px] divide-y divide-dashed divide-slate-300 dark:divide-slate-700">
-            {% for hour in hours %} 
-            <div class="relative h-[100px]">
-                <span class="absolute -top-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">{{ hour }}:00</span>
+    <div class="flex h-full min-h-screen">
+
+        <aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
+            <div class="flex flex-col gap-6">
+                <div class="flex items-center gap-3 px-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Logo UBO" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6WFHIxSxSg6tfUqACZVyKdDKLs2EPbYRQqDySuXw-YLfWNFgSYM2IRtLk_jDTPDS-AWl69gkmekx9U2yuZRkKmlNbmsxDBzOGzWXyYRb8IvhQUWwmxePbCWhiZU3q54lDovyxQgsit7PfNL1Bk_5u85hodKzsBHLvDn2ugoiuvSBhejXyUm-EMpF0Iw0sS-Gv-gwoVRvfNm2DxYO5Qq59Dqtz6xtedepFcheufkMFtrWsEOWFyjCUS-mdKWCUWpV05rgx_H8TB137");'></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
+                        <p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
+                    </div>
+                </div>
+                <div class="flex flex-col px-3 py-2">
+                    <p class="text-base font-semibold text-[#111318] dark:text-white">{{ user.full_name }}</p>
+                    <p class="text-sm text-[#616f89] dark:text-slate-400">{{ user.year }}</p>
+                </div>
+                <nav class="flex flex-col gap-2">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 {% if title == 'Tableau de bord' %}bg-primary/10 dark:bg-primary/20{% endif %}" 
+                    href="{% url 'dashboard:dashboard' %}"> 
+                        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300 {% if title == 'Tableau de bord' %}text-primary dark:text-primary{% endif %}">home</span>
+                        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal {% if title == 'Tableau de bord' %}text-primary dark:text-primary{% endif %}">Accueil</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" 
+                    href="{% url 'dashboard:calendar' %}">
+                        <span class="material-symbols-outlined text-primary dark:text-primary">calendar_month</span>
+                        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Calendrier</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:chat' %}">
+                        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
+                        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:forum' %}">
+                        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
+                        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
+                    </a>
+                </nav>
             </div>
-            {% endfor %}
-            <span class="absolute -bottom-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">18:00</span>
-        </div>
-    </div>
-
-    {% for day in week_days %}
-    <div class="flex flex-col">
-        <div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-            <p class="text-sm font-semibold text-[#111318] dark:text-white">{{ day.day_name }}</p>
-            <p class="text-xs text-[#616f89] dark:text-slate-400">{{ day.date|date:"d" }}</p>
-        </div>
-        <div class="p-4 h-[1000px] relative">
             
-            {% for event in day.events %}
-            <div class="absolute left-4 right-4 p-3 rounded-lg border-l-4 border-l-[4px] 
-                        event-color-{{ event.color_code }}"
-                style="top: {{ event.total_start_offset }}px; height: {{ event.height }}px;">
+            <div class="flex flex-col gap-1">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
+                   href="{% url 'dashboard:profile' %}">
+                    <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">account_circle</span>
+                    <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Mon Profil</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20" 
+                   href="{% url 'dashboard:logout' %}">
+                    <span class="material-symbols-outlined text-red-500">logout</span>
+                    <p class="text-red-500 text-sm font-medium leading-normal">Déconnexion</p>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-8">
+            <div class="flex flex-col gap-8">
+            
+                <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex flex-col gap-1">
+                        <h1 class="text-[#111318] dark:text-white text-3xl font-bold leading-tight tracking-tight">Calendrier Académique</h1>
+                        <p class="text-[#616f89] dark:text-slate-400 text-base font-normal leading-normal">Votre emploi du temps de la semaine.</p>
+                    </div>
+                    <button id="add-event-btn" class="inline-flex items-center py-2.5 px-6 rounded-lg shadow-md text-base font-semibold text-[#111318] bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300 dark:text-[#111318]">
+                        <span class="material-symbols-outlined mr-2">add</span>
+                        Ajouter un événement
+                    </button>
+                </header>
+
+                {% if success_message %}
+                <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-900/30 dark:text-green-400" role="alert">
+                    <span class="font-medium">Succès !</span> L'événement a été créé et ajouté à votre calendrier.
+                </div>
+                {% endif %}
                 
-                <p class="text-sm font-bold text-color-{{ event.color_code }}">
-                    {{ event.course.name }}
-                </p>
-                <p class="text-xs text-color-{{ event.color_code }}/80">
-                    {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }} / {{ event.location }}
-                </p>
+                {% if delete_success %}
+                <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-900/30 dark:text-green-400" role="alert">
+                    <span class="font-medium">Supprimé !</span> L'événement personnel a été retiré de votre calendrier.
+                </div>
+                {% endif %}
+                
+                {% if delete_error_message %}
+                <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400" role="alert">
+                    <span class="font-medium">Échec de la suppression !</span> {{ delete_error_message }}
+                </div>
+                {% endif %}
+
+
+                <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center gap-4">
+                            <a href="{% url 'dashboard:calendar' %}?date={{ prev_week_date }}" class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
+                                <span class="material-symbols-outlined text-base">chevron_left</span>
+                            </a>
+                            <h2 class="text-lg font-semibold text-[#111318] dark:text-white">{{ current_week_label }}</h2>
+                            <a href="{% url 'dashboard:calendar' %}?date={{ next_week_date }}" class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-[#111318] dark:text-white">
+                                <span class="material-symbols-outlined text-base">chevron_right</span>
+                            </a>
+                        </div>
+                        <a href="{% url 'dashboard:calendar' %}" class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800">Aujourd'hui</a>
+                    </div>
+
+                    <div class="flex overflow-x-auto">
+                        
+                        <div class="flex flex-col flex-shrink-0 w-16 text-xs text-right border-r border-slate-200 dark:border-slate-800 sticky left-0 z-20 bg-white dark:bg-slate-900">
+                            <div class="h-16"></div> {% for hour in hours %}
+                            <div class="h-[100px] border-b border-slate-100 dark:border-slate-800 pr-1 -mt-2">
+                                <span class="text-[#616f89] dark:text-slate-400">{{ hour }}:00</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% for day in week_days %}
+                        <div class="flex flex-col flex-grow min-w-[200px] border-r {% if forloop.last %}border-r-0{% else %}border-slate-200 dark:border-slate-800{% endif %}">
+                            
+                            <div class="p-4 text-center border-b border-slate-200 dark:border-slate-800 h-16 flex flex-col justify-center">
+                                <p class="text-sm font-semibold text-[#111318] dark:text-white">{{ day.day_name }}</p>
+                                <p class="text-xs text-[#616f89] dark:text-slate-400">{{ day.date|date:"d M" }}</p>
+                            </div>
+                            
+                            <div class="relative flex-grow calendar-grid">
+                                
+                                {% for hour in hours %}
+                                    <div class="border-b border-slate-100 dark:border-slate-800"></div>
+                                {% endfor %}
+
+                                {% for event in day.events %}
+                                    {% with event.color_code as color %}
+                                    <div class="event-item rounded-lg shadow-md transition duration-300 p-2 border-l-4 group 
+                                                bg-{{ color }}-50 dark:bg-{{ color }}-900/30 
+                                                border-{{ color }}-500" 
+                                        style="top: {{ event.total_start_offset }}px; height: {{ event.height }}px;">
+                                        
+                                        <p class="text-sm font-bold text-{{ color }}-700 dark:text-{{ color }}-400 line-clamp-1">{{ event.display_name }}</p>
+                                        <p class="text-xs text-{{ color }}-600/80 dark:text-{{ color }}-400/80">{{ event.local_start_time|date:"H:i" }} - {{ event.local_end_time|date:"H:i" }}</p>
+                                        <p class="text-xs text-{{ color }}-600/80 dark:text-{{ color }}-400/80 line-clamp-1">{{ event.location }}</p>
+
+                                        {% if event.is_personal_event %}
+                                            <button 
+                                                class="delete-event-btn absolute top-1 right-1 text-red-600/50 hover:text-red-600 dark:text-red-400/50 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition duration-300" 
+                                                data-event-id="{{ event.id }}"
+                                                title="Supprimer l'événement personnel">
+                                                <span class="material-symbols-outlined text-base">delete</span>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                    {% endwith %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-            {% endfor %}
-            
-        </div>
+        </main>
     </div>
-    {% endfor %}
-    
 </div>
+
+
+<div id="event-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 justify-center items-center backdrop-blur-sm">
+    <div class="bg-white dark:bg-[#111318] rounded-xl shadow-2xl w-full max-w-lg mx-4 my-8 p-6 lg:p-8 transform transition-all duration-300">
+        
+        <header class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800 mb-6">
+            <h3 class="text-xl font-bold">Créer un nouvel événement personnel</h3>
+            <button id="close-modal-btn" class="text-[#616f89] dark:text-slate-400 hover:text-primary transition duration-300">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </header>
+
+        <form method="POST" action="{% url 'dashboard:calendar' %}" class="flex flex-col gap-4">
+            {% csrf_token %}
+            
+            {% if form_error_message %}
+            <div class="p-3 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400 mb-2" role="alert">
+                <span class="font-medium">Erreur :</span> {{ form_error_message }}
+            </div>
+            {% endif %}
+
+            <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Titre de l'événement</span>
+                <input type="text" name="title" required 
+                       value="{{ form_data.title|default_if_none:'' }}"
+                       class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white"
+                       placeholder="Ex: Réunion de travail IHM"/>
+            </label>
+            
+            <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Lieu</span>
+                <input type="text" name="location" required 
+                       value="{{ form_data.location|default_if_none:'' }}"
+                       class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white"
+                       placeholder="Ex: Salle 305 ou en ligne"/>
+            </label>
+            
+            <div class="grid grid-cols-3 gap-3">
+                <label class="flex flex-col gap-1">
+                    <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Date</span>
+                    <input type="date" name="date" required 
+                           value="{% if form_data.date %}{{ form_data.date }}{% else %}{{ current_date }}{% endif %}"
+                           class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white"/>
+                </label>
+                
+                <label class="flex flex-col gap-1">
+                    <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Début</span>
+                    <input type="time" name="start_time" required 
+                           value="{% if form_data.start_time %}{{ form_data.start_time }}{% else %}09:00{% endif %}" step="300"
+                           class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white"/>
+                </label>
+                
+                <label class="flex flex-col gap-1">
+                    <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Fin</span>
+                    <input type="time" name="end_time" required 
+                           value="{% if form_data.end_time %}{{ form_data.end_time }}{% else %}10:00{% endif %}" step="300"
+                           class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white"/>
+                </label>
+            </div>
+            
+            <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium text-[#111318] dark:text-slate-300">Inviter des étudiants (Optionnel)</span>
+                <select multiple name="attendees" 
+                        class="border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary dark:text-white h-32">
+                    {% for student in all_other_students %}
+                        <option value="{{ student.student_id }}"
+                                {% if student.student_id|stringformat:"s" in form_data.attendees or student.student_id|stringformat:"s" == form_data.attendees %}selected{% endif %}>
+                            {{ student.full_name }}
+                        </option>
+                    {% empty %}
+                        <option disabled>Aucun autre étudiant trouvé</option>
+                    {% endfor %}
+                </select>
+                <p class="text-xs text-[#616f89] dark:text-slate-400 mt-1">
+                    Maintenez **Ctrl** (ou **Cmd** sur Mac) pour sélectionner plusieurs personnes.
+                </p>
+            </label>
+
+            <button type="submit" class="mt-2 px-4 py-2.5 text-base font-semibold text-[#111318] rounded-lg shadow-md bg-primary hover:bg-primary/90 transition duration-300">
+                Créer l'événement
+            </button>
+        </form>
+
+    </div>
 </div>
-</div>
-</main>
-</div>
-</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('event-modal');
+        const addEventBtn = document.getElementById('add-event-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const deleteButtons = document.querySelectorAll('.delete-event-btn');
+
+        // Fonction pour ouvrir la modale
+        const openModal = () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        // Fonction pour fermer la modale
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        // Écouteurs d'événements pour les boutons de création
+        addEventBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Fermer la modale si l'utilisateur clique en dehors
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Ouvrir la modal si la vue a renvoyé une erreur POST
+        const shouldOpenModal = "{{ should_open_modal }}" === "True"; 
+        
+        if (shouldOpenModal) {
+            openModal();
+        }
+
+        // Logique de suppression d'événement
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const eventId = this.dataset.eventId;
+                
+                // Demander confirmation avant de supprimer
+                if (confirm("Êtes-vous sûr de vouloir supprimer cet événement personnel ? Cette action est irréversible.")) {
+                    // Créer un formulaire dynamique pour envoyer la requête POST
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/calendar/delete/${eventId}/`; 
+                    
+                    // Ajouter le jeton CSRF
+                    const csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                    if (csrfTokenInput) {
+                        const csrfToken = csrfTokenInput.value;
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = 'csrfmiddlewaretoken';
+                        csrfInput.value = csrfToken;
+                        form.appendChild(csrfInput);
+                    } else {
+                        console.error("Jeton CSRF non trouvé.");
+                        return;
+                    }
+                    
+                    document.body.appendChild(form);
+                    
+                    // Soumettre le formulaire
+                    form.submit();
+                }
+            });
+        });
+
+    });
+</script>
 </body>
 </html>

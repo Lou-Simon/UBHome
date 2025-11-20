@@ -21,15 +21,32 @@ class Course(models.Model):
         return self.name
 
 class Event(models.Model):
-    title = models.CharField(max_length=200)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='events')
+    # Nouveau champ pour le titre des événements personnels. 
+    # Le nom du cours sera utilisé comme titre pour les événements académiques.
+    title = models.CharField(max_length=200, default='Événement Personnel') 
+    
+    # Rend le champ course optionnel pour les événements personnels
+    course = models.ForeignKey(
+        'Course', 
+        on_delete=models.SET_NULL, # Meilleure pratique : ne pas supprimer les événements si le cours est supprimé
+        null=True, 
+        blank=True
+    ) 
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    location = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=100)
+    
+    # Nouveau champ pour lier l'événement aux étudiants participants (y compris l'organisateur)
+    # Permet de lier l'événement à un ou plusieurs étudiants (Mael, vous-même, etc.)
+    attendees = models.ManyToManyField('Student', related_name='events') 
 
     def __str__(self):
-        return self.title
+        # Utilise le titre ou le nom du cours pour l'affichage
+        return self.title if self.course is None else f"Cours: {self.course.name}"
+
+    class Meta:
+        verbose_name = "Événement"
+        verbose_name_plural = "Événements"
 
 class Email(models.Model):
     sender = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sent_emails')

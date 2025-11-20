@@ -23,4 +23,5 @@ urlpatterns = [
     path('calendar/', include('dashboard.sub_urls.calendar_urls')),
     path('chat/', include('dashboard.sub_urls.chat_urls')),
     path('forum/', include('dashboard.sub_urls.forum_urls')),
+    
 ]
