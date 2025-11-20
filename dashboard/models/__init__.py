@@ -9,6 +9,7 @@ from .models import (
     Course, 
     Event,
     ForumAttachment,
+    ForumReaction,
 )
 
 # Importe le module de signaux pour s'assurer que les récepteurs sont chargés au démarrage de l'application.
