@@ -86,3 +86,24 @@ class ForumAttachment(models.Model):
 
     def __str__(self):
         return self.file.name
+
+class ForumReaction(models.Model):
+    EMOJI_CHOICES = [
+        ('like', '👍'),
+        ('love', '❤️'),
+        ('laugh', '😂'),
+        ('wow', '😮'),
+        ('sad', '😢'),
+        ('angry', '😡'),
+    ]
+    
+    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name='reactions')
+    author = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='reactions')
+    emoji_type = models.CharField(max_length=10, choices=EMOJI_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('post', 'author')  # Un utilisateur ne peut avoir qu'une seule réaction par post
+    
+    def __str__(self):
+        return f"{self.get_emoji_type_display()} by {self.author.full_name} on {self.post.title}"

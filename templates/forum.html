@@ -92,7 +92,7 @@
       </a>
     </aside>
     <main class="flex-1 flex flex-col h-screen">
-      <div class="flex-grow flex flex-col p-6 overflow-y-auto">
+      <div id="messagesArea" class="flex-grow flex flex-col p-6 overflow-y-auto">
         <header class="mb-6">
           <h1
             class="text-heading-light dark:text-heading-dark text-3xl font-black tracking-tight flex items-center gap-3">
@@ -126,35 +126,38 @@
           <p class="text-sm text-subtle-light dark:text-subtle-dark">Aucun message pour le moment. Soyez le premier à écrire !</p>
           {% endfor %}
         </div>
+        <div id="messagesEnd"></div>
       </div>
       <div
         class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
         <div class="relative">
           <form method="post" class="relative" id="forumForm" enctype="multipart/form-data">
             {% csrf_token %}
-            <textarea name="content" id="messageInput"
-              class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 pr-28 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
-              placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
+            <div class="flex items-center gap-2">
+              <button id="attachBtn" type="button"
+                class="flex items-center justify-center size-10 rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
+              </button>
+              
+              <textarea name="content" id="messageInput"
+                class="flex-1 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg p-3 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition resize-none"
+                placeholder="Écrire un message dans #{{ channel.name }}..." rows="1"></textarea>
+
+              <button id="emojiBtn" type="button"
+                class="flex items-center justify-center size-10 rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
+              </button>
+              
+              <button type="submit" id="sendBtn"
+                class="flex items-center justify-center size-10 rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold transition-colors">
+                <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+              </button>
+            </div>
 
             <input type="file" id="attachmentsInput" name="attachments" multiple class="hidden" />
             <div id="selectedFiles" class="mt-2 flex flex-wrap gap-2"></div>
 
             <div id="emojiPanel" class="hidden absolute bottom-14 right-24 z-20 p-2 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark shadow-xl max-w-[240px] flex flex-wrap gap-1"></div>
-
-            <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <button id="emojiBtn" type="button"
-                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <span class="material-symbols-outlined" style="font-size: 22px;">sentiment_satisfied</span>
-              </button>
-              <button id="attachBtn" type="button"
-                class="size-9 flex items-center justify-center rounded-lg text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <span class="material-symbols-outlined" style="font-size: 22px;">attach_file</span>
-              </button>
-              <button type="submit" id="sendBtn"
-                class="h-9 px-4 flex items-center justify-center rounded-lg bg-accent hover:bg-accent/90 text-primary font-bold text-sm transition-colors">
-                <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
-              </button>
-            </div>
           </form>
         </div>
       </div>
@@ -164,12 +167,30 @@
   <script>
     (function () {
       const postsContainer = document.getElementById('postsContainer');
+      const messagesArea = document.getElementById('messagesArea');
+      const messagesEnd = document.getElementById('messagesEnd');
       const currentStudentId = document.body.dataset.currentStudentId;
       const channelNameEl = document.getElementById('channelName');
       const channelDescEl = document.getElementById('channelDesc');
       const form = document.getElementById('forumForm');
       const input = document.getElementById('messageInput');
       const fetchUrl = '{% url "dashboard:forum_posts_json" %}';
+      
+      let isInitialLoad = true; // Pour savoir si c'est le premier chargement
+
+      // Fonction pour vérifier si l'utilisateur est proche du bas
+      function isNearBottom(threshold = 100) {
+        return messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight < threshold;
+      }
+
+      // Scroll automatique vers le bas
+      function scrollToBottom() {
+        if (messagesEnd) {
+          messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+      }
 
       // Nouveaux éléments: pièces jointes et emojis
       const attachBtn = document.getElementById('attachBtn');
@@ -306,9 +327,9 @@
       });
 
       function renderPosts(data) {
-        const scroller = postsContainer.parentElement;
-        const wasAtBottom = scroller ? (scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight) < 4 : false;
-        const prevScrollTop = scroller ? scroller.scrollTop : 0;
+        // Sauvegarder la position de scroll avant le refresh
+        const wasAtBottom = isNearBottom();
+        const scrollPosition = messagesArea.scrollTop;
 
         if (data.channel) {
           if (channelNameEl) channelNameEl.textContent = data.channel.name;
@@ -321,8 +342,6 @@
           p.className = 'text-sm text-subtle-light dark:text-subtle-dark';
           p.textContent = 'Aucun message pour le moment. Soyez le premier à écrire !';
           postsContainer.appendChild(p);
-          // Ajuste le scroll selon la position précédente
-          if (scroller) scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
           return;
         }
         data.posts.forEach((post) => {
@@ -401,6 +420,44 @@
           contentCol.appendChild(header);
           contentCol.appendChild(bubble);
 
+          // Ajouter les réactions sous le message
+          const reactionsContainer = document.createElement('div');
+          reactionsContainer.className = 'mt-2 flex flex-wrap gap-1';
+          
+          const reactionEmojis = [
+            {type: 'like', emoji: '👍'},
+            {type: 'love', emoji: '❤️'},
+            {type: 'laugh', emoji: '😂'},
+            {type: 'wow', emoji: '😮'},
+            {type: 'sad', emoji: '😢'},
+            {type: 'angry', emoji: '😡'}
+          ];
+          
+          reactionEmojis.forEach(({type, emoji}) => {
+            const reaction = post.reactions[type];
+            if (reaction && reaction.count > 0) {
+              const reactionBtn = document.createElement('button');
+              reactionBtn.className = `reaction-btn flex items-center gap-1 px-2 py-1 text-xs rounded-full border transition-colors ${
+                reaction.user_reacted 
+                  ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300' 
+                  : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`;
+              reactionBtn.dataset.postId = post.id;
+              reactionBtn.dataset.emojiType = type;
+              reactionBtn.innerHTML = `<span>${emoji}</span><span>${reaction.count}</span>`;
+              reactionsContainer.appendChild(reactionBtn);
+            }
+          });
+          
+          // Bouton pour ajouter une réaction
+          const addReactionBtn = document.createElement('button');
+          addReactionBtn.className = 'add-reaction-btn flex items-center justify-center w-6 h-6 text-xs rounded-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors';
+          addReactionBtn.dataset.postId = post.id;
+          addReactionBtn.innerHTML = '<span class="text-gray-500 dark:text-gray-400">+</span>';
+          reactionsContainer.appendChild(addReactionBtn);
+          
+          contentCol.appendChild(reactionsContainer);
+
           wrapper.appendChild(contentCol);
 
           if (isMine) {
@@ -411,10 +468,21 @@
 
           postsContainer.appendChild(wrapper);
         });
-        // Ajuste le scroll: on reste où on était, et on ne va en bas que si l'utilisateur y était déjà
-        if (scroller) {
-          scroller.scrollTop = wasAtBottom ? scroller.scrollHeight : prevScrollTop;
-        }
+        
+        // Gestion du scroll après le rendu
+        setTimeout(() => {
+          if (isInitialLoad) {
+            // Premier chargement : aller en bas
+            scrollToBottom();
+            isInitialLoad = false;
+          } else if (wasAtBottom) {
+            // Si on était en bas avant le refresh : rester en bas
+            scrollToBottom();
+          } else {
+            // Sinon : maintenir la position de scroll
+            messagesArea.scrollTop = scrollPosition;
+          }
+        }, 50);
       }
 
       async function refreshPosts() {
@@ -432,6 +500,90 @@
       refreshPosts();
       setInterval(refreshPosts, 1000);
 
+      // Gestion des clics sur les réactions
+      async function toggleReaction(postId, emojiType) {
+        try {
+          const formData = new FormData();
+          formData.append('post_id', postId);
+          formData.append('emoji_type', emojiType);
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+          
+          const response = await fetch('{% url "dashboard:toggle_reaction" %}', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (response.ok) {
+            // Rafraîchir les messages pour voir les nouvelles réactions
+            refreshPosts();
+          }
+        } catch (error) {
+          console.error('Erreur lors de la réaction:', error);
+        }
+      }
+
+      // Panneau de sélection des réactions
+      function showReactionPicker(postId, button) {
+        // Supprimer les panneaux existants
+        document.querySelectorAll('.reaction-picker').forEach(p => p.remove());
+        
+        const picker = document.createElement('div');
+        picker.className = 'reaction-picker absolute z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 flex gap-1';
+        
+        const reactionEmojis = [
+          {type: 'like', emoji: '👍'},
+          {type: 'love', emoji: '❤️'},
+          {type: 'laugh', emoji: '😂'},
+          {type: 'wow', emoji: '😮'},
+          {type: 'sad', emoji: '😢'},
+          {type: 'angry', emoji: '😡'}
+        ];
+        
+        reactionEmojis.forEach(({type, emoji}) => {
+          const btn = document.createElement('button');
+          btn.className = 'p-2 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors';
+          btn.textContent = emoji;
+          btn.onclick = () => {
+            toggleReaction(postId, type);
+            picker.remove();
+          };
+          picker.appendChild(btn);
+        });
+        
+        // Positionner le panneau
+        const rect = button.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.top = (rect.top - 50) + 'px';
+        picker.style.left = rect.left + 'px';
+        
+        document.body.appendChild(picker);
+        
+        // Fermer en cliquant ailleurs
+        setTimeout(() => {
+          document.addEventListener('click', function closePicker(e) {
+            if (!picker.contains(e.target) && e.target !== button) {
+              picker.remove();
+              document.removeEventListener('click', closePicker);
+            }
+          });
+        }, 100);
+      }
+
+      // Délégation d'événements pour les réactions
+      postsContainer.addEventListener('click', (e) => {
+        const reactionBtn = e.target.closest('.reaction-btn');
+        const addReactionBtn = e.target.closest('.add-reaction-btn');
+        
+        if (reactionBtn) {
+          const postId = reactionBtn.dataset.postId;
+          const emojiType = reactionBtn.dataset.emojiType;
+          toggleReaction(postId, emojiType);
+        } else if (addReactionBtn) {
+          const postId = addReactionBtn.dataset.postId;
+          showReactionPicker(postId, addReactionBtn);
+        }
+      });
+
       // Intercept form submit to avoid full reload
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -444,7 +596,11 @@
           if (res.ok) {
             input.value = '';
             if (attachInput) { attachInput.value = ''; selectedFiles.innerHTML = ''; }
-            refreshPosts();
+            // Après l'envoi d'un message, on force le scroll vers le bas
+            setTimeout(() => {
+              refreshPosts();
+              setTimeout(scrollToBottom, 100);
+            }, 50);
           }
         } catch (_) {}
       });
