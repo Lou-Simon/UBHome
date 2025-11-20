@@ -23,7 +23,8 @@ def dashboard_view(request):
     # --- 2. DONNÉES DU CALENDRIER (Aujourd'hui seulement) ---
     
     current_date = timezone.localdate()
-    enrolled_course_ids = student.enrolled_courses.values_list('id', flat=True)
+    # On utilise 'student.courses' grâce au related_name défini dans le modèle Course
+    enrolled_course_ids = student.courses.values_list('id', flat=True)
 
     # Événements du jour
     today_events = Event.objects.select_related('course').filter(

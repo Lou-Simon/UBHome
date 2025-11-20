@@ -43,7 +43,8 @@ def calendar(request):
 
     # --- 3. Récupération et organisation des événements ---
     
-    enrolled_course_ids = student.enrolled_courses.values_list('id', flat=True)
+    # On remplace 'enrolled_courses' par 'courses'
+    enrolled_course_ids = student.courses.values_list('id', flat=True)
 
     all_events = Event.objects.select_related('course').filter(
         course_id__in=enrolled_course_ids,

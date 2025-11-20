@@ -42,7 +42,7 @@ def login_view(request):
         try:
             student = Student.objects.get(student_id=student_id)
             
-            if student.password_clear == password:
+            if student.password == password:
                 request.session['student_id'] = student.student_id
                 return JsonResponse({
                     "full_name": student.full_name,
