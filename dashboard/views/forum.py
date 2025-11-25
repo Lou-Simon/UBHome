@@ -38,10 +38,18 @@ def forum_view(request):
     # Gestion de l'envoi d'un message
     if request.method == 'POST':
         content = request.POST.get('content', '').strip()
-        if content or request.FILES.getlist('attachments'):
-            post = ForumPost.objects.create(channel=channel, author=student, content=content)
+        files = request.FILES.getlist('attachments')
+        
+        # Autoriser l'envoi si contenu OU fichiers
+        if content or files:
+            # Créer le post avec le contenu (vide si seulement fichiers)
+            post = ForumPost.objects.create(
+                channel=channel, 
+                author=student, 
+                content=content if content else ''
+            )
             # Gérer les pièces jointes
-            for f in request.FILES.getlist('attachments'):
+            for f in files:
                 ForumAttachment.objects.create(post=post, file=f, original_name=getattr(f, 'name', ''))
         return redirect('dashboard:forum')
 

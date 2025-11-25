@@ -86,20 +86,20 @@ class ForumChannel(models.Model):
 class ForumPost(models.Model):
     channel = models.ForeignKey(ForumChannel, on_delete=models.CASCADE, related_name='posts')
     author = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='forum_posts')
-    title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = models.TextField(blank=True)  # Rendre content optionnel
     posted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.title} by {self.author.full_name}"
+        return f"{self.content[:50]} by {self.author.full_name}"
 
 class ForumAttachment(models.Model):
     post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(upload_to='forum_attachments/')
+    original_name = models.CharField(max_length=255, blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.file.name
+        return self.original_name or self.file.name
 
 class ForumReaction(models.Model):
     EMOJI_CHOICES = [
