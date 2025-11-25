@@ -39,6 +39,10 @@ def delete_email_view(request):
     return redirect(reverse('dashboard:chat') + '?box=inbox')
 
 
+# Dans dashboard/views/chat.py
+
+# ... (début du fichier inchangé) ...
+
 def chat_view(request):
     user_data = get_session_user_data(request)
     if not user_data: return redirect('dashboard:login')
@@ -48,47 +52,38 @@ def chat_view(request):
 
     unread_count = Email.objects.filter(recipient=student, is_read=False, is_deleted_by_recipient=False, is_draft=False).count()
 
-    # --- GESTION DES ACTIONS (ENVOI / BROUILLON) ---
+    # --- GESTION DES ACTIONS ---
     if request.method == 'POST':
         form = EmailForm(request.POST)
         
-        # Action 1 : SAUVEGARDER LE BROUILLON
+        # 1. SAUVEGARDER BROUILLON
         if 'save_draft' in request.POST:
-            # On valide partiellement (Sujet/Corps) mais on ignore les destinataires
             if form.is_valid():
                 draft = form.save(commit=False)
                 draft.sender = student
                 draft.is_draft = True
-                draft.recipient = None # Un brouillon n'a pas de destinataire unique lié
+                draft.recipient = None
                 draft.save()
                 return redirect(reverse('dashboard:chat') + '?box=drafts')
         
-        # Action 2 : ENVOYER LE MAIL
+        # 2. ENVOYER LE MAIL
         elif 'send_email' in request.POST:
             if form.is_valid():
+                # On récupère uniquement les destinataires individuels
                 recipients = form.cleaned_data['recipients']
-                group = form.cleaned_data['group']
                 
-                # Validation manuelle : Il faut au moins un destinataire pour envoyer
-                if not recipients and not group:
-                    form.add_error(None, "Veuillez choisir un destinataire ou une filière pour envoyer.")
+                if not recipients:
+                    form.add_error(None, "Veuillez choisir au moins un destinataire.")
                 else:
-                    # Logique d'envoi groupé
-                    final_targets = set()
-                    for s in recipients: final_targets.add(s)
-                    if group:
-                        for s in Student.objects.filter(year=group): final_targets.add(s)
-
-                    for target in final_targets:
+                    # Boucle d'envoi
+                    for target in recipients:
                         Email.objects.create(
                             sender=student,
                             recipient=target,
                             subject=form.cleaned_data['subject'],
                             body=form.cleaned_data['body'],
-                            is_draft=False # Ce n'est plus un brouillon
+                            is_draft=False
                         )
-                    
-                    # Si on envoyait un brouillon existant, on pourrait le supprimer ici (optionnel)
                     return redirect(reverse('dashboard:chat') + '?box=sent')
     else:
         form = EmailForm()
