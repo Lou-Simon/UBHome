@@ -48,18 +48,32 @@ class Event(models.Model):
         verbose_name = "Événement"
         verbose_name_plural = "Événements"
 
+# dashboard/models.py
+# ... (Garde tes imports et les autres modèles Course, Event, Student...)
+
 class Email(models.Model):
     sender = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='sent_emails')
-    recipient = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='received_emails')
+    
+    # MODIFICATION : On autorise le destinataire à être vide (pour les brouillons)
+    recipient = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='received_emails', null=True, blank=True)
+    
     subject = models.CharField(max_length=255)
     body = models.TextField()
     sent_at = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
-    # NOUVEAU CHAMP ICI :
-    is_deleted_by_recipient = models.BooleanField(default=False) # Ajoute cette ligne
+    is_deleted_by_recipient = models.BooleanField(default=False)
+    
+    # AJOUT : Champ pour identifier un brouillon
+    is_draft = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"De {self.sender.full_name} à {self.recipient.full_name}: {self.subject}"
+        if self.is_draft:
+            return f"[BROUILLON] {self.subject}"
+        # On gère le cas où recipient est None pour l'affichage
+        recipient_name = self.recipient.full_name if self.recipient else "Inconnu"
+        return f"De {self.sender.full_name} à {recipient_name}: {self.subject}"
+
+# ... (Garde le reste : ForumChannel, etc.)
 
 class ForumChannel(models.Model):
     name = models.CharField(max_length=100, unique=True)
