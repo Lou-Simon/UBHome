@@ -35,7 +35,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # AUTORISER LES HÔTES LOCAUX POUR LE DÉVELOPPEMENT :
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'datek.pythonanywhere.com']
 
 # DANS la section INSTALLED_APPS (vers la ligne 33)
 INSTALLED_APPS = [
