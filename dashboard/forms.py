@@ -1,6 +1,8 @@
 # dashboard/forms.py
 from django import forms
-from .models import Email, Student
+from .models import Email, Student # Assurez-vous d'importer Student
+
+# --- 1. Formulaire d'Email Existant ---
 
 class EmailForm(forms.ModelForm):
     recipients = forms.ModelMultipleChoiceField(
@@ -45,6 +47,13 @@ class EmailForm(forms.ModelForm):
         choices = [('', '--- Choisir une filière ---')] + [(year, year) for year in distinct_years if year]
         self.fields['group'].choices = choices
 
-    # J'AI SUPPRIMÉ LA MÉTHODE clean() ICI.
-    # La vérification "Destinataire obligatoire" se fera désormais dans la Vue, 
-    # uniquement si on clique sur "Envoyer".
+
+# --- 2. NOUVEAU Formulaire de Photo de Profil ---
+
+class ProfilePictureForm(forms.ModelForm):
+    """
+    Formulaire dédié uniquement à la modification de la photo de profil de l'Étudiant.
+    """
+    class Meta:
+        model = Student # Utilise le modèle Student
+        fields = ['profile_picture'] # Seul ce champ est géré par ce formulaire

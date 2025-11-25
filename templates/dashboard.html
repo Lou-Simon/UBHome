@@ -69,6 +69,11 @@ font-size: 24px;
         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
     </a>
+    <!-- NOUVEAU : Bouton Plan du Campus -->
+    <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-left w-full">
+        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">map</span>
+        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Plan du Campus</p>
+    </button>
 </nav>
 </div>
 <div class="flex flex-col gap-1">
@@ -201,5 +206,64 @@ font-size: 24px;
 </main>
 </div>
 </div>
+
+<!-- MODALE PLAN DU CAMPUS -->
+<div id="campusMapModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">map</span>
+                <h2 class="text-xl font-bold text-[#111318] dark:text-white">Plan du Campus UBO - Brest</h2>
+            </div>
+            <button onclick="closeCampusMap()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <span class="material-symbols-outlined text-[#616f89] dark:text-slate-400">close</span>
+            </button>
+        </div>
+        
+        <!-- Contenu -->
+        <div class="flex-1 overflow-auto p-6 bg-slate-50 dark:bg-slate-800/50">
+            <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" 
+                 alt="Plan du Campus UBO Brest" 
+                 class="w-full h-auto rounded-lg shadow-lg">
+        </div>
+        
+        <!-- Footer avec infos -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30">
+            <p class="text-sm text-[#616f89] dark:text-slate-400 text-center">
+                📍 Campus de Brest - Université de Bretagne Occidentale
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fonction pour ouvrir la modale
+    function openCampusMap() {
+        document.getElementById('campusMapModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Empêche le scroll de la page
+    }
+
+    // Fonction pour fermer la modale
+    function closeCampusMap() {
+        document.getElementById('campusMapModal').classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Réactive le scroll
+    }
+
+    // Fermer avec la touche Échap
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCampusMap();
+        }
+    });
+
+    // Fermer en cliquant à l'extérieur de la modale
+    document.getElementById('campusMapModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCampusMap();
+        }
+    });
+</script>
+
 </body>
 </html>

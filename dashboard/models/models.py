@@ -8,6 +8,14 @@ class Student(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128) # Utilise un hacheur de mot de passe en production!
     year = models.CharField(max_length=20) # Année d'étude
+    
+    # NOUVEAU CHAMP : Photo de profil
+    profile_picture = models.ImageField(
+        upload_to='profile_pics/',    # Images stockées dans media/profile_pics/
+        null=True,                    # Optionnel dans la BDD
+        blank=True,                   # Optionnel dans les formulaires
+        default='default_profile.png' # Image par défaut si aucune n'est uploadée
+    )
 
     def __str__(self):
         return self.full_name

@@ -96,3 +96,16 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 # Redirige les utilisateurs non connectés vers la route 'login' si besoin
 LOGIN_URL = '/login'
+
+# student_hub_project/settings.py
+# ... (votre code existant)
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+# ... (votre code existant)
+
+# ... (à la toute fin du fichier)
+# --- Configuration des fichiers MEDIA (Photos de profil, pièces jointes, etc.) ---
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

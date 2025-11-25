@@ -5,11 +5,46 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone 
 from datetime import timedelta, datetime
 from django.db.models import Q 
-from ..models import Student, Event 
+from ..models import Student, Event, Email  # AJOUT : Import du modèle Email
 from .auth import get_session_user_data 
 import logging
 
 logger = logging.getLogger(__name__)
+
+# --- FONCTION UTILITAIRE POUR ENVOYER DES NOTIFICATIONS ---
+def send_event_notification(sender_student, recipient_student, event, event_date_str):
+    """
+    Crée et envoie un email de notification pour informer un participant 
+    qu'il a été ajouté à un événement.
+    """
+    subject = f"Nouvel événement : {event.title}"
+    
+    body = f"""Bonjour {recipient_student.full_name},
+
+Vous avez été ajouté(e) à un nouvel événement par {sender_student.full_name}.
+
+📅 Détails de l'événement :
+- Titre : {event.title}
+- Date : {event_date_str}
+- Heure de début : {timezone.localtime(event.start_time).strftime('%H:%M')}
+- Heure de fin : {timezone.localtime(event.end_time).strftime('%H:%M')}
+- Lieu : {event.location if event.location else 'Non spécifié'}
+
+Cordialement,
+Le système de gestion des événements"""
+    
+    try:
+        Email.objects.create(
+            sender=sender_student,
+            recipient=recipient_student,
+            subject=subject,
+            body=body,
+            is_draft=False
+        )
+        logger.info(f"Email de notification envoyé à {recipient_student.full_name} pour l'événement {event.id}")
+    except Exception as e:
+        logger.error(f"Erreur lors de l'envoi de la notification email : {e}")
+
 
 # --- VUE POUR LA SUPPRESSION ---
 @require_http_methods(["POST"])
@@ -26,10 +61,9 @@ def delete_event(request, event_id):
     
     # Trouver le chemin de base pour la redirection (e.g., '/calendar/')
     try:
-        # On coupe après le dernier segment /delete/ (même si l'URL est /calendar/delete/ID/)
         base_path = '/'.join(request.path_info.split('/delete/')[:-1]) + '/'
     except IndexError:
-        base_path = '/calendar/' # Fallback si le split échoue
+        base_path = '/calendar/'
 
     # 1. Vérification : Est-ce un événement de cours ? Si oui, refuser la suppression.
     if event.course is not None:
@@ -101,28 +135,23 @@ def calendar(request):
                 form_error_message = "L'heure de début doit être strictement antérieure à l'heure de fin."
                 raise ValueError("Heure invalide.")
 
-            # 2. Validation de la date antérieure (CORRECTION ICI)
-            # DÉFINITION DE event_date à partir de la chaîne de date soumise
+            # 2. Validation de la date antérieure
             event_date = datetime.strptime(date_str, '%Y-%m-%d').date() 
             
-            # Comparaison avec la date du jour (timezone-aware)
             if event_date < timezone.localdate(): 
                 form_error_message = "La date de l'événement ne peut pas être antérieure à la date du jour."
                 raise ValueError("Date antérieure interdite.")
-            # ----------------------------------------------------
 
             # 3. Vérification de Conflit
-            # Définir le filtre d'événements à vérifier (cours ET événements personnels de l'utilisateur)
             events_to_check_filter = (
                 Q(course_id__in=enrolled_course_ids) |
                 Q(attendees=current_student)
             )
 
-            # Chercher les événements qui chevauchent la nouvelle période
             overlapping_events_exist = Event.objects.filter(
                 events_to_check_filter,
-                start_time__lt=end_datetime, # Commence avant la fin du nouvel événement
-                end_time__gt=start_datetime   # Finit après le début du nouvel événement
+                start_time__lt=end_datetime,
+                end_time__gt=start_datetime
             ).exists()
 
             if overlapping_events_exist:
@@ -141,26 +170,35 @@ def calendar(request):
             # Ajout de l'étudiant courant
             new_event.attendees.add(current_student)
             
-            # Ajout des autres participants
+            # NOUVEAU : Formatage de la date pour les emails
+            event_date_formatted = event_date.strftime('%d/%m/%Y')
+            
+            # NOUVEAU : Ajout des autres participants + envoi d'email de notification
             for student_id in attendee_ids:
                 try:
                     attendee = Student.objects.get(student_id=student_id)
                     new_event.attendees.add(attendee)
+                    
+                    # Envoyer un email de notification au participant
+                    send_event_notification(
+                        sender_student=current_student,
+                        recipient_student=attendee,
+                        event=new_event,
+                        event_date_str=event_date_formatted
+                    )
                 except Student.DoesNotExist:
+                    logger.warning(f"Étudiant avec ID {student_id} introuvable")
                     pass 
 
             # Succès : redirection
             return redirect(f"{request.path_info}?success=created&date={date_str}")
 
         except ValueError:
-            # Capturé pour toutes les erreurs de format, d'heure, de date antérieure, ou de conflit
-            # form_error_message est déjà défini. La modale sera rouverte avec les données.
+            # form_error_message est déjà défini
             pass 
         except Exception as e:
             logger.error(f"Erreur lors de la création de l'événement : {e}")
             form_error_message = f"Une erreur inattendue est survenue lors de la création."
-        
-        # Si une erreur survient (y compris conflit), on continue ici.
 
 
     # --- 2. Détermination de la semaine courante (GET) ---
@@ -178,7 +216,7 @@ def calendar(request):
     end_of_displayed_week = start_of_week + timedelta(days=4)
     end_of_query_week = start_of_week + timedelta(days=6)
 
-    # --- 3. Récupération et organisation des événements (Inchangé) ---
+    # --- 3. Récupération et organisation des événements ---
     
     events_filter = (
         Q(course_id__in=enrolled_course_ids) |
@@ -221,7 +259,6 @@ def calendar(request):
             duration = (local_end_time - local_start_time).total_seconds() / 3600
             event.height = int(duration * PX_PER_HOUR)
             
-            # Détermination de la couleur et du type d'événement
             if event.course is None:
                 color_code = 'primary'
                 display_name = event.title
@@ -255,7 +292,6 @@ def calendar(request):
     
     all_other_students = Student.objects.exclude(student_id=current_student.student_id).order_by('full_name')
     
-    # La modale doit s'ouvrir s'il y a une erreur POST ou une erreur DELETE qui a causé une redirection
     should_open_modal = form_error_message is not None or request.GET.get('error') == 'form_post'
 
     # Gestion des messages d'erreur de suppression

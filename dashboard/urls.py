@@ -18,6 +18,7 @@ urlpatterns = [
     
     # La vue de PROFIL
     path('profile', profile.profile_view, name='profile'),
+    path('profile/upload', profile.upload_profile_picture, name='upload_profile_picture'),
     
     # --- FONCTIONNALITÉS INCLUSES (sub_urls) ---
     path('calendar/', include('dashboard.sub_urls.calendar_urls')),

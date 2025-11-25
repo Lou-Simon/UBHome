@@ -9,6 +9,8 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <!-- Ajout de Font Awesome pour l'icône de l'appareil photo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMDJqL22tC7V99cT/H9cE1C/h6R8rXJ7D/4l6eL2s5p/gYv3Z0T6Zt4zD9yN6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script id="tailwind-config">
         tailwind.config = {
@@ -38,6 +40,84 @@
         body {
             font-family: 'Lexend', sans-serif;
         }
+        /* Conteneur principal de la photo de profil */
+        .profile-picture-container {
+            position: relative;
+            width: 128px; /* w-32 */
+            height: 128px; /* h-32 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Styles pour l'image réelle si elle est uploadée */
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px; /* rounded-full */
+            object-fit: cover;
+            border: 4px solid rgba(244, 199, 83, 0.5); /* border-4 border-primary/50 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+        }
+        
+        /* Style du cercle initial quand aucune photo n'est présente */
+        .default-initial-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #F4C753; 
+            border: 4px solid rgba(244, 199, 83, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* Nous gardons les dimensions et la couleur, mais le texte sera vide */
+            font-size: 3em; 
+            font-weight: 800; 
+        }
+
+        /* Style de l'icône d'upload et du label conteneur */
+        .upload-label-wrapper {
+            cursor: pointer;
+            position: relative;
+            display: inline-block; 
+            /* Ajout de display: block et margin: 0 auto; pour le centrage horizontal */
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* L'icône elle-même, positionnée en bas à droite */
+        .camera-icon {
+            position: absolute;
+            bottom: 0px; 
+            right: 0px; 
+            background-color: #30333b; 
+            color: white;
+            border-radius: 9999px;
+            padding: 8px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px; 
+            height: 36px; 
+            transition: background-color 0.2s;
+            z-index: 10; 
+        }
+
+        .upload-label-wrapper:hover .camera-icon {
+            background-color: #4b4b4b;
+        }
+
+        /* Masque le champ de fichier en le positionnant par-dessus l'image/le cercle, mais en le rendant transparent */
+        /* Ceci permet au champ de fichier de capturer le clic n'importe où sur la zone du label */
+        .custom-file-input {
+            position: absolute;
+            inset: 0; /* Équivalent à top: 0; right: 0; bottom: 0; left: 0; */
+            opacity: 0;
+            z-index: 15; /* Doit être au-dessus du .camera-icon et de l'image */
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-background-light dark:bg-[#111318] min-h-screen">
@@ -49,11 +129,65 @@
 
         <div class="bg-white dark:bg-[#1e2025] rounded-2xl shadow-2xl p-8 sm:p-12 border border-slate-200 dark:border-slate-700">
             <div class="flex flex-col items-center mb-10">
-                <div class="relative w-32 h-32 bg-primary/20 dark:bg-primary/10 rounded-full flex items-center justify-center mb-4 border-4 border-primary/50 shadow-xl">
-                    <span class="text-6xl font-extrabold text-[#111318] dark:text-white">
-                        {{ student.full_name|slice:"1" }}
-                    </span>
-                    </div>
+                
+                <!-- ZONE DE LA PHOTO DE PROFIL ET FORMULAIRE D'UPLOAD -->
+                <form id="profile-picture-form" 
+                      method="POST" 
+                      action="{% url 'dashboard:upload_profile_picture' %}" 
+                      enctype="multipart/form-data" 
+                      class="mb-4">
+                    {% csrf_token %}
+
+                    <!-- CHANGEMENT : Retrait de l'attribut title pour éviter tout texte résiduel. -->
+                    <label class="upload-label-wrapper group -mt-10">
+
+                        <div class="profile-picture-container">
+                            
+                            <!-- 1. Affichage de la photo ou du cercle vide (par défaut) -->
+                            {% if student.profile_picture %}
+                                <img src="{{ student.profile_picture.url }}" 
+                                     alt="" 
+                                     class="profile-pic">
+                            {% else %}
+                                <div class="default-initial-circle text-[#111318] dark:text-white">
+                                </div>
+                            {% endif %}
+                            
+                            <!-- 2. L'icône de l'appareil photo, visible et positionnée -->
+                            <div class="camera-icon" aria-hidden="true">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+
+                            <!-- 3. Le champ de fichier invisible positionné au-dessus de tout -->
+                            <input type="file" 
+                                   name="profile_picture" 
+                                   id="id_profile_picture" 
+                                   class="custom-file-input" 
+                                   accept="image/*">
+                        </div>
+                    </label>
+
+                </form>
+                
+                <!-- Script JavaScript pour soumettre le formulaire automatiquement -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // On cible l'input de fichier réel via son ID
+                        const fileInput = document.getElementById('id_profile_picture'); 
+                        
+                        if (fileInput) {
+                            // Ajoute un écouteur d'événement 'change'.
+                            fileInput.addEventListener('change', function() {
+                                // Soumet le formulaire immédiatement
+                                document.getElementById('profile-picture-form').submit();
+                            });
+                        }
+                    });
+                </script>
+
+                <!-- FIN ZONE DE LA PHOTO DE PROFIL -->
+
+                <!-- Le nom complet de l'étudiant est affiché ici -->
                 <h2 class="text-3xl font-bold text-[#111318] dark:text-white">{{ student.full_name }}</h2>
                 <p class="text-lg text-[#616f89] dark:text-slate-400 mt-1">{{ student.year }}</p>
             </div>
