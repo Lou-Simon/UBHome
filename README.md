@@ -28,7 +28,7 @@ Novembre 2025
 | JavaScript vanilla      | Interactions calendrier & forum        |
 | Git & GitHub            | Collaboration + CI/CD                  |
 
-## Équipe (par ordre alphabétique)
+## Équipe 
 
 | Membre          | Rôle principal                                                |
 |-----------------|---------------------------------------------------------------|
