@@ -1,4 +1,4 @@
-# UBhome – Student Hub (Projet M1 – Groupe de 4)
+# UBhome – Student Hub (Projet M1 – Groupe de 3)
 
 Site web complet pour une communauté étudiante – réalisé en **Django 5 + Python 3.12**  
 Novembre 2025
