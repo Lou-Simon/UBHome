@@ -10,260 +10,172 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C753", "background-light": "#f8f7f6", "background-dark": "#221d10",
-        /* Couleurs supplémentaires pour les événements */
-        course_teal: "#2dd4bf", /* Teinte Turquoise/Cyan */
-        course_indigo: "#4f46e5", /* Teinte Indigo */
-        course_red: "#ef4444", /* Teinte Rouge */
-        }, fontFamily: {display: "Lexend"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<script id="tailwind-config">
+tailwind.config = {
+    darkMode: "class", 
+    theme: {
+        extend: {
+            colors: {
+                primary: "#F4C753", 
+                "background-light": "#f8f7f6", 
+                "background-dark": "#221d10",
+                "surface-light": "#ffffff",
+                "surface-dark": "#1e2025",
+                "border-light": "#e5e7eb",
+                "border-dark": "#374151",
+                course_teal: "#2dd4bf", 
+                course_indigo: "#4f46e5", 
+                course_red: "#ef4444"
+            }, 
+            fontFamily: {display: "Lexend"}, 
+            borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}
+        }
+    }
+};
+</script>
 <style>
- .material-symbols-outlined {
-font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-font-size: 24px;
-}
-/* Définition des styles de couleur basés sur le code injecté par la vue Python */
-.event-color-primary { background-color: rgba(244, 199, 83, 0.2); border-left-color: #F4C753; }
-.event-color-teal { background-color: rgba(45, 212, 191, 0.1); border-left-color: #2dd4bf; }
-.event-color-indigo { background-color: rgba(79, 70, 229, 0.1); border-left-color: #4f46e5; }
-.event-color-red { background-color: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; }
-
-.text-color-primary { color: #F4C753; }
-.text-color-teal { color: #2dd4bf; }
-.text-color-indigo { color: #4f46e5; }
-.text-color-red { color: #ef4444; }
-
-/* Correction des couleurs de texte pour le dark mode */
-.dark .event-color-primary { background-color: rgba(244, 199, 83, 0.2); }
-.dark .text-color-primary { color: #F4C753; }
+ .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
+ /* Styles spécifiques événements */
+ .event-color-primary { background-color: rgba(244, 199, 83, 0.2); border-left-color: #F4C753; }
+ .event-color-teal { background-color: rgba(45, 212, 191, 0.1); border-left-color: #2dd4bf; }
+ .event-color-indigo { background-color: rgba(79, 70, 229, 0.1); border-left-color: #4f46e5; }
+ .event-color-red { background-color: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; }
+ .text-color-primary { color: #F4C753; }
+ .text-color-teal { color: #2dd4bf; }
+ .text-color-indigo { color: #4f46e5; }
+ .text-color-red { color: #ef4444; }
+ .dark .event-color-primary { background-color: rgba(244, 199, 83, 0.2); }
+ .dark .text-color-primary { color: #F4C753; }
 </style>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark">
-<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-<div class="flex h-full min-h-screen">
-<aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
-<div class="flex flex-col gap-6">
-<div class="flex items-center gap-3 px-3">
-    <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10"/> 
-    <div class="flex flex-col">
-        <h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
-        <p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
-    </div>
-</div>
-<nav class="flex flex-col gap-2">
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" 
-       href="{% url 'dashboard:dashboard' %}"> 
-        <span class="material-symbols-outlined text-primary dark:text-primary">home</span>
-        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Accueil</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-       href="{% url 'dashboard:calendar' %}">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" 
-    href="{% url 'dashboard:chat' %}">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
-    </a>
-    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:forum' %}">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
-    </a>
-    <!-- NOUVEAU : Bouton Plan du Campus -->
-    <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-left w-full">
-        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">map</span>
-        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Plan du Campus</p>
-    </button>
-</nav>
-</div>
-<div class="flex flex-col gap-1">
-</div>
-</aside>
-<main class="flex-1 p-8">
-<div class="flex flex-col gap-8">
-<header class="flex items-center justify-between gap-4">
-<div class="flex flex-col gap-1">
-    <h1 class="text-[#111318] dark:text-white text-3xl font-bold leading-tight tracking-tight">Tableau de Bord</h1>
-    <p class="text-[#616f89] dark:text-slate-400 text-base font-normal leading-normal">Bonjour, {{ user.full_name|default:"Étudiant UBO" }}. Voici vos informations clés.</p>
-</div>
-<div class="flex items-center gap-4">
-    <button class="p-2.5 text-[#616f89] dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-        <span class="material-symbols-outlined">notifications</span>
-    </button>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white">
+<div class="flex h-screen w-full overflow-hidden">
     
-    <a class="p-2.5 text-[#111318] dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900" 
-       href="{% url 'dashboard:profile' %}">
-        <span class="material-symbols-outlined">account_circle</span>
-    </a>
-
-    <a class="p-2.5 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-slate-800 border border-red-200 dark:border-red-700 bg-white dark:bg-slate-900" 
-       href="{% url 'dashboard:logout' %}">
-        <span class="material-symbols-outlined">logout</span>
-    </a>
-</div>
-</header>
-<div class="grid grid-cols-2 gap-8">
-    
-    <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 col-span-1">
-        
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-            <h2 class="text-lg font-semibold text-[#111318] dark:text-white">Emploi du temps : Aujourd'hui</h2>
-            <a class="px-4 py-2 text-sm font-medium border rounded-md border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-               href="{% url 'dashboard:calendar' %}">Voir la semaine</a>
-        </div>
-
-        <div class="grid grid-cols-[50px_1fr] divide-x divide-slate-200 dark:divide-slate-800">
-            
-            <div class="flex flex-col">
-                <div class="p-4 border-b border-slate-200 dark:border-slate-800 h-[72px] bg-slate-50 dark:bg-slate-800"></div>
-                <div class="flex flex-col relative h-[1000px] divide-y divide-dashed divide-slate-300 dark:divide-slate-700">
-                    {% for hour in hours %} 
-                    <div class="relative h-[100px]">
-                        <span class="absolute -top-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">{{ hour }}:00</span>
-                    </div>
-                    {% endfor %}
-                    <span class="absolute -bottom-3 right-1 text-xs text-slate-500 dark:text-slate-400 font-medium">18:00</span>
+    <aside class="flex w-64 flex-col justify-between bg-surface-light dark:bg-surface-dark p-4 border-r border-border-light dark:border-border-dark flex-shrink-0 h-full overflow-y-auto">
+        <div class="flex flex-col gap-6">
+            <div class="flex items-center gap-3 px-3">
+                <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
+                <div class="flex flex-col">
+                    <h1 class="text-base font-bold leading-normal">UBO</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-normal">Hub Étudiant</p>
                 </div>
             </div>
+            
+            {% if user.full_name %}
+            <div class="flex flex-col px-3 py-2">
+                <p class="text-base font-semibold">{{ user.full_name }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.year }}</p>
+            </div>
+            {% endif %}
 
-            <div class="flex flex-col">
-                <div class="p-4 text-center border-b border-slate-200 dark:border-slate-800">
-                    <p class="text-sm font-semibold text-[#111318] dark:text-white">{{ today_data.date|date:"l" }}</p>
-                    <p class="text-xs text-[#616f89] dark:text-slate-400">{{ today_data.date|date:"d M Y" }}</p>
-                </div>
-                <div class="p-4 h-[1000px] relative">
+            <nav class="flex flex-col gap-2">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary-700 dark:text-primary" href="{% url 'dashboard:dashboard' %}">
+                    <span class="material-symbols-outlined">home</span>
+                    <p class="text-sm font-medium">Accueil</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <p class="text-sm font-medium">Calendrier</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:chat' %}">
+                    <span class="material-symbols-outlined">mail</span>
+                    <p class="text-sm font-medium">Messagerie</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:forum' %}">
+                    <span class="material-symbols-outlined">forum</span>
+                    <p class="text-sm font-medium">Forum</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:profile' %}">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <p class="text-sm font-medium">Mon Profil</p>
+                </a>
+                <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 w-full text-left">
+                    <span class="material-symbols-outlined">map</span>
+                    <p class="text-sm font-medium">Plan du Campus</p>
+                </button>
+            </nav>
+        </div>
+        <div class="pt-4 border-t border-border-light dark:border-border-dark">
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" href="{% url 'dashboard:logout' %}">
+                <span class="material-symbols-outlined">logout</span>
+                <p class="text-sm font-medium">Déconnexion</p>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Tableau de Bord</h1>
+                <p class="text-gray-500 dark:text-gray-400">Bonjour, {{ user.full_name|default:"Étudiant" }}.</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-4 h-[600px] flex flex-col">
+                <h2 class="text-lg font-semibold mb-4">Aujourd'hui</h2>
+                <div class="flex-1 relative overflow-y-auto border border-border-light dark:border-border-dark rounded-lg">
+                    {% for hour in hours %}
+                    <div class="h-[60px] border-b border-gray-100 dark:border-gray-800 px-2 text-xs text-gray-400">{{ hour }}:00</div>
+                    {% endfor %}
                     
                     {% for event in today_data.events %}
-                    <div class="absolute left-4 right-4 p-3 rounded-lg border-l-4 border-l-[4px] 
-                                event-color-{{ event.color_code }}"
-                        style="top: {{ event.total_start_offset }}px; height: {{ event.height }}px;">
-                        
-                        <p class="text-sm font-bold text-color-{{ event.color_code }} whitespace-nowrap overflow-hidden text-ellipsis">
-                            {{ event.course.name }}
-                        </p>
-                        <p class="text-xs text-color-{{ event.color_code }}/80">
-                            {{ event.local_start_time|date:"H:i" }} - {{ event.local_end_time|date:"H:i" }} / {{ event.location }}
-                        </p>
-                    </div>
-                    {% empty %}
-                    <div class="absolute inset-0 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                        <p>Aucun cours programmé aujourd'hui.</p>
+                    <div class="absolute left-10 right-2 p-2 rounded border-l-4 event-color-{{ event.color_code }}" 
+                         style="top: {{ event.total_start_offset|default:0 }}px; height: {{ event.height|default:60 }}px;">
+                        <p class="text-xs font-bold text-color-{{ event.color_code }}">{{ event.course.name }}</p>
+                        <p class="text-[10px]">{{ event.location }}</p>
                     </div>
                     {% endfor %}
-                    
                 </div>
             </div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="flex flex-col gap-8 col-span-1">
-        
-        <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-                <h2 class="text-lg font-semibold text-[#111318] dark:text-white">Emails non lus ({% if unread_emails %}{{ unread_emails|length }}{% else %}0{% endif %})</h2>
-                <a class="text-sm text-primary hover:text-primary/80" href="{% url 'dashboard:chat' %}">Voir tout</a>
-            </div>
-            <div class="p-4 flex flex-col divide-y divide-slate-200 dark:divide-slate-800">
-                {% for email in unread_emails %}
-                <div class="py-3 flex flex-col">
-                    <p class="text-sm font-semibold text-[#111318] dark:text-white truncate">{{ email.subject }}</p>
-                    <p class="text-xs text-[#616f89] dark:text-slate-400">De: {{ email.sender.full_name }}</p>
-                </div>
-                {% empty %}
-                <div class="py-3 text-sm text-slate-500 dark:text-slate-400">
-                    <p>Félicitations ! Vous n'avez aucun email non lu.</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-                <h2 class="text-lg font-semibold text-[#111318] dark:text-white">Derniers Posts du Forum</h2>
-                <a class="text-sm text-primary hover:text-primary/80" href="{% url 'dashboard:forum' %}">Voir le Forum</a>
-            </div>
-            <div class="p-4 flex flex-col divide-y divide-slate-200 dark:divide-slate-800">
-                {% for post in recent_posts %}
-                <div class="py-3 flex flex-col">
-                    <span class="text-xs font-medium text-primary">{{ post.channel.name }}</span>
-                    <p class="text-sm text-[#111318] dark:text-white line-clamp-2">{{ post.content }}</p>
-                    <p class="text-xs text-[#616f89] dark:text-slate-400">Par {{ post.author.full_name }} ({{ post.posted_at|date:"H:i" }})</p>
-                </div>
-                {% empty %}
-                <div class="py-3 text-sm text-slate-500 dark:text-slate-400">
-                    <p>Aucun post récent dans les canaux affichés.</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-    </div>
 
-</div>
-</div>
-</main>
-</div>
+            <div class="flex flex-col gap-6">
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">Emails non lus</h2>
+                        <span class="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-bold">{{ unread_emails|length }}</span>
+                    </div>
+                    <div class="space-y-3">
+                        {% for email in unread_emails|slice:":3" %}
+                        <div class="p-2 bg-gray-50 dark:bg-white/5 rounded-lg">
+                            <p class="text-sm font-medium">{{ email.subject }}</p>
+                            <p class="text-xs text-gray-500">{{ email.sender.full_name }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-sm text-gray-500 italic">Aucun nouveau message.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-4 flex-1">
+                    <h2 class="text-lg font-semibold mb-4">Derniers posts Forum</h2>
+                    <div class="space-y-3">
+                        {% for post in recent_posts %}
+                        <div class="border-l-2 border-primary pl-3">
+                            <p class="text-sm font-medium truncate">{{ post.content }}</p>
+                            <p class="text-xs text-gray-500">{{ post.channel.name }} - {{ post.posted_at|date:"d M" }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-sm text-gray-500 italic">Aucune activité récente.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 
-<!-- MODALE PLAN DU CAMPUS -->
-<div id="campusMapModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <!-- Header -->
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary">map</span>
-                <h2 class="text-xl font-bold text-[#111318] dark:text-white">Plan du Campus UBO - Brest</h2>
-            </div>
-            <button onclick="closeCampusMap()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                <span class="material-symbols-outlined text-[#616f89] dark:text-slate-400">close</span>
-            </button>
-        </div>
-        
-        <!-- Contenu -->
-        <div class="flex-1 overflow-auto p-6 bg-slate-50 dark:bg-slate-800/50">
-            <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" 
-                 alt="Plan du Campus UBO Brest" 
-                 class="w-full h-auto rounded-lg shadow-lg">
-        </div>
-        
-        <!-- Footer avec infos -->
-        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30">
-            <p class="text-sm text-[#616f89] dark:text-slate-400 text-center">
-                📍 Campus de Brest - Université de Bretagne Occidentale
-            </p>
-        </div>
+<div id="campusMapModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onclick="closeCampusMap()">
+    <div class="bg-white dark:bg-surface-dark rounded-xl max-w-4xl w-full p-4 relative" onclick="event.stopPropagation()">
+        <button onclick="closeCampusMap()" class="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10"><span class="material-symbols-outlined">close</span></button>
+        <h3 class="text-xl font-bold mb-4">Plan du Campus UBO</h3>
+        <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" class="w-full rounded-lg shadow-lg">
     </div>
 </div>
 
 <script>
-    // Fonction pour ouvrir la modale
-    function openCampusMap() {
-        document.getElementById('campusMapModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Empêche le scroll de la page
-    }
-
-    // Fonction pour fermer la modale
-    function closeCampusMap() {
-        document.getElementById('campusMapModal').classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Réactive le scroll
-    }
-
-    // Fermer avec la touche Échap
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeCampusMap();
-        }
-    });
-
-    // Fermer en cliquant à l'extérieur de la modale
-    document.getElementById('campusMapModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeCampusMap();
-        }
-    });
+function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
+function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
 </script>
-
 </body>
 </html>

@@ -10,9 +10,7 @@ import mimetypes
 
 
 def forum_view(request):
-    """Vue pour afficher la page du Forum et envoyer un message.
-    Supporte plusieurs canaux de discussion par niveau.
-    """
+    # --- CORRECTION ICI : Récupération des données de session ---
     user_data = get_session_user_data(request)
 
     if not user_data:
@@ -24,12 +22,43 @@ def forum_view(request):
     except Student.DoesNotExist:
         return redirect('dashboard:login')
 
-    # Déterminer le niveau de l'étudiant (ex: "M1 ILIADE" -> "M1")
+    # Déterminer le niveau de l'étudiant (ex: "M1 ILIADE")
     student_year = student.year or user_data.get("year") or "M1"
-    level = student_year.split()[0] if student_year else "M1"
+    
+    # On détermine le NIVEAU COURT (ex: M1) pour créer les canaux génériques
+    level = student_year.split()[0] if student_year else "M1" 
 
     # Récupérer le canal sélectionné (depuis l'URL ou par défaut l'année de l'étudiant)
     selected_channel_name = request.GET.get('channel', student_year)
+
+    # --- Étape 1 : Création/Vérification des canaux prédéfinis ---
+    default_channels = [
+        # Le canal principal est nommé avec l'année complète (M1 ILIADE)
+        {'name': student_year, 'description': f'Canal principal de la promotion {student_year}'},
+        
+        # Les canaux génériques sont nommés avec le préfixe court (M1 Général)
+        {'name': f'📢 {level} Général', 'description': f'{level} - Discussions générales et annonces'},
+        {'name': f'📚 {level} Cours', 'description': f'{level} - Questions et discussions sur les cours'},
+        {'name': f'💼 {level} Projets', 'description': f'{level} - Collaborations et projets étudiants'},
+        {'name': f'🎉 {level} Social', 'description': f'{level} - Événements, sorties et discussions informelles'},
+        {'name': f'💡 {level} Aide', 'description': f'{level} - Entraide entre étudiants'},
+    ]
+    
+    for channel_data in default_channels:
+        ForumChannel.objects.get_or_create(
+            name=channel_data['name'],
+            defaults={'description': channel_data['description']}
+        )
+
+    # --- Étape 2 : Récupérer TOUS les canaux pertinents ---
+    # On récupère tous les canaux qui contiennent le préfixe court (M1) ou qui sont les canaux spéciaux
+    all_channels = ForumChannel.objects.all().order_by('created_at')
+
+    # Récupérer le canal sélectionné
+    channel = ForumChannel.objects.filter(name=selected_channel_name).first()
+    if not channel:
+        # Si le canal n'existe pas, utiliser le canal principal de l'étudiant (Ex: M1 ILIADE)
+        channel = all_channels.first()
 
     # Créer les canaux prédéfinis pour ce niveau s'ils n'existent pas
     default_channels = [
@@ -92,6 +121,9 @@ def forum_view(request):
             'post_count': post_count,
             'is_active': ch.id == channel.id
         })
+
+    print(f"DEBUG: Nombre de canaux trouvés : {len(channels_with_counts)}")
+    print(f"DEBUG: Liste : {[c['channel'].name for c in channels_with_counts]}")
 
     context = {
         'user': user_data,

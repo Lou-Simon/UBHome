@@ -2,439 +2,296 @@
 <!DOCTYPE html>
 <html class="light" lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Messagerie - Hub Étudiant UBO</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Messagerie - Hub Étudiant UBO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.default.css" rel="stylesheet">
+<script>
+tailwind.config = {
+    darkMode: "class", 
+    theme: {
         extend: {
-          colors: {
-            "ubo-blue": "#0055A4",
-            "ubo-yellow": "#FDB913",
-            "ubo-neutral-bg": "#F4F6F8",
-            "ubo-neutral-text": "#6c757d",
-            "surface-light": "#ffffff",
-            "surface-dark": "#182431",
-            "background-light": "#f6f7f8",
-            "background-dark": "#101922",
-            "border-light": "#e5e7eb",
-            "border-dark": "#374151"
-          },
-          fontFamily: { "display": ["Lexend", "sans-serif"] },
-        },
-      },
+            colors: {
+                primary: "#F4C753", 
+                "background-light": "#f8f7f6", 
+                "background-dark": "#221d10",
+                "surface-light": "#ffffff",
+                "surface-dark": "#1e2025",
+                "border-light": "#e5e7eb",
+                "border-dark": "#374151",
+                "ubo-blue": "#0055A4" // Gardé pour la cohérence des messages
+            }, 
+            fontFamily: {display: "Lexend"}, 
+            borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}
+        }
     }
-  </script>
+};
+</script>
+<style>
+ .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
+ /* Tom Select Styles */
+ .ts-control { border-radius: 0.5rem; padding: 8px; background: transparent; border: 1px solid #e5e7eb; }
+ .dark .ts-control { border-color: #374151; color: white; }
+ .dark .ts-control input { color: white; }
+ .dark .ts-dropdown { background-color: #1e2025; border-color: #374151; color: white; }
+ .dark .ts-dropdown .option:hover { background-color: #F4C753; color: black; }
+</style>
 </head>
-
-<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 relative">
-  
-  <div class="flex h-screen w-full">
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white">
+<div class="flex h-screen w-full overflow-hidden">
     
-    <aside class="flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
-      <div class="flex items-center gap-3 mb-8">
-        <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
-        <h1 class="text-gray-900 dark:text-white text-lg font-bold">Hub Étudiant UBO</h1>
-      </div>
-
-      <nav class="flex flex-col gap-1 flex-1">
-        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:dashboard' %}">
-          <span class="material-symbols-outlined text-xl">home</span>
-          <p class="text-sm font-medium">Accueil</p>
-        </a>
-        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
-          <span class="material-symbols-outlined text-xl">calendar_month</span>
-          <p class="text-sm font-medium">Calendrier</p>
-        </a>
-        
-        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-ubo-yellow/20 text-ubo-blue dark:text-ubo-yellow" href="{% url 'dashboard:chat' %}">
-          <span class="material-symbols-outlined text-xl">mail</span>
-          <p class="text-sm font-bold">Messagerie</p>
-        </a>
-
-        <div class="pl-4 mt-1 flex flex-col gap-1 border-l-2 border-ubo-yellow ml-5">
-          
-          <a class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg {% if box_type == 'inbox' %}bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20{% else %}hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300{% endif %}" href="?box=inbox">
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-xl">inbox</span>
-              <p class="text-sm font-medium">Boîte de réception</p>
+    <aside class="flex w-64 flex-col justify-between bg-surface-light dark:bg-surface-dark p-4 border-r border-border-light dark:border-border-dark flex-shrink-0 h-full overflow-y-auto">
+        <div class="flex flex-col gap-6">
+            <div class="flex items-center gap-3 px-3">
+                <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
+                <div class="flex flex-col">
+                    <h1 class="text-base font-bold leading-normal">UBO</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-normal">Hub Étudiant</p>
+                </div>
             </div>
-            {% if unread_count > 0 %}
-            <span class="flex items-center justify-center rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
-              {{ unread_count }}
-            </span>
+            
+            {% if user.full_name %}
+            <div class="flex flex-col px-3 py-2">
+                <p class="text-base font-semibold">{{ user.full_name }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.year }}</p>
+            </div>
             {% endif %}
-          </a>
-          
-          <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if box_type == 'sent' %}bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20{% else %}hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300{% endif %}" href="?box=sent">
-            <span class="material-symbols-outlined text-xl">send</span>
-            <p class="text-sm font-medium">Envoyés</p>
-          </a>
 
-          <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if box_type == 'drafts' %}bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20{% else %}hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300{% endif %}" href="?box=drafts">
-            <span class="material-symbols-outlined text-xl">draft</span>
-            <p class="text-sm font-medium">Brouillons</p>
-          </a>
+            <nav class="flex flex-col gap-2">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:dashboard' %}">
+                    <span class="material-symbols-outlined">home</span>
+                    <p class="text-sm font-medium">Accueil</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <p class="text-sm font-medium">Calendrier</p>
+                </a>
+                
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary-700 dark:text-primary" href="{% url 'dashboard:chat' %}">
+                    <span class="material-symbols-outlined">mail</span>
+                    <p class="text-sm font-medium">Messagerie</p>
+                </a>
+                
+                <div class="pl-4 ml-3 border-l-2 border-primary space-y-1">
+                    <a href="?box=inbox" class="flex justify-between items-center px-3 py-2 rounded-lg {% if box_type == 'inbox' %}bg-gray-100 dark:bg-white/10{% else %}hover:bg-gray-50 dark:hover:bg-white/5{% endif %} text-sm">
+                        <span>Boîte de réception</span>
+                        {% if unread_count > 0 %}<span class="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ unread_count }}</span>{% endif %}
+                    </a>
+                    <a href="?box=sent" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'sent' %}bg-gray-100 dark:bg-white/10{% else %}hover:bg-gray-50 dark:hover:bg-white/5{% endif %} text-sm">Envoyés</a>
+                    <a href="?box=drafts" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'drafts' %}bg-gray-100 dark:bg-white/10{% else %}hover:bg-gray-50 dark:hover:bg-white/5{% endif %} text-sm">Brouillons</a>
+                    <a href="?box=trash" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'trash' %}bg-gray-100 dark:bg-white/10{% else %}hover:bg-gray-50 dark:hover:bg-white/5{% endif %} text-sm">Corbeille</a>
+                </div>
 
-          <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if box_type == 'trash' %}bg-ubo-blue/10 text-ubo-blue dark:bg-ubo-blue/20{% else %}hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300{% endif %}" href="?box=trash">
-            <span class="material-symbols-outlined text-xl">delete</span>
-            <p class="text-sm font-medium">Corbeille</p>
-          </a>
-
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:forum' %}">
+                    <span class="material-symbols-outlined">forum</span>
+                    <p class="text-sm font-medium">Forum</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:profile' %}">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <p class="text-sm font-medium">Mon Profil</p>
+                </a>
+                <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 w-full text-left">
+                    <span class="material-symbols-outlined">map</span>
+                    <p class="text-sm font-medium">Plan du Campus</p>
+                </button>
+            </nav>
         </div>
-
-        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:forum' %}">
-          <span class="material-symbols-outlined text-xl">forum</span>
-          <p class="text-sm font-medium">Forum</p>
-        </a>
-      </nav>
+        <div class="pt-4 border-t border-border-light dark:border-border-dark">
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" href="{% url 'dashboard:logout' %}">
+                <span class="material-symbols-outlined">logout</span>
+                <p class="text-sm font-medium">Déconnexion</p>
+            </a>
+        </div>
     </aside>
 
-    <main class="flex w-full max-w-md flex-col border-r border-border-light dark:border-border-dark bg-ubo-neutral-bg dark:bg-background-dark">
-      
-      <div class="sticky top-0 z-10 border-b border-border-light dark:border-border-dark bg-ubo-neutral-bg dark:bg-background-dark p-4">
-        <form method="GET" action="{% url 'dashboard:chat' %}" class="flex flex-col min-w-40 h-12 w-full">
-          <input type="hidden" name="box" value="{{ box_type }}">
-          <div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark focus-within:ring-2 focus-within:ring-ubo-yellow">
-            <button type="submit" class="text-ubo-neutral-text flex items-center justify-center pl-3 cursor-pointer hover:text-ubo-blue">
-              <span class="material-symbols-outlined text-2xl">search</span>
+    <main class="w-96 flex flex-col border-r border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+        <div class="p-4 border-b border-border-light dark:border-border-dark sticky top-0 bg-inherit z-10">
+            <form method="GET" action="{% url 'dashboard:chat' %}" class="relative">
+                <input type="hidden" name="box" value="{{ box_type }}">
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span>
+                <input type="text" name="search" placeholder="Rechercher..." value="{{ search_query }}"
+                       class="w-full pl-10 pr-4 py-2 rounded-lg border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary shadow-sm">
+                {% if search_query %}
+                <a href="?box={{ box_type }}" class="absolute right-3 top-2.5 text-gray-400 hover:text-red-500"><span class="material-symbols-outlined text-lg">close</span></a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="p-4 flex justify-center">
+            <button onclick="openModal()" class="flex items-center gap-2 px-6 py-2 bg-ubo-blue text-white font-bold rounded-full shadow hover:opacity-90 transition">
+                <span class="material-symbols-outlined">edit</span> Nouveau message
             </button>
-            <input type="text" name="search" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-ubo-neutral-text px-2 text-base font-normal" placeholder="Rechercher un e-mail..." value="{{ search_query }}"/>
-            {% if search_query %}
-            <a href="?box={{ box_type }}" class="text-ubo-neutral-text flex items-center justify-center pr-3 hover:text-red-500" title="Effacer la recherche">
-                <span class="material-symbols-outlined text-xl">close</span>
-            </a>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-2">
+            {% if emails %}
+                {% for email in emails %}
+                <a href="?box={{ box_type }}&email_id={{ email.id }}" class="block mb-2">
+                    <div class="p-3 rounded-lg border-l-4 transition-colors bg-surface-light dark:bg-surface-dark shadow-sm
+                        {% if selected_email.id == email.id %}border-primary bg-primary/10{% elif not email.is_read and box_type == 'inbox' %}border-red-500 font-semibold{% else %}border-transparent hover:bg-gray-100 dark:hover:bg-white/5{% endif %}">
+                        <div class="flex justify-between">
+                            <span class="truncate">
+                                {% if box_type == 'sent' or box_type == 'drafts' %}À: {{ email.recipient.full_name|default:"..." }}{% else %}{{ email.sender.full_name }}{% endif %}
+                            </span>
+                            <span class="text-xs text-gray-500">{{ email.sent_at|date:"d M" }}</span>
+                        </div>
+                        <p class="text-sm truncate mt-1 text-gray-600 dark:text-gray-300">
+                            {% if email.is_draft %}<span class="text-red-500">[Brouillon]</span>{% endif %} {{ email.subject|default:"(Sans objet)" }}
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-10 text-gray-500">Aucun message.</div>
             {% endif %}
-          </div>
-        </form>
-      </div>
-
-      <div class="flex justify-center p-4 flex-shrink-0 gap-2">
-        <button onclick="openModal()" class="flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-6 bg-ubo-blue text-white text-sm font-bold shadow-sm hover:bg-ubo-blue/90 transition-colors">
-          <span class="material-symbols-outlined text-xl">edit</span>
-          <span class="truncate">Nouveau Message</span>
-        </button>
-        
-        {% if selected_email and box_type != 'sent' and box_type != 'trash' %}
-        <form action="{% url 'dashboard:delete_email' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="email_id" value="{{ selected_email.id }}">
-            <button type="submit" class="flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-red-600 text-white text-sm font-bold shadow-sm hover:bg-red-700 transition-colors" title="Supprimer ce message">
-                <span class="material-symbols-outlined text-xl">delete</span>
-            </button>
-        </form>
-        {% endif %}
-      </div>
-
-      <div class="overflow-y-auto flex-1">
-        {% if emails %}
-          {% for email in emails %}
-          <a href="?box={{ box_type }}&email_id={{ email.id }}" class="block">
-            
-            <div class="flex gap-4 px-4 py-3 border-l-4 transition-colors duration-150
-                {% if selected_email and selected_email.id == email.id %}
-                    border-ubo-yellow bg-ubo-yellow/20
-                {% elif not email.is_read and box_type == 'inbox' %}
-                    border-red-500 hover:bg-gray-100 dark:hover:bg-white/5 bg-white dark:bg-surface-dark
-                {% else %}
-                    border-transparent hover:bg-gray-100 dark:hover:bg-white/5
-                {% endif %}">
-                
-              <div class="flex items-start gap-3 w-full">
-                <div class="flex items-center justify-center aspect-square rounded-full size-10 mt-1 bg-ubo-blue text-white font-bold text-lg relative">
-                  {% if box_type == 'sent' or box_type == 'drafts' %}
-                    {{ email.recipient.full_name|slice:":1"|default:"?" }}
-                  {% else %}
-                    {{ email.sender.full_name|slice:":1" }}
-                  {% endif %}
-
-                  {% if not email.is_read and box_type == 'inbox' %}
-                  <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                  </span>
-                  {% endif %}
-                </div>
-
-                <div class="flex flex-1 flex-col justify-center min-w-0">
-                  <div class="flex justify-between items-baseline">
-                    <p class="text-gray-900 dark:text-white text-base font-semibold truncate">
-                      {% if box_type == 'sent' or box_type == 'drafts' %}
-                        À: {{ email.recipient.full_name|default:"(Pas de destinataire)" }}
-                      {% else %}
-                        {{ email.sender.full_name }}
-                      {% endif %}
-                    </p>
-                    <p class="text-ubo-neutral-text text-xs font-medium whitespace-nowrap ml-1">{{ email.sent_at|date:"d M" }}</p>
-                  </div>
-                  
-                  <p class="text-gray-800 dark:text-gray-200 text-sm font-medium truncate">
-                    {% if not email.is_read and box_type == 'inbox' %}<strong>{% endif %}
-                    {{ email.subject|default:"(Sans objet)" }}
-                    {% if not email.is_read and box_type == 'inbox' %}</strong>{% endif %}
-                    
-                    {% if email.is_draft %} <span class="text-red-500 text-xs">[Brouillon]</span> {% endif %}
-                  </p>
-                  <p class="text-ubo-neutral-text text-sm font-normal truncate">{{ email.body|truncatechars:50 }}</p>
-                </div>
-              </div>
-            </div>
-          </a>
-          {% endfor %}
-        {% else %}
-          <div class="flex flex-col items-center justify-center h-64 text-ubo-neutral-text text-center p-4">
-            <span class="material-symbols-outlined text-4xl mb-2">
-                {% if box_type == 'trash' %}delete_forever
-                {% elif box_type == 'sent' %}send
-                {% elif box_type == 'drafts' %}draft
-                {% else %}inbox{% endif %}
-            </span>
-            <p>
-                {% if box_type == 'trash' %}La corbeille est vide.
-                {% elif box_type == 'sent' %}Aucun message envoyé.
-                {% elif box_type == 'drafts' %}Aucun brouillon.
-                {% else %}Aucun message reçu.{% endif %}
-            </p>
-          </div>
-        {% endif %}
-      </div>
+        </div>
     </main>
 
-    <section class="flex flex-1 flex-col bg-surface-light dark:bg-surface-dark">
-      {% if selected_email %}
-      <div class="flex items-center justify-between border-b border-border-light dark:border-border-dark p-4 h-[72px]">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white truncate">{{ selected_email.subject }}</h2>
-        
-        <div class="flex items-center gap-2">
-          {% if not selected_email.is_draft %}
-          <button onclick="replyToEmail('{{ selected_email.sender.id }}', '{{ selected_email.subject|escapejs }}')" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-ubo-neutral-text dark:text-gray-400" title="Répondre">
-            <span class="material-symbols-outlined text-2xl">reply</span>
-          </button>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-6">
-        
-        <div class="flex items-center gap-4 mb-6">
-          <div class="flex items-center justify-center bg-ubo-blue text-white aspect-square rounded-full size-12 font-bold text-xl">
-            {{ selected_email.sender.full_name|slice:":1" }}
-          </div>
-          <div class="flex-1">
-            <p class="font-semibold text-gray-900 dark:text-white">
-              {{ selected_email.sender.full_name }} 
-              <span class="font-normal text-ubo-neutral-text">&lt;{{ selected_email.sender.email }}&gt;</span>
-            </p>
-            <p class="text-sm text-ubo-neutral-text">
-                À : {{ selected_email.recipient.full_name|default:"(Pas encore défini)" }}
-            </p>
-          </div>
-          <div class="text-right text-sm text-ubo-neutral-text">
-            <p>{{ selected_email.sent_at|date:"l d F, H:i" }}</p>
-          </div>
-        </div>
-
-        {% if selected_email.is_draft %}
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <span class="material-symbols-outlined text-yellow-400">edit_note</span>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm text-yellow-700">
-                Ce message est un <strong>brouillon</strong> non envoyé.
-              </p>
-              <div class="mt-2">
-                <button onclick="resumeDraft('{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="text-sm font-bold text-yellow-800 underline hover:text-yellow-900">
-                    Cliquez ici pour reprendre la rédaction
+    <section class="flex-1 flex flex-col bg-surface-light dark:bg-surface-dark">
+        {% if selected_email %}
+        <div class="p-6 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+            <h2 class="text-xl font-bold truncate">{{ selected_email.subject }}</h2>
+            <div class="flex gap-2">
+                {% if not selected_email.is_draft %}
+                <button onclick="replyToEmail('{{ selected_email.sender.id }}', '{{ selected_email.subject|escapejs }}')" class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full" title="Répondre">
+                    <span class="material-symbols-outlined">reply</span>
                 </button>
-              </div>
+                {% endif %}
+                {% if box_type != 'sent' and box_type != 'trash' %}
+                <form action="{% url 'dashboard:delete_email' %}" method="post">{% csrf_token %}
+                    <input type="hidden" name="email_id" value="{{ selected_email.id }}">
+                    <button type="submit" class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full text-red-500" title="Supprimer">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </form>
+                {% endif %}
             </div>
-          </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="size-10 rounded-full bg-ubo-blue text-white flex items-center justify-center font-bold text-lg">
+                    {{ selected_email.sender.full_name|slice:":1" }}
+                </div>
+                <div>
+                    <p class="font-bold">{{ selected_email.sender.full_name }} <span class="text-xs font-normal text-gray-500">&lt;{{ selected_email.sender.email }}&gt;</span></p>
+                    <p class="text-sm text-gray-500">À : {{ selected_email.recipient.full_name|default:"(Brouillon)" }}</p>
+                </div>
+            </div>
+
+            {% if selected_email.is_draft %}
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-yellow-800">
+                <p>Ceci est un brouillon.</p>
+                <button onclick="resumeDraft('{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="underline font-bold">Reprendre la rédaction</button>
+            </div>
+            {% endif %}
+
+            <div class="prose dark:prose-invert max-w-none whitespace-pre-wrap">{{ selected_email.body }}</div>
+        </div>
+        {% else %}
+        <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
+            <span class="material-symbols-outlined text-6xl mb-4">mail</span>
+            <p>Sélectionnez un email pour le lire.</p>
         </div>
         {% endif %}
-
-        <article class="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
-          {{ selected_email.body }}
-        </article>
-      </div>
-      {% else %}
-      <div class="flex flex-col items-center justify-center h-full text-ubo-neutral-text">
-        <span class="material-symbols-outlined text-6xl mb-4">mail</span>
-        <p class="text-lg">Sélectionnez un e-mail pour le lire.</p>
-      </div>
-      {% endif %}
     </section>
-  </div>
 
-  <div id="emailModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-      <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal()"></div>
+</div>
 
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+<div id="emailModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
+        <div class="p-4 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+            <h3 class="text-lg font-bold">Nouveau message</h3>
+            <button onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        
+        <form method="POST" action="{% url 'dashboard:chat' %}" class="flex-1 flex flex-col p-6 overflow-y-auto gap-4">
+            {% csrf_token %}
+            <input type="hidden" name="form_submit" value="true">
+            
+            {% if form.non_field_errors %}
+            <div class="bg-red-100 text-red-700 p-3 rounded">{{ form.non_field_errors }}</div>
+            {% endif %}
 
-      <div class="inline-block align-bottom bg-surface-light dark:bg-surface-dark rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-border-light dark:border-border-dark">
-        <form method="POST" action="{% url 'dashboard:chat' %}">
-          {% csrf_token %}
-          <input type="hidden" name="form_submit" value="true">
-          
-          <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4" id="modal-title">
-                  Nouveau Message
-                </h3>
-                
-                {% if form.non_field_errors %}
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    {{ form.non_field_errors }}
-                </div>
-                {% endif %}
-
-                <div class="mt-2 space-y-4">
-                  
-                  <div>
-                    <label class="block text-sm font-medium text-ubo-neutral-text mb-1">Envoyer à une filière</label>
-                    {{ form.group }}
-                  </div>
-
-                  <div class="relative flex py-1 items-center">
-                    <div class="flex-grow border-t border-border-light dark:border-border-dark"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">OU SÉLECTION MULTIPLE</span>
-                    <div class="flex-grow border-t border-border-light dark:border-border-dark"></div>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-ubo-neutral-text mb-1">Sélectionner des étudiants</label>
-                    <p class="text-xs text-gray-500 mb-1">Maintenez Ctrl (ou Cmd) pour en sélectionner plusieurs.</p>
-                    {{ form.recipients }}
-                    {% if form.recipients.errors %}
-                    <p class="text-red-500 text-xs italic mt-1">{{ form.recipients.errors }}</p>
-                    {% endif %}
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-ubo-neutral-text mb-1">Objet</label>
-                    {{ form.subject }}
-                    {% if form.subject.errors %}
-                    <p class="text-red-500 text-xs italic mt-1">{{ form.subject.errors }}</p>
-                    {% endif %}
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-ubo-neutral-text mb-1">Message</label>
-                    {{ form.body }}
-                    {% if form.body.errors %}
-                    <p class="text-red-500 text-xs italic mt-1">{{ form.body.errors }}</p>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Destinataire(s)</label>
+                {{ form.recipients }}
             </div>
-          </div>
-          
-          <div class="bg-gray-50 dark:bg-white/5 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-border-light dark:border-border-dark gap-2">
-            <button type="submit" name="send_email" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-ubo-blue text-base font-medium text-white hover:bg-ubo-blue/90 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-              Envoyer
-            </button>
             
-            <button type="submit" name="save_draft" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Brouillon
-            </button>
-            
-            <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-transparent text-base font-medium text-gray-500 hover:text-gray-700 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-              Annuler
-            </button>
-          </div>
+            <input type="text" name="subject" id="id_subject" placeholder="Objet" class="w-full rounded border-gray-300 dark:bg-white/5 dark:border-gray-700">
+            <textarea name="body" id="id_body" rows="8" placeholder="Votre message..." class="w-full rounded border-gray-300 dark:bg-white/5 dark:border-gray-700"></textarea>
+
+            <div class="flex justify-between pt-4 border-t border-border-light dark:border-border-dark">
+                <button type="submit" name="save_draft" class="px-4 py-2 border rounded hover:bg-gray-100 dark:hover:bg-white/10">Brouillon</button>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700">Annuler</button>
+                    <button type="submit" name="send_email" class="px-6 py-2 bg-ubo-blue text-white rounded hover:opacity-90">Envoyer</button>
+                </div>
+            </div>
         </form>
-      </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    function openModal() {
-      const modal = document.getElementById('emailModal');
-      if (modal) {
-          modal.classList.remove('hidden');
-      }
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    var recipientControl;
+    document.addEventListener('DOMContentLoaded', function() {
+        if(document.getElementById('select-recipients')) {
+            recipientControl = new TomSelect('#select-recipients', {
+                plugins: ['remove_button'], maxItems: null, valueField: 'value', labelField: 'text', searchField: ['text'],
+                placeholder: 'Rechercher un nom...', create: false, selectOnTab: true,
+                onItemAdd: function() { this.setTextboxValue(''); this.refreshOptions(); },
+                render: {
+                    option: function(data, escape) {
+                        const parts = (data.text || "").split(' :: ');
+                        if (parts.length < 2) return `<div>${escape(data.text)}</div>`;
+                        return `<div class="flex justify-between px-2 py-1 border-b border-gray-100 hover:bg-blue-50 cursor-pointer">
+                                    <div><div class="font-bold">${escape(parts[0])}</div><div class="text-xs text-gray-500">${escape(parts[1])}</div></div>
+                                    ${parts[2] ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 rounded-full h-fit">${escape(parts[2])}</span>` : ''}
+                                </div>`;
+                    },
+                    item: function(data, escape) { return `<div>${escape((data.text || "").split(' :: ')[0])}</div>`; }
+                }
+            });
+        }
+    });
+
+    function openModal() { document.getElementById('emailModal').classList.remove('hidden'); }
+    function closeModal() { 
+        document.getElementById('emailModal').classList.add('hidden'); 
+        if(recipientControl) recipientControl.clear();
+        document.getElementById('id_subject').value = "";
+        document.getElementById('id_body').value = "";
     }
-
-    function closeModal() {
-      const modal = document.getElementById('emailModal');
-      if (modal) {
-          modal.classList.add('hidden');
-      }
-      // On nettoie les champs (reset)
-      const groupSelect = document.getElementById('id_group');
-      if(groupSelect) groupSelect.value = "";
-      
-      const recipientSelect = document.getElementById('id_recipients');
-      if(recipientSelect) {
-          for (let i = 0; i < recipientSelect.options.length; i++) {
-              recipientSelect.options[i].selected = false;
-          }
-      }
-      
-      document.getElementById('id_subject').value = "";
-      document.getElementById('id_body').value = "";
-    }
-
-    // Fonction pour REPRENDRE un brouillon (remplit le formulaire)
     function resumeDraft(subject, body) {
         document.getElementById('id_subject').value = subject;
         document.getElementById('id_body').value = body;
         openModal();
     }
-
-    // Fonction pour RÉPONDRE à un mail
-    function replyToEmail(senderId, originalSubject) {
-        // On cible le champ 'id_recipients'
-        const recipientSelect = document.getElementById('id_recipients');
-        
-        if (recipientSelect) {
-            // On désélectionne tout d'abord
-            for (let i = 0; i < recipientSelect.options.length; i++) {
-                 recipientSelect.options[i].selected = false;
-            }
-            // On sélectionne l'expéditeur
-            for (let i = 0; i < recipientSelect.options.length; i++) {
-                if (recipientSelect.options[i].value == senderId) {
-                    recipientSelect.options[i].selected = true;
-                    break;
-                }
-            }
-        }
-        
-        // On vide le groupe
-        const groupSelect = document.getElementById('id_group');
-        if (groupSelect) groupSelect.value = "";
-
-        // On met le sujet avec Re:
-        const subjectInput = document.getElementById('id_subject');
-        if (subjectInput) {
-             if (!originalSubject.startsWith("Re:")) {
-                subjectInput.value = "Re: " + originalSubject;
-            } else {
-                subjectInput.value = originalSubject;
-            }
-        }
+    function replyToEmail(senderId, subject) {
+        if(recipientControl) { recipientControl.clear(); recipientControl.addItem(senderId); }
+        document.getElementById('id_subject').value = subject.startsWith("Re:") ? subject : "Re: " + subject;
         openModal();
     }
-
-    // Gestion des erreurs Django (Réouverture automatique)
+    // Plan Campus
+    function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
+    function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
+    
+    // Auto-open error
     const hasErrors = "{{ form.errors|yesno:'true,false' }}";
-    if (hasErrors === 'true') {
-        console.log("Erreurs détectées dans le formulaire, ouverture de la modale.");
-        openModal();
-    }
-  </script>
+    if (hasErrors === 'true') openModal();
+</script>
+
+<div id="campusMapModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onclick="closeCampusMap()">
+    <div class="bg-white dark:bg-surface-dark rounded-xl max-w-4xl w-full p-4 relative" onclick="event.stopPropagation()">
+        <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" class="w-full rounded shadow">
+    </div>
+</div>
 
 </body>
 </html>

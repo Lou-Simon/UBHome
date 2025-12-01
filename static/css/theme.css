@@ -1,0 +1,88 @@
+/* Thème Unifié UBHome */
+
+:root {
+  /* Couleurs Primaires */
+  --color-primary: #F4C753;
+  --color-primary-light: rgba(244, 199, 83, 0.1);
+  --color-primary-lighter: rgba(244, 199, 83, 0.05);
+  
+  /* Couleurs de Fond */
+  --bg-light: #f8f7f6;
+  --bg-dark: #221d10;
+  --bg-surface-light: #ffffff;
+  --bg-surface-dark: #1e2025;
+  
+  /* Couleurs de Texte */
+  --text-primary-light: #111318;
+  --text-primary-dark: #ffffff;
+  --text-secondary-light: #616f89;
+  --text-secondary-dark: #9ca3af;
+  
+  /* Couleurs de Bordure */
+  --border-light: #e5e7eb;
+  --border-dark: #374151;
+  --border-slate-light: #cbd5e1;
+  --border-slate-dark: #475569;
+}
+
+/* Styles de Navigation Commune */
+.nav-item {
+  @apply px-3 py-2.5 rounded-xl border transition-all duration-200 flex items-center gap-3;
+}
+
+.nav-item-active {
+  @apply bg-primary/15 dark:bg-primary/20 border-primary/30 dark:border-primary/40;
+}
+
+.nav-item-inactive {
+  @apply hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700;
+}
+
+/* Styles de Cartes Communes */
+.card {
+  @apply bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm;
+}
+
+.card-with-accent {
+  @apply border-t-2 border-t-primary/30;
+}
+
+/* Styles de Boutons */
+.btn-primary {
+  @apply bg-primary hover:bg-primary/90 text-[#111318] dark:text-[#111318] font-semibold px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply border border-slate-200 dark:border-slate-700 text-[#111318] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+/* Styles de Barre Latérale */
+.sidebar {
+  @apply bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 border-r-2 border-primary/20 dark:border-primary/10;
+}
+
+.logo-container {
+  @apply bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-xl px-3 py-2;
+}
+
+/* Styles de Modale */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-slate-900 rounded-xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col;
+}
+
+/* Styles de Sous-menu */
+.submenu-item {
+  @apply px-3 py-2 rounded-lg text-sm transition-all duration-200;
+}
+
+.submenu-item-active {
+  @apply bg-primary/15 dark:bg-primary/20 text-primary font-semibold border border-primary/30;
+}
+
+.submenu-item-inactive {
+  @apply hover:bg-slate-100 dark:hover:bg-slate-700 text-[#111318] dark:text-slate-300 border border-slate-200 dark:border-slate-700;
+}
