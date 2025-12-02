@@ -3,7 +3,6 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone 
 from datetime import timedelta
-# Assurez-vous d'importer vos modèles/utilitaires
 from ..models import Student, Event, Email, ForumPost
 from .auth import get_session_user_data 
 
@@ -23,7 +22,6 @@ def dashboard_view(request):
     # --- 2. DONNÉES DU CALENDRIER (Aujourd'hui seulement) ---
     
     current_date = timezone.localdate()
-    # On utilise 'student.courses' grâce au related_name défini dans le modèle Course
     enrolled_course_ids = student.courses.values_list('id', flat=True)
 
     # Événements du jour
@@ -33,8 +31,8 @@ def dashboard_view(request):
     ).order_by('start_time')
     
     # Constantes pour le calcul des pixels
-    PX_PER_HOUR = 100
-    START_HOUR_CALENDAR = 8 
+    PX_PER_HOUR = 60  # CHANGÉ : 60px par heure (pour correspondre au HTML)
+    START_HOUR_CALENDAR = 8  # Le calendrier commence à 8h00
 
     # Calcul des styles pour les événements du jour
     styled_events = []
@@ -47,23 +45,49 @@ def dashboard_view(request):
         # Calcul du TOP (position)
         start_hour = local_start_time.hour
         start_minute = local_start_time.minute
-        hour_offset = (start_hour - START_HOUR_CALENDAR) * PX_PER_HOUR
-        minute_offset = int((start_minute / 60) * PX_PER_HOUR)
-        event.total_start_offset = max(0, hour_offset + minute_offset)
+        
+        # CORRECTION : Vérifier que l'événement est bien dans la plage 8h-18h
+        if start_hour < START_HOUR_CALENDAR:
+            # L'événement commence avant 8h, on le positionne à 0
+            hour_offset = 0
+            minute_offset = 0
+        else:
+            hour_offset = (start_hour - START_HOUR_CALENDAR) * PX_PER_HOUR
+            minute_offset = int((start_minute / 60) * PX_PER_HOUR)
+        
+        event.total_start_offset = hour_offset + minute_offset
         
         # Calcul de la HAUTEUR
-        duration = (local_end_time - local_start_time).total_seconds() / 3600
-        event.height = int(duration * PX_PER_HOUR)
+        duration_seconds = (local_end_time - local_start_time).total_seconds()
+        duration_hours = duration_seconds / 3600
+        event.height = int(duration_hours * PX_PER_HOUR)
+        
+        # AJOUT : S'assurer qu'il y a une hauteur minimum
+        if event.height < 20:
+            event.height = 20
         
         # Détermination de la COULEUR
         color_key = event.course.id % 4 
         event.color_code = color_map.get(color_key, 'primary')
         
+        # AJOUT : Informations supplémentaires pour le debug
         event.local_start_time = local_start_time
         event.local_end_time = local_end_time
+        event.display_name = event.course.name
+        event.location = event.location if hasattr(event, 'location') else 'Salle non définie'
+        
         styled_events.append(event)
     
-    # Création du pseudo 'week_days' pour le template (contient juste le jour d'aujourd'hui)
+    # DEBUG : Afficher dans la console les événements trouvés
+    print(f"=== DEBUG DASHBOARD ===")
+    print(f"Date actuelle : {current_date}")
+    print(f"Nombre d'événements trouvés : {len(styled_events)}")
+    for evt in styled_events:
+        print(f"  - {evt.course.name}: {evt.local_start_time.strftime('%H:%M')} - {evt.local_end_time.strftime('%H:%M')}")
+        print(f"    Position: {evt.total_start_offset}px, Hauteur: {evt.height}px")
+    print(f"=====================")
+    
+    # Création du pseudo 'week_days' pour le template
     today_data = {
         'day_name': 'Aujourd\'hui',
         'date': current_date,
@@ -78,15 +102,15 @@ def dashboard_view(request):
         is_read=False
     ).order_by('-sent_at')[:5]
     
-    # 5 derniers posts dans les canaux de l'étudiant (ou tous, selon la logique)
+    # 5 derniers posts dans les canaux de l'étudiant
     recent_posts = ForumPost.objects.select_related('author', 'channel').order_by('-posted_at')[:5]
 
     # --- 4. Contexte pour le Template ---
     
     context = {
         'user': user_data,
-        'hours': range(8, 18), # Nécessaire pour les graduations du calendrier du jour
-        'today_data': today_data, # Contient les événements stylisés d'aujourd'hui
+        'hours': range(8, 18),  # Graduations de 8h à 17h
+        'today_data': today_data,
         'unread_emails': unread_emails,
         'recent_posts': recent_posts,
     }
