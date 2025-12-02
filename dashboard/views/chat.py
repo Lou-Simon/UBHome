@@ -14,8 +14,6 @@ def remove_accents(input_str):
 
 @require_POST
 def delete_email_view(request):
-    # ... (Code inchangé pour la suppression) ...
-    # Copie-colle ta fonction delete_email_view existante ici
     user_data = get_session_user_data(request)
     if not user_data: return redirect('dashboard:login')
     try:
@@ -26,10 +24,8 @@ def delete_email_view(request):
     if email_id:
         try:
             email = Email.objects.get(id=email_id)
-            # Si c'est un brouillon, on le supprime vraiment de la BDD
             if email.is_draft and email.sender == student:
                 email.delete()
-            # Si c'est un mail reçu, on le marque comme supprimé
             elif email.recipient == student:
                 email.is_deleted_by_recipient = True
                 email.save()
@@ -42,53 +38,49 @@ def delete_email_view(request):
 def chat_view(request):
     user_data = get_session_user_data(request)
     if not user_data: return redirect('dashboard:login')
+
     try:
         student = Student.objects.get(student_id=user_data.get('student_id'))
     except Student.DoesNotExist: return redirect('dashboard:login')
 
     unread_count = Email.objects.filter(recipient=student, is_read=False, is_deleted_by_recipient=False, is_draft=False).count()
 
-    # --- GESTION DES ACTIONS (ENVOI / BROUILLON) ---
+    # --- GESTION DES ACTIONS ---
     if request.method == 'POST':
         form = EmailForm(request.POST)
-        
-        # Action 1 : SAUVEGARDER LE BROUILLON
+
+        # 1. SAUVEGARDER BROUILLON
         if 'save_draft' in request.POST:
-            # On valide partiellement (Sujet/Corps) mais on ignore les destinataires
             if form.is_valid():
                 draft = form.save(commit=False)
                 draft.sender = student
                 draft.is_draft = True
-                draft.recipient = None # Un brouillon n'a pas de destinataire unique lié
+                draft.recipient = None
                 draft.save()
                 return redirect(reverse('dashboard:chat') + '?box=drafts')
-        
-        # Action 2 : ENVOYER LE MAIL
+
+        # 2. ENVOYER LE MAIL
         elif 'send_email' in request.POST:
             if form.is_valid():
-                recipients = form.cleaned_data['recipients']
-                group = form.cleaned_data['group']
-                
-                # Validation manuelle : Il faut au moins un destinataire pour envoyer
-                if not recipients and not group:
-                    form.add_error(None, "Veuillez choisir un destinataire ou une filière pour envoyer.")
-                else:
-                    # Logique d'envoi groupé
-                    final_targets = set()
-                    for s in recipients: final_targets.add(s)
-                    if group:
-                        for s in Student.objects.filter(year=group): final_targets.add(s)
+                # On récupère les destinataires
+                recipients = form.cleaned_data.get('recipients')
 
-                    for target in final_targets:
+                if not recipients:
+                    # Erreur si aucun destinataire
+                    form.add_error('recipients', "Veuillez choisir au moins un destinataire.")
+                else:
+                    # Envoi individuel à chaque destinataire sélectionné
+                    subject = form.cleaned_data['subject']
+                    body = form.cleaned_data['body']
+
+                    for target in recipients:
                         Email.objects.create(
                             sender=student,
                             recipient=target,
-                            subject=form.cleaned_data['subject'],
-                            body=form.cleaned_data['body'],
-                            is_draft=False # Ce n'est plus un brouillon
+                            subject=subject,
+                            body=body,
+                            is_draft=False
                         )
-                    
-                    # Si on envoyait un brouillon existant, on pourrait le supprimer ici (optionnel)
                     return redirect(reverse('dashboard:chat') + '?box=sent')
     else:
         form = EmailForm()
@@ -97,16 +89,12 @@ def chat_view(request):
     box_type = request.GET.get('box', 'inbox')
 
     if box_type == 'sent':
-        # Envoyés : (Expéditeur = Moi) ET (Pas brouillon)
         emails = Email.objects.filter(sender=student, is_draft=False).select_related('recipient').order_by('-sent_at')
     elif box_type == 'trash':
-        # Corbeille : Reçus supprimés
         emails = Email.objects.filter(recipient=student, is_deleted_by_recipient=True).select_related('sender').order_by('-sent_at')
     elif box_type == 'drafts':
-        # AJOUT : Brouillons : (Expéditeur = Moi) ET (Brouillon = True)
         emails = Email.objects.filter(sender=student, is_draft=True).order_by('-sent_at')
     else:
-        # Inbox : Reçus non supprimés et non brouillons
         emails = Email.objects.filter(recipient=student, is_deleted_by_recipient=False, is_draft=False).select_related('sender').order_by('-sent_at')
 
     # --- RECHERCHE ---
@@ -116,12 +104,11 @@ def chat_view(request):
         emails = []
         query_clean = remove_accents(search_query.lower())
         for email in all_emails:
-            # Gestion sécurisée des champs qui peuvent être None (ex: recipient d'un brouillon)
             sub = remove_accents(email.subject.lower())
             bod = remove_accents(email.body.lower())
             sen = remove_accents(email.sender.full_name.lower())
             rec = remove_accents(email.recipient.full_name.lower()) if email.recipient else ""
-            
+
             if (query_clean in sub or query_clean in bod or query_clean in sen or query_clean in rec):
                 emails.append(email)
 
@@ -132,10 +119,9 @@ def chat_view(request):
     if selected_email_id:
         try:
             selected_email = Email.objects.get(id=selected_email_id)
-            # Sécurité : doit être expéditeur ou destinataire
             if selected_email.sender != student and selected_email.recipient != student:
                 selected_email = None
-            # Marquer comme lu si nécessaire
+
             if selected_email and selected_email.recipient == student and not selected_email.is_read and box_type == 'inbox':
                 selected_email.is_read = True
                 selected_email.save()
@@ -145,8 +131,12 @@ def chat_view(request):
         selected_email = emails[0]
 
     context = {
-        'user': user_data, 'emails': emails, 'selected_email': selected_email,
-        'box_type': box_type, 'form': form, 'search_query': search_query,
+        'user': user_data,
+        'emails': emails,
+        'selected_email': selected_email,
+        'box_type': box_type,
+        'form': form,
+        'search_query': search_query,
         'unread_count': unread_count
     }
     return render(request, 'chat.html', context)
