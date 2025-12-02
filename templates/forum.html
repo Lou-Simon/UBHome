@@ -2,340 +2,1351 @@
 {% load static %}
 <!DOCTYPE html>
 <html class="light" lang="fr">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Forum - Hub Étudiant UBO</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script>
-tailwind.config = {
-    darkMode: "class", 
-    theme: {
-        extend: {
-            colors: {
-                primary: "#F4C753", 
-                "background-light": "#f8f7f6", 
-                "background-dark": "#221d10",
-                "surface-light": "#ffffff",
-                "surface-dark": "#1e2025",
-                "border-light": "#e5e7eb",
-                "border-dark": "#374151",
-                "ubo-blue": "#0055A4"
-            }, 
-            fontFamily: {display: "Lexend"}, 
-            borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}
-        }
-    }
-};
-</script>
-<style>
- .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
-</style>
-</head>
-<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white" data-current-student-id="{{ user.student_id }}">
-<div class="flex h-screen w-full overflow-hidden">
-    
-    <aside class="flex w-64 flex-col justify-between bg-surface-light dark:bg-surface-dark p-4 border-r border-border-light dark:border-border-dark flex-shrink-0 h-full overflow-y-auto">
-        <div class="flex flex-col gap-6">
-            <div class="flex items-center gap-3 px-3">
-                <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10 rounded-full"/>
-                <div class="flex flex-col">
-                    <h1 class="text-base font-bold leading-normal">UBO</h1>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm font-normal">Hub Étudiant</p>
-                </div>
-            </div>
-            
-            {% if user.full_name %}
-            <div class="flex flex-col px-3 py-2">
-                <p class="text-base font-semibold">{{ user.full_name }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.year }}</p>
-            </div>
-            {% endif %}
 
-            <nav class="flex flex-col gap-2">
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:dashboard' %}">
-                    <span class="material-symbols-outlined">home</span>
-                    <p class="text-sm font-medium">Accueil</p>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
-                    <span class="material-symbols-outlined">calendar_month</span>
-                    <p class="text-sm font-medium">Calendrier</p>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:chat' %}">
-                    <span class="material-symbols-outlined">mail</span>
-                    <p class="text-sm font-medium">Messagerie</p>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary-700 dark:text-primary" href="{% url 'dashboard:forum' %}">
-                    <span class="material-symbols-outlined">forum</span>
-                    <p class="text-sm font-medium">Forum</p>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:profile' %}">
-                    <span class="material-symbols-outlined">account_circle</span>
-                    <p class="text-sm font-medium">Mon Profil</p>
-                </a>
-                <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 w-full text-left">
-                    <span class="material-symbols-outlined">map</span>
-                    <p class="text-sm font-medium">Plan du Campus</p>
-                </button>
-            </nav>
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Forum - UBHome</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#005A9E", // UBO Blue
+            "background-light": "#F8F9FA",
+            "background-dark": "#101922",
+            "accent": "#FFD700", // UBO Yellow
+            "text-light": "#333333",
+            "text-dark": "#E5E7EB",
+            "heading-light": "#000000",
+            "heading-dark": "#FFFFFF",
+            "subtle-light": "#6B7280",
+            "subtle-dark": "#9CA3AF",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+            "card-light": "#FFFFFF",
+            "card-dark": "#1F2937",
+            "active-light": "#EBF3FB", // Light blue for active nav item
+            "active-dark": "#1E3A8A",
+          },
+          fontFamily: {
+            "display": ["Lexend", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark" data-current-student-id="{{ user.student_id }}">
+  <div class="flex h-screen w-full">
+    <aside
+      class="flex flex-col w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark p-4 shrink-0">
+      <div class="flex-grow flex flex-col gap-4">
+        <div class="flex gap-3 items-center mb-4">
+          <img src="{% static 'images/images.png' %}" alt="Logo UBO Hub" class="size-10"/>
+          <div class="flex flex-col">
+            <h1 class="text-heading-light dark:text-heading-dark text-base font-bold leading-normal">UBO Hub</h1>
+            <p class="text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">Espace Étudiant</p>
+          </div>
         </div>
-        <div class="pt-4 border-t border-border-light dark:border-border-dark">
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" href="{% url 'dashboard:logout' %}">
-                <span class="material-symbols-outlined">logout</span>
-                <p class="text-sm font-medium">Déconnexion</p>
-            </a>
-        </div>
+        <nav class="flex flex-col gap-2">
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-active-light dark:hover:bg-active-dark/50"
+            href="{% url 'dashboard:dashboard' %}">
+            <span class="material-symbols-outlined text-subtle-light dark:text-subtle-dark">home</span>
+            <p class="text-sm font-medium">Accueil</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            href="{% url 'dashboard:calendar' %}">
+            <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
+            <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            href="{% url 'dashboard:chat' %}">
+            <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">mail</span>
+            <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Emails</p>
+          </a>
+
+
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-active-light dark:bg-active-dark"
+            href="{% url 'dashboard:forum' %}">
+            <span class="material-symbols-outlined text-primary dark:text-white">forum</span>
+            <p class="text-primary dark:text-white text-sm font-bold">Forum</p>
+          </a>
+        </nav>
+      </div>
+      <a class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] transition-colors"
+        href="{% url 'dashboard:logout' %}">
+        <span class="truncate">Se déconnecter</span>
+      </a>
     </aside>
 
-    <main class="flex flex-1 h-full overflow-hidden">
-        
-        <div class="w-72 flex flex-col border-r border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
-            <div class="p-4 border-b border-border-light dark:border-border-dark">
-                <h2 class="text-lg font-bold flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">tag</span>
-                    Canaux
-                </h2>
-                <p class="text-xs text-gray-500 mt-1">Choisissez une discussion</p>
+    <!-- Sidebar des canaux -->
+    <aside class="flex flex-col w-72 bg-background-light dark:bg-background-dark border-r border-border-light dark:border-border-dark shrink-0">
+      <div class="p-4 border-b border-border-light dark:border-border-dark">
+        <h2 class="text-lg font-bold text-heading-light dark:text-heading-dark flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">forum</span>
+          Canaux
+        </h2>
+        <p class="text-xs text-subtle-light dark:text-subtle-dark mt-1">Choisissez un canal de discussion</p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-2">
+        <div class="space-y-1">
+          {% for channel_data in all_channels %}
+          <a href="?channel={{ channel_data.channel.name }}"
+             class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group {% if channel_data.is_active %}bg-primary/10 dark:bg-accent/10 border border-primary/20 dark:border-accent/20{% else %}hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <span class="text-2xl flex-shrink-0">
+                {% if '📢' in channel_data.channel.name %}📢
+                {% elif '📚' in channel_data.channel.name %}📚
+                {% elif '💼' in channel_data.channel.name %}💼
+                {% elif '🎉' in channel_data.channel.name %}🎉
+                {% elif '💡' in channel_data.channel.name %}💡
+                {% else %}#{% endif %}
+              </span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate {% if channel_data.is_active %}text-primary dark:text-accent{% else %}text-heading-light dark:text-heading-dark{% endif %}">
+                  {{ channel_data.channel.name|slice:"2:" }}
+                </p>
+                <p class="text-xs text-subtle-light dark:text-subtle-dark truncate">
+                  {{ channel_data.post_count }} message{{ channel_data.post_count|pluralize }}
+                </p>
+              </div>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-2 space-y-1">
-                {% for channel_data in all_channels %}
-                <a href="?channel={{ channel_data.channel.name }}" 
-                   class="flex items-center justify-between px-3 py-3 rounded-lg transition-colors group 
-                          {% if channel_data.is_active %}bg-primary/10 border border-primary/30 text-primary-700 dark:text-primary{% else %}hover:bg-white dark:hover:bg-surface-dark text-gray-700 dark:text-gray-300{% endif %}">
-                    
-                    <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <span class="text-xl flex-shrink-0">
-                            {% if '📢' in channel_data.channel.name %}📢
-                            {% elif '📚' in channel_data.channel.name %}📚
-                            {% elif '💼' in channel_data.channel.name %}💼
-                            {% elif '🎉' in channel_data.channel.name %}🎉
-                            {% elif '💡' in channel_data.channel.name %}💡
-                            {% else %}#{% endif %}
+            {% if channel_data.post_count > 0 and not channel_data.is_active %}
+            <span class="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-white text-xs font-bold flex-shrink-0">
+              {{ channel_data.post_count }}
+            </span>
+            {% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="p-3 border-t border-border-light dark:border-border-dark">
+        <button id="createChannelBtn" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-medium transition">
+          <span class="material-symbols-outlined text-lg">add</span>
+          Créer un canal
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen">
+      <!-- Barre de recherche fixe -->
+      <div class="sticky top-0 z-10 bg-background-light dark:bg-background-dark border-b border-border-light dark:border-border-dark p-4 shadow-sm">
+        <div class="max-w-2xl mx-auto">
+          <div class="relative">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Rechercher dans les messages..."
+              class="w-full bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-full pl-12 pr-10 py-2.5 text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+            />
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-subtle-light dark:text-subtle-dark">search</span>
+            <button
+              id="clearSearch"
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-subtle-light dark:text-subtle-dark hover:text-heading-light dark:hover:text-heading-dark transition"
+            >
+              <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+          </div>
+          <p id="searchResults" class="mt-2 text-xs text-subtle-light dark:text-subtle-dark text-center hidden"></p>
+        </div>
+      </div>
+
+      <div id="messagesArea" class="flex-grow flex flex-col p-6 overflow-y-auto">
+        <header class="mb-6">
+          <h1
+            class="text-heading-light dark:text-heading-dark text-3xl font-black tracking-tight flex items-center gap-3">
+            <span class="material-symbols-outlined text-accent" style="font-size: 32px;">tag</span>
+            <span id="channelName">{{ channel.name }}</span>
+          </h1>
+          <p id="channelDesc" class="text-subtle-light dark:text-subtle-dark text-base font-normal">{{ channel.description }}</p>
+        </header>
+        <div id="postsContainer" class="flex-grow space-y-6">
+          {% for post in posts %}
+          <div class="flex items-start gap-3 max-w-lg {% if post.author.student_id == user.student_id %} ml-auto justify-end{% endif %}">
+            {% if post.author.student_id != user.student_id %}
+              <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+            {% endif %}
+            <div class="flex flex-col {% if post.author.student_id == user.student_id %} items-end{% endif %}">
+              <div class="flex items-baseline gap-2">
+                <p class="font-bold {% if post.author.student_id == user.student_id %} text-primary dark:text-accent {% else %} text-heading-light dark:text-heading-dark {% endif %} text-sm">
+                  {% if post.author.student_id == user.student_id %}Vous{% else %}{{ post.author.full_name }}{% endif %}
+                </p>
+                <p class="text-xs text-subtle-light dark:text-subtle-dark">{{ post.posted_at|localtime|date:"d/m/Y H:i" }}</p>
+              </div>
+              <div class="mt-1 rounded-lg {% if post.author.student_id == user.student_id %} bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none {% else %} bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none {% endif %}">
+                {% if post.content %}
+                <div class="p-3">
+                  <p class="text-sm">{{ post.content }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Affichage des pièces jointes -->
+                {% if post.attachments.all %}
+                <div class="{% if post.content %}pt-0 p-3{% else %}p-1{% endif %} flex flex-col gap-1">
+                  {% for attachment in post.attachments.all %}
+                    {% if attachment.file.name|slice:"-4:" in ".jpg.png.gif.jpeg.webp" or attachment.file.name|slice:"-5:" in ".jpeg" %}
+                      <!-- Image avec bouton de téléchargement -->
+                      <div class="relative group rounded-lg overflow-hidden">
+                        <img src="{{ attachment.file.url }}" alt="{{ attachment.original_name }}"
+                             class="max-h-64 w-full object-cover rounded-lg cursor-pointer"
+                             onclick="window.open('{{ attachment.file.url }}', '_blank')">
+                        <a href="{{ attachment.file.url }}" download="{{ attachment.original_name }}"
+                           class="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span class="material-symbols-outlined text-lg">download</span>
+                        </a>
+                      </div>
+                    {% else %}
+                      <!-- Autre fichier -->
+                      <a href="{{ attachment.file.url }}" download="{{ attachment.original_name }}"
+                         class="flex items-center gap-3 p-2 rounded-lg {% if post.author.student_id == user.student_id %}bg-white/10 hover:bg-white/20{% else %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600{% endif %} transition-colors">
+                        <span class="material-symbols-outlined text-2xl">
+                          {% if ".pdf" in attachment.file.name %}picture_as_pdf
+                          {% elif ".zip" in attachment.file.name or ".rar" in attachment.file.name %}folder_zip
+                          {% elif ".mp4" in attachment.file.name or ".avi" in attachment.file.name %}movie
+                          {% elif ".mp3" in attachment.file.name or ".wav" in attachment.file.name %}music_note
+                          {% elif ".txt" in attachment.file.name or ".doc" in attachment.file.name %}description
+                          {% else %}attach_file{% endif %}
                         </span>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate">{{ channel_data.channel.name }}</p>
-                            <p class="text-xs text-gray-500 truncate">{{ channel_data.post_count }} message{{ channel_data.post_count|pluralize }}</p>
+                          <p class="text-xs font-medium truncate">{{ attachment.original_name|default:attachment.file.name }}</p>
+                          <p class="text-[11px] {% if post.author.student_id == user.student_id %}text-white/70{% else %}text-subtle-light dark:text-subtle-dark{% endif %}">
+                            {% if attachment.file.size %}{{ attachment.file.size|filesizeformat }}{% endif %}
+                          </p>
                         </div>
-                    </div>
-                    
-                    {% if channel_data.post_count > 0 and not channel_data.is_active %}
-                    <span class="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-gray-200 dark:bg-gray-700 text-xs font-bold text-gray-600 dark:text-gray-300">
-                        {{ channel_data.post_count }}
-                    </span>
+                        <span class="material-symbols-outlined text-lg">download</span>
+                      </a>
                     {% endif %}
-                </a>
-                {% empty %}
-                <div class="p-4 text-center text-sm text-gray-500 italic">Aucun canal disponible.</div>
-                {% endfor %}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
             </div>
-            
-            <div class="p-3 border-t border-border-light dark:border-border-dark">
-                <button id="createChannelBtn" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-white/5 text-sm font-medium transition">
-                    <span class="material-symbols-outlined text-lg">add</span> Nouveau canal
+            {% if post.author.student_id == user.student_id %}
+              <div class="size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0"></div>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="text-sm text-subtle-light dark:text-subtle-dark">Aucun message pour le moment. Soyez le premier à écrire !</p>
+          {% endfor %}
+        </div>
+        <div id="messagesEnd"></div>
+      </div>
+      <div
+        class="p-6 pt-4 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark">
+        <div class="relative">
+          <form method="post" class="relative" id="forumForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="flex items-center gap-2">
+              <!-- Bouton + style WhatsApp -->
+              <button id="plusBtn" type="button"
+                class="flex items-center justify-center size-10 rounded-full text-subtle-light dark:text-subtle-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined text-2xl font-bold">add</span>
+              </button>
+
+              <div class="flex-1 flex items-center bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-primary/50 transition">
+                <textarea name="content" id="messageInput"
+                  class="flex-1 bg-transparent text-sm placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:outline-none resize-none max-h-32"
+                  placeholder="Écrire un message..." rows="1"></textarea>
+
+                <button id="emojiBtn" type="button"
+                  class="flex items-center justify-center ml-2 text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors">
+                  <span class="material-symbols-outlined text-xl">sentiment_satisfied</span>
                 </button>
+              </div>
+
+              <button type="submit" id="sendBtn"
+                class="flex items-center justify-center size-12 rounded-full bg-primary hover:bg-primary/90 text-white font-bold transition-all transform hover:scale-105">
+                <span class="material-symbols-outlined text-xl">send</span>
+              </button>
             </div>
+
+            <input type="file" id="attachmentsInput" name="attachments" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar" class="hidden" />
+
+            <!-- Zone de prévisualisation des fichiers sélectionnés -->
+            <div id="selectedFiles" class="mt-3 hidden"></div>
+
+            <!-- Menu d'actions (style WhatsApp) -->
+            <div id="actionsMenu" class="hidden absolute bottom-16 left-2 z-50 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl shadow-2xl overflow-hidden min-w-[200px]">
+              <button type="button" id="photoVideoBtn" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
+                <span class="material-symbols-outlined text-primary">image</span>
+                <span class="text-sm font-medium">Photo ou vidéo</span>
+              </button>
+              <button type="button" id="documentBtn" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
+                <span class="material-symbols-outlined text-blue-500">description</span>
+                <span class="text-sm font-medium">Document</span>
+              </button>
+              <button type="button" id="pollBtn" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left">
+                <span class="material-symbols-outlined text-green-500">poll</span>
+                <span class="text-sm font-medium">Sondage</span>
+              </button>
+            </div>
+
+            <!-- Panneau d'emojis -->
+            <div id="emojiPanel" class="hidden absolute bottom-14 right-14 z-20 p-3 rounded-xl border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark shadow-2xl max-w-[280px]">
+              <div class="flex flex-wrap gap-1"></div>
+            </div>
+          </form>
         </div>
-        
-        <div class="flex-1 flex flex-col bg-surface-light dark:bg-surface-dark min-w-0">
-            <div class="sticky top-0 z-10 border-b border-border-light dark:border-border-dark bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur p-4 flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold flex items-center gap-2">
-                        <span class="text-primary">#</span>
-                        <span id="channelName">{{ channel.name }}</span>
-                    </h1>
-                    <p id="channelDesc" class="text-sm text-gray-500 mt-1">{{ channel.description }}</p>
-                </div>
-                <div class="relative w-64 hidden md:block">
-                    <input type="text" id="searchInput" placeholder="Rechercher..." class="w-full pl-9 pr-4 py-2 rounded-full bg-background-light dark:bg-background-dark border-none text-sm focus:ring-2 focus:ring-primary">
-                    <span class="material-symbols-outlined absolute left-3 top-2 text-gray-400 text-lg">search</span>
-                </div>
-            </div>
-            
-            <div id="messagesArea" class="flex-grow flex flex-col p-6 overflow-y-auto bg-surface-light dark:bg-surface-dark space-y-6">
-                <div id="postsContainer" class="flex-grow space-y-6">
-                    {% for post in posts %}
-                    <div class="flex items-start gap-3 max-w-3xl {% if post.author.student_id == user.student_id %} ml-auto justify-end{% endif %}">
-                        
-                        {% if post.author.student_id != user.student_id %}
-                        <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-500 text-sm flex-shrink-0">
-                            {{ post.author.full_name|slice:":1" }}
-                        </div>
-                        {% endif %}
-
-                        <div class="flex flex-col {% if post.author.student_id == user.student_id %} items-end{% endif %} max-w-[80%]">
-                            <div class="flex items-baseline gap-2 mb-1">
-                                <p class="font-bold text-sm {% if post.author.student_id == user.student_id %}text-primary{% else %}text-gray-900 dark:text-white{% endif %}">
-                                    {% if post.author.student_id == user.student_id %}Vous{% else %}{{ post.author.full_name }}{% endif %}
-                                </p>
-                                <p class="text-[10px] text-gray-500">{{ post.posted_at|localtime|date:"d M H:i" }}</p>
-                            </div>
-                            
-                            <div class="rounded-2xl px-4 py-3 text-sm shadow-sm
-                                        {% if post.author.student_id == user.student_id %}
-                                            bg-primary/10 text-gray-900 dark:text-white rounded-tr-none border border-primary/20
-                                        {% else %}
-                                            bg-background-light dark:bg-background-dark text-gray-900 dark:text-white rounded-tl-none
-                                        {% endif %}">
-                                {% if post.content %}
-                                <p class="whitespace-pre-wrap">{{ post.content }}</p>
-                                {% endif %}
-                                
-                                {% if post.attachments.all %}
-                                <div class="mt-3 space-y-2">
-                                    {% for attachment in post.attachments.all %}
-                                    <a href="{{ attachment.file.url }}" target="_blank" class="flex items-center gap-2 p-2 bg-white/50 dark:bg-black/20 rounded border border-black/5 hover:bg-white/80 transition">
-                                        <span class="material-symbols-outlined text-lg">attachment</span>
-                                        <span class="truncate max-w-[150px] text-xs font-medium">{{ attachment.original_name|default:"Fichier" }}</span>
-                                    </a>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        {% if post.author.student_id == user.student_id %}
-                        <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary-700 text-sm flex-shrink-0">
-                            {{ user.full_name|slice:":1" }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% empty %}
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2 py-10">
-                        <span class="material-symbols-outlined text-4xl opacity-20">chat_bubble_outline</span>
-                        <p>Aucun message ici. Lancez la discussion !</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div id="messagesEnd"></div>
-            </div>
-
-            <div class="p-4 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
-                <form method="post" id="forumForm" enctype="multipart/form-data" class="max-w-4xl mx-auto flex items-end gap-2 bg-background-light dark:bg-background-dark p-2 rounded-xl border border-border-light dark:border-border-dark focus-within:border-primary transition-colors">
-                    {% csrf_token %}
-                    
-                    <button type="button" id="plusBtn" class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition">
-                        <span class="material-symbols-outlined">add_circle</span>
-                    </button>
-                    
-                    <textarea name="content" id="messageInput" rows="1" 
-                              class="flex-1 bg-transparent border-none focus:ring-0 text-sm max-h-32 py-3 placeholder:text-gray-400"
-                              placeholder="Écrivez votre message..."></textarea>
-                    
-                    <button type="submit" class="p-2 bg-primary text-white rounded-lg hover:opacity-90 shadow-sm transition transform hover:scale-105">
-                        <span class="material-symbols-outlined text-xl">send</span>
-                    </button>
-
-                    <input type="file" id="attachmentsInput" name="attachments" multiple class="hidden">
-                </form>
-                
-                <div id="actionsMenu" class="hidden absolute bottom-20 left-80 z-50 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl w-48 overflow-hidden">
-                    <button id="photoVideoBtn" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/5 flex items-center gap-2 text-sm">
-                        <span class="material-symbols-outlined text-primary">image</span> Photo/Vidéo
-                    </button>
-                    <button id="documentBtn" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/5 flex items-center gap-2 text-sm">
-                        <span class="material-symbols-outlined text-blue-500">description</span> Document
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
     </main>
-</div>
+  </div>
 
-<div id="channelModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-    <div class="bg-surface-light dark:bg-surface-dark rounded-xl max-w-md w-full p-6 shadow-2xl">
-        <div class="flex justify-between items-center mb-4 border-b border-border-light dark:border-border-dark pb-2">
-            <h3 class="text-lg font-bold">Créer un canal</h3>
-            <button id="closeChannelModal" class="text-gray-500 hover:text-primary"><span class="material-symbols-outlined">close</span></button>
+  <!-- Modal de création de sondage -->
+  <div id="pollModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-border-light dark:border-border-dark">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-heading-light dark:text-heading-dark flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">poll</span>
+            Créer un sondage
+          </h2>
+          <button id="closePollModal" class="text-subtle-light dark:text-subtle-dark hover:text-heading-light dark:hover:text-heading-dark transition">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
+      </div>
+
+      <div class="p-6">
         <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Nom du canal</label>
-                <input type="text" id="channelNameInput" placeholder="Ex: Projet Java" class="w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary">
-                <p class="text-xs text-gray-500 mt-1">Le niveau sera ajouté automatiquement.</p>
+          <div>
+            <label class="block text-sm font-medium text-heading-light dark:text-heading-dark mb-2">
+              Question du sondage
+            </label>
+            <input
+              type="text"
+              id="pollQuestion"
+              placeholder="Ex: Quelle est votre matière préférée ?"
+              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              maxlength="200"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-heading-light dark:text-heading-dark mb-2">
+              Options (2 minimum)
+            </label>
+            <div id="pollOptions" class="space-y-2">
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  class="poll-option flex-1 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Option 1"
+                  maxlength="100"
+                />
+              </div>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  class="poll-option flex-1 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Option 2"
+                  maxlength="100"
+                />
+              </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Description</label>
-                <textarea id="channelDescriptionInput" rows="3" placeholder="Description..." class="w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary"></textarea>
-            </div>
-            <button id="createChannelSubmit" class="w-full py-2 bg-primary text-white rounded-lg font-bold hover:opacity-90">Créer</button>
+            <button
+              id="addPollOption"
+              class="mt-2 text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+              Ajouter une option
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div class="p-6 border-t border-border-light dark:border-border-dark flex gap-3">
+        <button
+          id="cancelPoll"
+          class="flex-1 px-4 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-heading-light dark:text-heading-dark font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+        >
+          Annuler
+        </button>
+        <button
+          id="sendPoll"
+          class="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition"
+        >
+          Envoyer
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 
-<div id="campusMapModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onclick="closeCampusMap()">
-    <div class="bg-surface-light dark:bg-surface-dark rounded-xl max-w-4xl w-full p-4 relative" onclick="event.stopPropagation()">
-        <button onclick="closeCampusMap()" class="absolute top-2 right-2 p-2 bg-white rounded-full shadow hover:bg-gray-100"><span class="material-symbols-outlined text-black">close</span></button>
-        <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" class="w-full rounded shadow">
+  <!-- Modal de création de canal -->
+  <div id="channelModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-2xl max-w-md w-full mx-4">
+      <div class="p-6 border-b border-border-light dark:border-border-dark">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-heading-light dark:text-heading-dark flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">add_circle</span>
+            Créer un canal
+          </h2>
+          <button id="closeChannelModal" class="text-subtle-light dark:text-subtle-dark hover:text-heading-light dark:hover:text-heading-dark transition">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-heading-light dark:text-heading-dark mb-2">
+              Nom du canal
+            </label>
+            <input
+              type="text"
+              id="channelName"
+              placeholder="Ex: Projet PHP, Groupe de TD..."
+              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              maxlength="50"
+            />
+            <p class="mt-1 text-xs text-subtle-light dark:text-subtle-dark">Le niveau sera automatiquement ajouté (ex: M1 Projet PHP)</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-heading-light dark:text-heading-dark mb-2">
+              Description (optionnel)
+            </label>
+            <textarea
+              id="channelDescription"
+              placeholder="Décrivez brièvement le but de ce canal..."
+              class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+              rows="3"
+              maxlength="200"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 border-t border-border-light dark:border-border-dark flex gap-3">
+        <button
+          id="cancelChannel"
+          class="flex-1 px-4 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-heading-light dark:text-heading-dark font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+        ></button>
+          Annuler
+        </button>
+        <button
+          id="createChannelSubmit"
+          class="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition"
+        >
+          Créer
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-    // -- GLOBAL --
-    function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
-    function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
+  <script>
+    (function () {
+      const postsContainer = document.getElementById('postsContainer');
+      const messagesArea = document.getElementById('messagesArea');
+      const messagesEnd = document.getElementById('messagesEnd');
+      const currentStudentId = document.body.dataset.currentStudentId;
+      const channelNameEl = document.getElementById('channelName');
+      const channelDescEl = document.getElementById('channelDesc');
+      const form = document.getElementById('forumForm');
+      const input = document.getElementById('messageInput');
 
-    // -- FORUM LOGIC --
-    const messagesArea = document.getElementById('messagesArea');
-    const messagesEnd = document.getElementById('messagesEnd');
-    
-    // Scroll auto en bas
-    if (messagesArea) messagesArea.scrollTop = messagesArea.scrollHeight;
+      // Récupérer le canal depuis l'URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentChannel = urlParams.get('channel') || '{{ channel.name }}';
+      const baseFetchUrl = '{% url "dashboard:forum_posts_json" %}';
+      const fetchUrl = `${baseFetchUrl}?channel=${encodeURIComponent(currentChannel)}`;
 
-    // Input attachments
-    const plusBtn = document.getElementById('plusBtn');
-    const actionsMenu = document.getElementById('actionsMenu');
-    const attachInput = document.getElementById('attachmentsInput');
-    
-    if (plusBtn) {
-        plusBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            actionsMenu.classList.toggle('hidden');
-        });
-    }
-    
-    document.addEventListener('click', () => actionsMenu?.classList.add('hidden'));
+      let isInitialLoad = true; // Pour savoir si c'est le premier chargement
 
-    document.getElementById('photoVideoBtn')?.addEventListener('click', () => {
-        attachInput.accept = "image/*,video/*";
-        attachInput.click();
-    });
-    document.getElementById('documentBtn')?.addEventListener('click', () => {
-        attachInput.accept = ".pdf,.doc,.docx,.txt,.zip";
-        attachInput.click();
-    });
-    
-    attachInput?.addEventListener('change', () => {
-        if(attachInput.files.length > 0) {
-            plusBtn.classList.add('text-primary');
-            plusBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span>';
+      // Fonction pour vérifier si l'utilisateur est proche du bas
+      function isNearBottom(threshold = 100) {
+        return messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight < threshold;
+      }
+
+      // Scroll automatique vers le bas
+      function scrollToBottom() {
+        if (messagesEnd) {
+          messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          messagesArea.scrollTop = messagesArea.scrollHeight;
         }
-    });
+      }
 
-    // Création de canal
-    const channelModal = document.getElementById('channelModal');
-    document.getElementById('createChannelBtn')?.addEventListener('click', () => channelModal.classList.remove('hidden'));
-    document.getElementById('closeChannelModal')?.addEventListener('click', () => channelModal.classList.add('hidden'));
-    
-    document.getElementById('createChannelSubmit')?.addEventListener('click', async () => {
-        const name = document.getElementById('channelNameInput').value;
-        const desc = document.getElementById('channelDescriptionInput').value;
-        if (!name) return;
+      // Nouveaux éléments: bouton + style WhatsApp
+      const plusBtn = document.getElementById('plusBtn');
+      const actionsMenu = document.getElementById('actionsMenu');
+      const photoVideoBtn = document.getElementById('photoVideoBtn');
+      const documentBtn = document.getElementById('documentBtn');
+      const emojiBtn = document.getElementById('emojiBtn');
+      const attachInput = document.getElementById('attachmentsInput');
+      const selectedFiles = document.getElementById('selectedFiles');
+      const emojiPanel = document.getElementById('emojiPanel');
+      const pollModal = document.getElementById('pollModal');
+      const closePollModal = document.getElementById('closePollModal');
+      const pollBtn = document.getElementById('pollBtn');
+      const addPollOption = document.getElementById('addPollOption');
+      const pollOptions = document.getElementById('pollOptions');
+      const cancelPoll = document.getElementById('cancelPoll');
+      const sendPoll = document.getElementById('sendPoll');
+      const pollQuestion = document.getElementById('pollQuestion');
+      const createChannelBtn = document.getElementById('createChannelBtn');
+      const channelModal = document.getElementById('channelModal');
+      const closeChannelModal = document.getElementById('closeChannelModal');
+      const cancelChannel = document.getElementById('cancelChannel');
+      const createChannelSubmit = document.getElementById('createChannelSubmit');
+      const channelNameInput = document.getElementById('channelName');
+      const channelDescriptionInput = document.getElementById('channelDescription');
 
-        const formData = new FormData();
-        formData.append('channel_name', name);
-        formData.append('channel_description', desc);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      // Toggle menu d'actions style WhatsApp
+      plusBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        actionsMenu.classList.toggle('hidden');
+      });
+
+      // Bouton Photo/Vidéo
+      photoVideoBtn?.addEventListener('click', () => {
+        attachInput.accept = 'image/*,video/*';
+        attachInput.click();
+        actionsMenu.classList.add('hidden');
+      });
+
+      // Bouton Document
+      documentBtn?.addEventListener('click', () => {
+        attachInput.accept = '*/*';
+        attachInput.click();
+        actionsMenu.classList.add('hidden');
+      });
+
+      // Bouton Sondage
+      pollBtn?.addEventListener('click', () => {
+        pollModal.classList.remove('hidden');
+        actionsMenu.classList.add('hidden');
+      });
+
+      // Fermer le modal de sondage
+      closePollModal?.addEventListener('click', () => {
+        pollModal.classList.add('hidden');
+      });
+
+      cancelPoll?.addEventListener('click', () => {
+        pollModal.classList.add('hidden');
+      });
+
+      // Ajouter une option de sondage
+      addPollOption?.addEventListener('click', () => {
+        const optionCount = pollOptions.querySelectorAll('.poll-option').length;
+        if (optionCount >= 10) return; // Limite à 10 options
+        const newOption = document.createElement('div');
+        newOption.className = 'flex gap-2';
+        newOption.innerHTML = `
+          <input
+            type="text"
+            class="poll-option flex-1 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            placeholder="Option ${optionCount + 1}"
+            maxlength="100"
+          />
+        `;
+        pollOptions.appendChild(newOption);
+      });
+
+      // Envoyer le sondage
+      sendPoll?.addEventListener('click', async () => {
+        const question = pollQuestion.value.trim();
+        const options = Array.from(pollOptions.querySelectorAll('.poll-option'))
+          .map(input => input.value.trim())
+          .filter(value => value);
+
+        if (!question || options.length < 2) {
+          alert('Veuillez entrer une question et au moins deux options.');
+          return;
+        }
 
         try {
-            const res = await fetch('{% url "dashboard:create_channel" %}', { method: 'POST', body: formData });
-            if (res.ok) window.location.reload();
-        } catch (e) { console.error(e); }
-    });
-</script>
+          const formData = new FormData();
+          formData.append('question', question);
+          options.forEach((option, index) => {
+            formData.append(`options[${index}]`, option);
+          });
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+          const response = await fetch('{% url "dashboard:create_poll" %}', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            pollModal.classList.add('hidden');
+            pollQuestion.value = '';
+            pollOptions.innerHTML = `
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  class="poll-option flex-1 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Option 1"
+                  maxlength="100"
+                />
+              </div>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  class="poll-option flex-1 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Option 2"
+                  maxlength="100"
+                />
+              </div>
+            `;
+            refreshPosts();
+          }
+        } catch (error) {
+          console.error('Erreur lors de la création du sondage:', error);
+        }
+      });
+
+      // Fermer le menu si on clique ailleurs
+      document.addEventListener('click', (e) => {
+        if (!actionsMenu.classList.contains('hidden') && !plusBtn.contains(e.target) && !actionsMenu.contains(e.target)) {
+          actionsMenu.classList.add('hidden');
+        }
+      });
+
+      // Drag & Drop (style WhatsApp)
+      const dropZone = messagesArea;
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.add('bg-blue-50', 'dark:bg-blue-900/10');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+          dropZone.classList.remove('bg-blue-50', 'dark:bg-blue-900/10');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          attachInput.files = files;
+          renderSelectedFiles();
+          selectedFiles.classList.remove('hidden');
+          input.focus();
+        }
+      });
+
+      // Affiche les fichiers sélectionnés avec preview style WhatsApp
+      attachInput?.addEventListener('change', () => {
+        if (attachInput.files && attachInput.files.length > 0) {
+          renderSelectedFiles();
+          selectedFiles.classList.remove('hidden');
+          input.focus();
+        }
+      });
+
+      function formatBytes(bytes) {
+        if (!bytes && bytes !== 0) return '';
+        const sizes = ['o','Ko','Mo','Go','To'];
+        if (bytes === 0) return '0 o';
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return parseFloat((bytes / Math.pow(1024, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+
+      function isImageType(t) { return typeof t === 'string' && t.startsWith('image/'); }
+      function isVideoType(t) { return typeof t === 'string' && t.startsWith('video/'); }
+
+      function iconForType(t) {
+        if (!t) return 'attach_file';
+        if (t.startsWith('image/')) return 'image';
+        if (t === 'application/pdf') return 'picture_as_pdf';
+        if (t.startsWith('video/')) return 'movie';
+        if (t.startsWith('audio/')) return 'music_note';
+        if (t.indexOf('zip') !== -1 || t.indexOf('compressed') !== -1) return 'folder_zip';
+        if (t.startsWith('text/')) return 'description';
+        return 'attach_file';
+      }
+
+      function fileId(f) { return [f.name, f.size, f.lastModified].join('|'); }
+
+      function renderSelectedFiles() {
+        selectedFiles.innerHTML = '';
+        if (!attachInput.files || attachInput.files.length === 0) {
+          selectedFiles.classList.add('hidden');
+          return;
+        }
+
+        // Conteneur avec design style WhatsApp
+        const container = document.createElement('div');
+        container.className = 'bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-3 space-y-2';
+
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between mb-2';
+        const title = document.createElement('p');
+        title.className = 'text-sm font-semibold text-heading-light dark:text-heading-dark';
+        title.textContent = attachInput.files.length === 1 ? '1 fichier sélectionné' : `${attachInput.files.length} fichiers sélectionnés`;
+        header.appendChild(title);
+        container.appendChild(header);
+
+        const filesGrid = document.createElement('div');
+        filesGrid.className = 'grid grid-cols-2 gap-2';
+
+        Array.from(attachInput.files).forEach((f) => {
+          const id = fileId(f);
+          const isImg = isImageType(f.type);
+          const isVid = isVideoType(f.type);
+
+          const card = document.createElement('div');
+          card.className = 'relative group rounded-lg overflow-hidden border border-border-light dark:border-border-dark bg-gray-50 dark:bg-gray-800';
+          card.dataset.id = id;
+
+          if (isImg) {
+            // Preview image style WhatsApp
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(f);
+            img.alt = f.name;
+            img.className = 'w-full h-32 object-cover';
+            img.onload = () => URL.revokeObjectURL(img.src);
+            card.appendChild(img);
+          } else if (isVid) {
+            // Preview vidéo
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(f);
+            video.className = 'w-full h-32 object-cover';
+            video.muted = true;
+            card.appendChild(video);
+
+            const playIcon = document.createElement('div');
+            playIcon.className = 'absolute inset-0 flex items-center justify-center bg-black/30';
+            playIcon.innerHTML = '<span class="material-symbols-outlined text-white text-4xl">play_circle</span>';
+            card.appendChild(playIcon);
+          } else {
+            // Autres fichiers avec icône
+            const iconContainer = document.createElement('div');
+            iconContainer.className = 'w-full h-32 flex flex-col items-center justify-center gap-2 p-3';
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined text-4xl text-primary dark:text-accent';
+            icon.textContent = iconForType(f.type);
+            const name = document.createElement('p');
+            name.className = 'text-xs text-center truncate w-full px-2';
+            name.textContent = f.name;
+            iconContainer.appendChild(icon);
+            iconContainer.appendChild(name);
+            card.appendChild(iconContainer);
+          }
+
+          // Bouton de suppression
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.dataset.action = 'remove-file';
+          removeBtn.dataset.id = id;
+          removeBtn.className = 'absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity';
+          removeBtn.innerHTML = '<span class="material-symbols-outlined text-lg">close</span>';
+          card.appendChild(removeBtn);
+
+          // Info fichier en bas
+          const info = document.createElement('div');
+          info.className = 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2';
+          const size = document.createElement('p');
+          size.className = 'text-xs text-white font-medium';
+          size.textContent = formatBytes(f.size);
+          info.appendChild(size);
+          card.appendChild(info);
+
+          filesGrid.appendChild(card);
+        });
+
+        container.appendChild(filesGrid);
+        selectedFiles.appendChild(container);
+      }
+
+      function removeFileById(id) {
+        const dt = new DataTransfer();
+        Array.from(attachInput.files).forEach(f => {
+          if (fileId(f) !== id) dt.items.add(f);
+        });
+        attachInput.files = dt.files;
+        renderSelectedFiles();
+      }
+
+      selectedFiles.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="remove-file"]');
+        if (!btn) return;
+        removeFileById(btn.dataset.id);
+      });
+
+      // Gestion du panneau d'emojis
+      function insertAtCursor(textarea, text) {
+        const start = textarea.selectionStart ?? textarea.value.length;
+        const end = textarea.selectionEnd ?? textarea.value.length;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + text + after;
+        const pos = start + text.length;
+        textarea.selectionStart = textarea.selectionEnd = pos;
+        textarea.dispatchEvent(new Event('input'));
+      }
+
+      const emojis = ['😀','😁','😂','🤣','😊','😍','🥰','😘','😗','😙','😚','🤗','🤔','🤨','😐','😑','😶','🙄','😏','😣','😥','😮','🤐','😯','😪','😫','😴','😌','😛','😜','😝','🤤','😒','😓','😔','😕','🙃','🤑','😲','☹️','🙁','😖','😞','😟','😤','😢','😭','😦','😧','😨','😩','🤯','😬','😰','😱','🥵','🥶','😳','🤪','😵','😡','😠','🤬','👍','👎','👊','✊','🤛','🤜','🤞','✌️','🤟','🤘','👌','👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤙','💪','🙏','✍️','💅','🤳','💃','🕺','🎉','🎊','🎈','🎁','🏆','🥇','🥈','🥉','⭐','🌟','💫','✨','🔥','💥','💢','💯','💤','💨','🎯','🎪','🎭','🎨','🎬','🎤','🎧','🎼','🎹','🎺','🎷','🎸','🎻'];
+
+      const emojiPanelContainer = emojiPanel.querySelector('.flex');
+      if (emojiPanelContainer) {
+        emojiPanelContainer.innerHTML = '';
+        emojis.forEach(e => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-2 text-xl rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors';
+          b.textContent = e;
+          b.addEventListener('click', () => {
+            insertAtCursor(input, e);
+            emojiPanel.classList.add('hidden');
+            input.focus();
+          });
+          emojiPanelContainer.appendChild(b);
+        });
+      }
+
+      emojiBtn?.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        emojiPanel.classList.toggle('hidden');
+        actionsMenu.classList.add('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!emojiPanel.classList.contains('hidden') && !emojiPanel.contains(e.target) && !emojiBtn.contains(e.target)) {
+          emojiPanel.classList.add('hidden');
+        }
+      });
+
+      function renderPosts(data) {
+        // Sauvegarder la position de scroll avant le refresh
+        const wasAtBottom = isNearBottom();
+        const scrollPosition = messagesArea.scrollTop;
+
+        if (data.channel) {
+          if (channelNameEl) channelNameEl.textContent = data.channel.name;
+          if (channelDescEl) channelDescEl.textContent = data.channel.description || '';
+        }
+        // Clear container
+        postsContainer.innerHTML = '';
+        if (!data.posts || data.posts.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-sm text-subtle-light dark:text-subtle-dark';
+          p.textContent = 'Aucun message pour le moment. Soyez le premier à écrire !';
+          postsContainer.appendChild(p);
+          return;
+        }
+        data.posts.forEach((post) => {
+          const isMine = post.author.student_id === currentStudentId;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'flex items-start gap-3 max-w-lg' + (isMine ? ' ml-auto justify-end' : '');
+
+          if (!isMine) {
+            const avatar = document.createElement('div');
+            avatar.className = 'size-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0';
+            wrapper.appendChild(avatar);
+          }
+
+          const contentCol = document.createElement('div');
+          contentCol.className = 'flex flex-col' + (isMine ? ' items-end' : '');
+
+          const header = document.createElement('div');
+          header.className = 'flex items-baseline gap-2';
+
+          const name = document.createElement('p');
+          name.className = 'font-bold text-sm ' + (isMine ? 'text-primary dark:text-accent' : 'text-heading-light dark:text-heading-dark');
+          name.textContent = isMine ? 'Vous' : post.author.full_name;
+
+          const date = document.createElement('p');
+          date.className = 'text-xs text-subtle-light dark:text-subtle-dark';
+          date.textContent = post.posted_at;
+
+          header.appendChild(name);
+          header.appendChild(date);
+
+          const bubble = document.createElement('div');
+          bubble.className = 'mt-1 rounded-lg text-sm ' + (isMine
+            ? 'bg-primary dark:bg-accent text-white dark:text-primary rounded-tr-none'
+            : 'bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark rounded-tl-none');
+
+          // Vérifier si c'est un sondage
+          let pollData = null;
+          try {
+            pollData = JSON.parse(post.content);
+            if (pollData.type !== 'poll') pollData = null;
+          } catch (e) {
+            pollData = null;
+          }
+
+          if (pollData) {
+            // Afficher le sondage
+            bubble.className += ' p-4 min-w-[300px]';
+
+            // Question du sondage
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'flex items-start gap-2 mb-3';
+            const pollIcon = document.createElement('span');
+            pollIcon.className = 'material-symbols-outlined text-green-500';
+            pollIcon.textContent = 'poll';
+            const question = document.createElement('p');
+            question.className = 'font-semibold text-base';
+            question.textContent = pollData.question;
+            questionDiv.appendChild(pollIcon);
+            questionDiv.appendChild(question);
+            bubble.appendChild(questionDiv);
+
+            // Calculer le total des votes
+            const totalVotes = Object.values(pollData.votes || {}).reduce((sum, voters) => sum + voters.length, 0);
+            const userVotedIndex = Object.entries(pollData.votes || {}).find(([idx, voters]) =>
+              voters.includes(currentStudentId)
+            )?.[0];
+
+            // Options du sondage
+            pollData.options.forEach((option, index) => {
+              const optionDiv = document.createElement('div');
+              optionDiv.className = 'mb-2';
+
+              const votes = (pollData.votes[index] || []).length;
+              const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+              const userVoted = userVotedIndex !== undefined;
+              const userVotedThis = userVotedIndex == index;
+
+              if (userVoted) {
+                // Mode affichage des résultats
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'relative overflow-hidden rounded-lg border ' +
+                  (userVotedThis
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                    : 'border-border-light dark:border-border-dark bg-white/10');
+
+                // Barre de progression
+                const progressBar = document.createElement('div');
+                progressBar.className = 'absolute inset-0 transition-all duration-500 ' +
+                  (userVotedThis ? 'bg-green-200 dark:bg-green-700/30' : 'bg-gray-200 dark:bg-gray-700/30');
+                progressBar.style.width = percentage + '%';
+                resultDiv.appendChild(progressBar);
+
+                // Contenu
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'relative z-10 px-3 py-2 flex items-center justify-between';
+                const optText = document.createElement('span');
+                optText.className = 'text-sm font-medium flex items-center gap-1';
+                optText.textContent = option;
+                if (userVotedThis) {
+                  const checkIcon = document.createElement('span');
+                  checkIcon.className = 'material-symbols-outlined text-green-600 text-lg';
+                  checkIcon.textContent = 'check_circle';
+                  optText.appendChild(checkIcon);
+                }
+                const percText = document.createElement('span');
+                percText.className = 'text-sm font-bold';
+                percText.textContent = `${percentage}% (${votes})`;
+                contentDiv.appendChild(optText);
+                contentDiv.appendChild(percText);
+                resultDiv.appendChild(contentDiv);
+
+                optionDiv.appendChild(resultDiv);
+              } else {
+                // Mode vote
+                const voteBtn = document.createElement('button');
+                voteBtn.className = 'w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark hover:bg-white/20 dark:hover:bg-white/10 transition text-left text-sm';
+                voteBtn.textContent = option;
+                voteBtn.onclick = () => votePoll(post.id, index);
+                optionDiv.appendChild(voteBtn);
+              }
+
+              bubble.appendChild(optionDiv);
+            });
+
+            // Afficher le nombre total de votes
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'mt-3 pt-2 border-t border-current/20 text-xs opacity-70';
+            totalDiv.textContent = totalVotes === 0 ? 'Aucun vote' : `${totalVotes} vote${totalVotes > 1 ? 's' : ''}`;
+            bubble.appendChild(totalDiv);
+          } else {
+            // Message normal
+            bubble.className += ' p-3';
+            const text = document.createElement('p');
+            text.className = 'text-sm';
+            text.textContent = post.content;
+            bubble.appendChild(text);
+
+            // Affichage des pièces jointes
+            if (post.attachments && post.attachments.length) {
+              const attWrap = document.createElement('div');
+              attWrap.className = 'mt-2 flex flex-col gap-2';
+              post.attachments.forEach(a => {
+                const isImg = isImageType(a.content_type);
+                if (isImg && a.url) {
+                  const aLink = document.createElement('a');
+                  aLink.href = a.url; aLink.target = '_blank'; aLink.rel = 'noreferrer';
+                  const img = document.createElement('img');
+                  img.src = a.url; img.alt = a.name || 'image';
+                  img.className = 'max-h-64 max-w-xs object-cover rounded-lg border border-border-light dark:border-border-dark hover:opacity-95 transition';
+                  aLink.appendChild(img);
+                  attWrap.appendChild(aLink);
+                } else {
+                  const card = document.createElement('a');
+                  card.href = a.url || '#'; card.target = '_blank'; card.rel = 'noreferrer';
+                  card.className = 'flex items-center gap-3 p-2 rounded-lg border border-border-light dark:border-border-dark bg-gray-50 dark:bg-white/5 max-w-sm hover:bg-gray-100/70 dark:hover:bg-white/10 transition';
+                  const icon = document.createElement('span');
+                  icon.className = 'material-symbols-outlined text-2xl';
+                  icon.textContent = iconForType(a.content_type || '');
+                  const meta = document.createElement('div');
+                  meta.className = 'flex-1 min-w-0';
+                  const n = document.createElement('p'); n.className = 'text-xs font-medium truncate'; n.textContent = a.name || 'Pièce jointe';
+                  const s = document.createElement('p'); s.className = 'text-[11px] text-subtle-light dark:text-subtle-dark'; s.textContent = formatBytes(a.size);
+                  meta.appendChild(n); meta.appendChild(s);
+                  card.appendChild(icon); card.appendChild(meta);
+                  const dl = document.createElement('span'); dl.className = 'material-symbols-outlined text-lg text-subtle-light dark:text-subtle-dark'; dl.textContent = 'download';
+                  card.appendChild(dl);
+                  attWrap.appendChild(card);
+                }
+              });
+              bubble.appendChild(attWrap);
+            }
+          }
+
+          contentCol.appendChild(header);
+          contentCol.appendChild(bubble);
+
+          // Ajouter les réactions sous le message (sauf pour les sondages)
+          if (!pollData) {
+            const reactionsContainer = document.createElement('div');
+            reactionsContainer.className = 'mt-2 flex flex-wrap gap-1';
+
+            const reactionEmojis = [
+              {type: 'like', emoji: '👍'},
+              {type: 'love', emoji: '❤️'},
+              {type: 'laugh', emoji: '😂'},
+              {type: 'wow', emoji: '😮'},
+              {type: 'sad', emoji: '😢'},
+              {type: 'angry', emoji: '😡'}
+            ];
+
+            reactionEmojis.forEach(({type, emoji}) => {
+              const reaction = post.reactions[type];
+              if (reaction && reaction.count > 0) {
+                const reactionBtn = document.createElement('button');
+                reactionBtn.className = `reaction-btn flex items-center gap-1 px-2 py-1 text-xs rounded-full border transition-colors ${
+                  reaction.user_reacted
+                    ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
+                    : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`;
+                reactionBtn.dataset.postId = post.id;
+                reactionBtn.dataset.emojiType = type;
+                reactionBtn.innerHTML = `<span>${emoji}</span><span>${reaction.count}</span>`;
+                reactionsContainer.appendChild(reactionBtn);
+              }
+            });
+
+            // Bouton pour ajouter une réaction
+            const addReactionBtn = document.createElement('button');
+            addReactionBtn.className = 'add-reaction-btn flex items-center justify-center w-6 h-6 text-xs rounded-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors';
+            addReactionBtn.dataset.postId = post.id;
+            addReactionBtn.innerHTML = '<span class="text-gray-500 dark:text-gray-400">+</span>';
+            reactionsContainer.appendChild(addReactionBtn);
+
+            contentCol.appendChild(reactionsContainer);
+          }
+
+          wrapper.appendChild(contentCol);
+
+          if (isMine) {
+            const meAvatar = document.createElement('div');
+            meAvatar.className = 'size-10 rounded-full bg-blue-200 dark:bg-blue-900 flex-shrink-0';
+            wrapper.appendChild(meAvatar);
+          }
+
+          postsContainer.appendChild(wrapper);
+        });
+
+        // Gestion du scroll après le rendu
+        setTimeout(() => {
+          if (isInitialLoad) {
+            scrollToBottom();
+            isInitialLoad = false;
+          } else if (wasAtBottom) {
+            scrollToBottom();
+          } else {
+            messagesArea.scrollTop = scrollPosition;
+          }
+        }, 50);
+      }
+
+      // Fonction pour voter dans un sondage
+      async function votePoll(postId, optionIndex) {
+        try {
+          const formData = new FormData();
+          formData.append('post_id', postId);
+          formData.append('option_index', optionIndex);
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+          const response = await fetch('{% url "dashboard:vote_poll" %}', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            refreshPosts();
+          }
+        } catch (error) {
+          console.error('Erreur lors du vote:', error);
+        }
+      }
+
+      async function refreshPosts() {
+        try {
+          const res = await fetch(fetchUrl, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) return;
+          const data = await res.json();
+          allPosts = data.posts || []; // Stocker tous les posts
+
+          // Si une recherche est active, réappliquer le filtre avec les nouveaux posts
+          if (currentSearchTerm) {
+            filterPosts(currentSearchTerm);
+          } else {
+            // Sinon afficher tous les posts
+            renderPosts(data);
+          }
+        } catch (e) {
+          // ignore network errors silently for polling
+        }
+      }
+
+      // Initial load + polling every 1s
+      refreshPosts();
+      setInterval(refreshPosts, 1000);
+
+      // Gestion des clics sur les réactions
+      async function toggleReaction(postId, emojiType) {
+        try {
+          const formData = new FormData();
+          formData.append('post_id', postId);
+          formData.append('emoji_type', emojiType);
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+          const response = await fetch('{% url "dashboard:toggle_reaction" %}', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            // Rafraîchir les messages pour voir les nouvelles réactions
+            refreshPosts();
+          }
+        } catch (error) {
+          console.error('Erreur lors de la réaction:', error);
+        }
+      }
+
+      // Panneau de sélection des réactions
+      function showReactionPicker(postId, button) {
+        // Supprimer les panneaux existants
+        document.querySelectorAll('.reaction-picker').forEach(p => p.remove());
+
+        const picker = document.createElement('div');
+        picker.className = 'reaction-picker absolute z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 flex gap-1';
+
+        const reactionEmojis = [
+          {type: 'like', emoji: '👍'},
+          {type: 'love', emoji: '❤️'},
+          {type: 'laugh', emoji: '😂'},
+          {type: 'wow', emoji: '😮'},
+          {type: 'sad', emoji: '😢'},
+          {type: 'angry', emoji: '😡'}
+        ];
+
+        reactionEmojis.forEach(({type, emoji}) => {
+          const btn = document.createElement('button');
+          btn.className = 'p-2 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors';
+          btn.textContent = emoji;
+          btn.onclick = () => {
+            toggleReaction(postId, type);
+            picker.remove();
+          };
+          picker.appendChild(btn);
+        });
+
+        // Positionner le panneau
+        const rect = button.getBoundingClientRect();
+        picker.style.position = 'fixed';
+        picker.style.top = (rect.top - 50) + 'px';
+        picker.style.left = rect.left + 'px';
+
+        document.body.appendChild(picker);
+
+        // Fermer en cliquant ailleurs
+        setTimeout(() => {
+          document.addEventListener('click', function closePicker(e) {
+            if (!picker.contains(e.target) && e.target !== button) {
+              picker.remove();
+              document.removeEventListener('click', closePicker);
+            }
+          });
+        }, 100);
+      }
+
+      // Délégation d'événements pour les réactions
+      postsContainer.addEventListener('click', (e) => {
+        const reactionBtn = e.target.closest('.reaction-btn');
+        const addReactionBtn = e.target.closest('.add-reaction-btn');
+
+        if (reactionBtn) {
+          const postId = reactionBtn.dataset.postId;
+          const emojiType = reactionBtn.dataset.emojiType;
+          toggleReaction(postId, emojiType);
+        } else if (addReactionBtn) {
+          const postId = addReactionBtn.dataset.postId;
+          showReactionPicker(postId, addReactionBtn);
+        }
+      });
+
+      // Intercept form submit to avoid full reload
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = (input.value || '').trim();
+        // Autoriser l'envoi si contenu OU fichiers
+        if (!content && (!attachInput.files || attachInput.files.length === 0)) return;
+        try {
+          const formData = new FormData(form); // inclut csrf + content + files
+          // IMPORTANT: Envoyer au bon canal en incluant le paramètre ?channel=...
+          const postUrl = `${window.location.pathname}?channel=${encodeURIComponent(currentChannel)}`;
+          const res = await fetch(postUrl, { method: 'POST', body: formData });
+          if (res.ok) {
+            input.value = '';
+            if (attachInput) { attachInput.value = ''; selectedFiles.innerHTML = ''; }
+            // Après l'envoi d'un message, on force le scroll vers le bas
+            setTimeout(() => {
+              refreshPosts();
+              setTimeout(scrollToBottom, 100);
+            }, 50);
+          }
+        } catch (_) {}
+      });
+
+      // ========== FONCTIONNALITÉ DE RECHERCHE ==========
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      const searchResults = document.getElementById('searchResults');
+      let allPosts = []; // Stocker tous les posts pour la recherche
+      let currentSearchTerm = ''; // Stocker le terme de recherche actuel
+
+      // Fonction pour filtrer et afficher les posts en fonction de la recherche
+      function filterPosts(searchTerm) {
+        const term = searchTerm.toLowerCase().trim();
+        currentSearchTerm = term; // Sauvegarder le terme de recherche
+
+        if (!term) {
+          // Si pas de terme de recherche, afficher tous les posts
+          renderPosts({ channel: { name: channelNameEl.textContent, description: channelDescEl.textContent }, posts: allPosts });
+          searchResults.classList.add('hidden');
+          clearSearchBtn.classList.add('hidden');
+          return;
+        }
+
+        // Filtrer les posts qui contiennent le terme de recherche
+        const filteredPosts = allPosts.filter(post => {
+          // Rechercher dans le contenu
+          if (post.content && post.content.toLowerCase().includes(term)) return true;
+          // Rechercher dans le nom de l'auteur
+          if (post.author.full_name && post.author.full_name.toLowerCase().includes(term)) return true;
+          // Rechercher dans les noms de fichiers attachés
+          if (post.attachments && post.attachments.some(att => att.name.toLowerCase().includes(term))) return true;
+          return false;
+        });
+
+        // Afficher les résultats
+        renderPosts({ channel: { name: channelNameEl.textContent, description: channelDescEl.textContent }, posts: filteredPosts });
+
+        // Afficher le nombre de résultats
+        searchResults.textContent = filteredPosts.length === 0
+          ? 'Aucun résultat trouvé'
+          : `${filteredPosts.length} message${filteredPosts.length > 1 ? 's' : ''} trouvé${filteredPosts.length > 1 ? 's' : ''}`;
+        searchResults.classList.remove('hidden');
+        clearSearchBtn.classList.remove('hidden');
+      }
+
+      // Événement sur l'input de recherche (avec debounce pour éviter trop de recherches)
+      let searchTimeout;
+      searchInput?.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          filterPosts(e.target.value);
+        }, 300); // Attendre 300ms après la dernière frappe
+      });
+
+      // Bouton pour effacer la recherche
+      clearSearchBtn?.addEventListener('click', () => {
+        searchInput.value = '';
+        currentSearchTerm = '';
+        filterPosts('');
+      });
+
+      // Ouvrir le modal de création de canal
+      createChannelBtn?.addEventListener('click', () => {
+        channelModal.classList.remove('hidden');
+      });
+
+      // Fermer le modal de création de canal
+      closeChannelModal?.addEventListener('click', () => {
+        channelModal.classList.add('hidden');
+      });
+
+      cancelChannel?.addEventListener('click', () => {
+        channelModal.classList.add('hidden');
+      });
+
+      // Créer un canal
+      createChannelSubmit?.addEventListener('click', async () => {
+        const name = channelNameInput.value.trim();
+        const description = channelDescriptionInput.value.trim();
+
+        if (!name) {
+          alert('Veuillez entrer un nom de canal.');
+          return;
+        }
+
+        try {
+          const formData = new FormData();
+          formData.append('name', name);
+          formData.append('description', description);
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+          const response = await fetch('{% url "dashboard:create_channel" %}', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            channelModal.classList.add('hidden');
+            channelNameInput.value = '';
+            channelDescriptionInput.value = '';
+            refreshPosts();
+          }
+        } catch (error) {
+          console.error('Erreur lors de la création du canal:', error);
+        }
+      });
+    })();
+  </script>
 </body>
+
 </html>

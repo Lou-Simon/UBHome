@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}Hub Étudiant UBO{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#F4C753",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221d10",
+                        course_teal: "#2dd4bf",
+                        course_indigo: "#4f46e5",
+                        course_red: "#ef4444",
+                    },
+                    fontFamily: { display: "Lexend" },
+                    borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
+        /* Styles globaux */
+        .event-color-primary { background-color: rgba(244, 199, 83, 0.2); border-left-color: #F4C753; }
+        .dark .event-color-primary { background-color: rgba(244, 199, 83, 0.2); }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="flex h-full min-h-screen">
+
+        <aside class="flex h-screen min-h-[700px] w-64 flex-col justify-between bg-white dark:bg-slate-900 p-4 border-r border-slate-200 dark:border-slate-800 sticky top-0">
+            <div class="flex flex-col gap-6">
+                <div class="flex items-center gap-3 px-3">
+                    <img src="{% static 'images/images.png' %}" alt="Logo UBO" class="size-10"/>
+                    <div class="flex flex-col">
+                        <h1 class="text-[#111318] dark:text-white text-base font-bold leading-normal">UBO</h1>
+                        <p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2">
+
+                    {% with url_name=request.resolver_match.url_name %}
+
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if url_name == 'dashboard' %}bg-primary/10 dark:bg-primary/20{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                       href="{% url 'dashboard:dashboard' %}">
+                        <span class="material-symbols-outlined {% if url_name == 'dashboard' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %}">home</span>
+                        <p class="{% if url_name == 'dashboard' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %} text-sm font-medium leading-normal">Accueil</p>
+                    </a>
+
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if url_name == 'calendar' %}bg-primary/10 dark:bg-primary/20{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                       href="{% url 'dashboard:calendar' %}">
+                        <span class="material-symbols-outlined {% if url_name == 'calendar' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %}">calendar_month</span>
+                        <p class="{% if url_name == 'calendar' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %} text-sm font-medium leading-normal">Calendrier</p>
+                    </a>
+
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if url_name == 'chat' %}bg-primary/10 dark:bg-primary/20{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                       href="{% url 'dashboard:chat' %}">
+                        <span class="material-symbols-outlined {% if url_name == 'chat' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %}">mail</span>
+                        <p class="{% if url_name == 'chat' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %} text-sm font-medium leading-normal">Emails</p>
+                    </a>
+
+                    {% block chat_dropdown %}{% endblock %}
+
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg {% if url_name == 'forum' %}bg-primary/10 dark:bg-primary/20{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                       href="{% url 'dashboard:forum' %}">
+                        <span class="material-symbols-outlined {% if url_name == 'forum' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %}">forum</span>
+                        <p class="{% if url_name == 'forum' %}text-primary dark:text-primary{% else %}text-[#111318] dark:text-slate-300{% endif %} text-sm font-medium leading-normal">Forum</p>
+                    </a>
+
+                    <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-left w-full">
+                        <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">map</span>
+                        <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Plan du Campus</p>
+                    </button>
+
+                    {% endwith %}
+                </nav>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                   href="{% url 'dashboard:profile' %}">
+                    <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">account_circle</span>
+                    <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Mon Profil</p>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-slate-800"
+                   href="{% url 'dashboard:logout' %}">
+                    <span class="material-symbols-outlined text-red-500">logout</span>
+                    <p class="text-red-500 text-sm font-medium leading-normal">Déconnexion</p>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-screen overflow-hidden">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<div id="campusMapModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+            <h2 class="text-xl font-bold text-[#111318] dark:text-white">Plan du Campus</h2>
+            <button onclick="closeCampusMap()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <span class="material-symbols-outlined text-[#616f89] dark:text-slate-400">close</span>
+            </button>
+        </div>
+        <div class="flex-1 overflow-auto p-6 bg-slate-50 dark:bg-slate-800/50">
+            <img src="https://www.univ-brest.fr/faculte-medecine/sites/faculte-medecine.www.univ-brest.fr/files/2022-05/PLAN-CAMPUS-BREST-horizontal_amphis500-600.png" class="w-full h-auto rounded-lg shadow-lg">
+        </div>
+    </div>
+</div>
+
+<script>
+    function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
+    function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
