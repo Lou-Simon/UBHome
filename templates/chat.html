@@ -34,33 +34,12 @@
     </script>
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; }
-
-        /* Styles Tom Select Personnalisés (Mode Gmail) */
-        .ts-control {
-           border-radius: 0.5rem;
-           padding: 8px;
-           background: transparent;
-           border: 1px solid #e5e7eb;
-           box-shadow: none;
-        }
-        .ts-control.focus { border-color: #F4C753; box-shadow: 0 0 0 1px #F4C753; }
-        .ts-wrapper.multi .ts-control > div.item {
-           background-color: #e0e7ff;
-           color: #3730a3;
-           border: 1px solid #c7d2fe;
-           border-radius: 9999px;
-           padding: 2px 10px;
-           font-weight: 500;
-        }
+        /* Tom Select Styles */
+        .ts-control { border-radius: 0.5rem; padding: 8px; background: transparent; border: 1px solid #e5e7eb; }
         .dark .ts-control { border-color: #374151; color: white; }
         .dark .ts-control input { color: white; }
         .dark .ts-dropdown { background-color: #1e2025; border-color: #374151; color: white; }
-        .dark .ts-dropdown .option:hover, .dark .ts-dropdown .active { background-color: #F4C753; color: black; }
-        .dark .ts-wrapper.multi .ts-control > div.item {
-           background-color: #3730a3;
-           color: #e0e7ff;
-           border-color: #4338ca;
-        }
+        .dark .ts-dropdown .option:hover { background-color: #F4C753; color: black; }
     </style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white">
@@ -90,26 +69,43 @@
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">home</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Accueil</p>
                     </a>
+
                     <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                        href="{% url 'dashboard:calendar' %}">
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
                     </a>
 
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20"
+                    <a class="flex justify-between items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20"
                        href="{% url 'dashboard:chat' %}">
-                        <span class="material-symbols-outlined text-primary dark:text-primary">mail</span>
-                        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Emails</p>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary dark:text-primary">mail</span>
+                            <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Emails</p>
+                        </div>
+                        {% if total_email_notifs > 0 %}
+                        <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">{{ total_email_notifs }}</span>
+                        {% endif %}
                     </a>
 
                     <div class="pl-4 ml-3 border-l-2 border-primary/30 space-y-1">
+
                         <a href="?box=inbox" class="flex justify-between items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'inbox' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
                             <span>Boîte de réception</span>
                             {% if unread_count > 0 %}<span class="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ unread_count }}</span>{% endif %}
                         </a>
-                        <a href="?box=sent" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'sent' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">Envoyés</a>
-                        <a href="?box=drafts" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'drafts' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">Brouillons</a>
-                        <a href="?box=trash" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'trash' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">Corbeille</a>
+
+                        <a href="?box=sent" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'sent' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
+                            Envoyés
+                        </a>
+
+                        <a href="?box=drafts" class="flex justify-between items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'drafts' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
+                            <span>Brouillons</span>
+                            {% if draft_count > 0 %}<span class="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ draft_count }}</span>{% endif %}
+                        </a>
+
+                        <a href="?box=trash" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'trash' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
+                            Corbeille
+                        </a>
                     </div>
 
                     <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -222,7 +218,7 @@
                     {% if selected_email.is_draft %}
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-yellow-800 rounded-r-lg flex justify-between items-center">
                         <p>Ceci est un brouillon non envoyé.</p>
-                        <button onclick="resumeDraft('{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded hover:bg-yellow-500 transition">
+                        <button onclick="resumeDraft('{{ selected_email.id }}', '{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded hover:bg-yellow-500 transition">
                             Reprendre la rédaction
                         </button>
                     </div>
@@ -233,7 +229,7 @@
                 {% else %}
                 <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
                     <span class="material-symbols-outlined text-6xl mb-4">mail</span>
-                    <p class="text-lg">Sélectionnez un email pour le lire.</p>
+                    <p>Sélectionnez un email pour le lire.</p>
                 </div>
                 {% endif %}
             </section>
@@ -242,15 +238,16 @@
     </div>
 </div>
 
-<div id="emailModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm">
+<div id="emailModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
         <div class="p-4 border-b border-border-light dark:border-border-dark flex justify-between items-center bg-gray-50 dark:bg-white/5 rounded-t-xl">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Nouveau message</h3>
             <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"><span class="material-symbols-outlined">close</span></button>
         </div>
 
-        <form method="POST" action="{% url 'dashboard:chat' %}" class="flex-1 flex flex-col p-6 overflow-y-auto gap-4">
+        <form id="emailForm" method="POST" action="{% url 'dashboard:chat' %}" class="flex-1 flex flex-col p-6 overflow-y-auto gap-4">
             {% csrf_token %}
+            <input type="hidden" name="draft_id" id="draft_id" value="">
             <input type="hidden" name="form_submit" value="true">
 
             {% if form.non_field_errors %}
@@ -265,12 +262,9 @@
             <input type="text" name="subject" id="id_subject" placeholder="Objet" class="w-full rounded-lg border-gray-300 dark:bg-surface-dark dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
             <textarea name="body" id="id_body" rows="10" placeholder="Votre message..." class="w-full rounded-lg border-gray-300 dark:bg-surface-dark dark:border-gray-700 text-gray-900 dark:text-white flex-1 focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
 
-            <div class="flex justify-between pt-4 border-t border-border-light dark:border-border-dark">
-                <button type="submit" name="save_draft" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-white transition">Brouillon</button>
-                <div class="flex gap-2">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition">Annuler</button>
-                    <button type="submit" name="send_email" class="px-6 py-2 bg-ubo-blue text-white rounded-lg hover:opacity-90 font-bold shadow-md transition">Envoyer</button>
-                </div>
+            <div class="flex justify-end pt-4 border-t border-border-light dark:border-border-dark">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition mr-2">Annuler</button>
+                <button type="submit" name="send_email" class="px-6 py-2 bg-ubo-blue text-white rounded-lg hover:opacity-90 font-bold shadow-md transition">Envoyer</button>
             </div>
         </form>
     </div>
@@ -288,61 +282,29 @@
     var recipientControl;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // --- CONFIGURATION TOM SELECT POUR DESTINATAIRES ---
         if(document.getElementById('select-recipients')) {
             recipientControl = new TomSelect('#select-recipients', {
                 plugins: ['remove_button'],
                 maxItems: null,
-
-                // Champs utilisés par Tom Select
                 valueField: 'value',
                 labelField: 'text',
-                searchField: ['text'], // Recherche dans tout le texte (Nom + Email)
-
+                searchField: ['text'],
                 placeholder: 'Saisissez un nom...',
                 persist: false,
                 create: false,
-                selectOnTab: true, // Sélectionne avec TAB
-                openOnFocus: false, // N'ouvre PAS la liste au clic (attente de frappe)
-
-                // VIDER LE CHAMP TEXTE APRÈS SÉLECTION
-                onItemAdd: function() {
-                    this.setTextboxValue('');
-                    this.refreshOptions();
-                },
-
-                // RENDU PERSONNALISÉ (Nom en gras, Email en dessous)
+                selectOnTab: true,
+                openOnFocus: false,
+                onItemAdd: function() { this.setTextboxValue(''); this.refreshOptions(); },
                 render: {
                     option: function(data, escape) {
-                        // Découpage du format "Nom :: Email :: Promo"
-                        const rawText = data.text || "";
-                        const parts = rawText.split(' :: ');
-
-                        // Fallback si format simple
-                        if (parts.length < 2) {
-                            return `<div class="py-2 px-3 border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 cursor-pointer text-gray-900 dark:text-white">${escape(rawText)}</div>`;
-                        }
-
-                        const name = parts[0];
-                        const email = parts[1];
-                        const promo = parts[2];
-
-                        return `
-                            <div class="flex items-center justify-between py-2 px-3 border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-white/10 cursor-pointer transition-colors">
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-gray-900 dark:text-white text-sm">${escape(name)}</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">${escape(email)}</span>
-                                </div>
-                                ${promo ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium ml-2">${escape(promo)}</span>` : ''}
-                            </div>
-                        `;
+                        const parts = (data.text || "").split(' :: ');
+                        if (parts.length < 2) return `<div>${escape(data.text)}</div>`;
+                        return `<div class="flex justify-between px-2 py-1 border-b border-gray-100 hover:bg-blue-50 cursor-pointer">
+                                    <div><div class="font-bold">${escape(parts[0])}</div><div class="text-xs text-gray-500">${escape(parts[1])}</div></div>
+                                    ${parts[2] ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 rounded-full h-fit">${escape(parts[2])}</span>` : ''}
+                                </div>`;
                     },
-                    item: function(data, escape) {
-                        // Affiche juste le nom dans la bulle de sélection
-                        const rawText = data.text || "";
-                        const parts = rawText.split(' :: ');
-                        return `<div title="${escape(parts[1] || '')}">${escape(parts[0])}</div>`;
-                    }
+                    item: function(data, escape) { return `<div>${escape((data.text || "").split(' :: ')[0])}</div>`; }
                 }
             });
         }
@@ -351,38 +313,57 @@
     function openModal() { document.getElementById('emailModal').classList.remove('hidden'); }
 
     function closeModal() {
+        // 1. Sauvegarde Auto si contenu
+        const subject = document.getElementById('id_subject').value;
+        const body = document.getElementById('id_body').value;
+        const draftId = document.getElementById('draft_id').value;
+
+        if (subject.trim() !== "" || body.trim() !== "") {
+            saveDraftSilently(draftId, subject, body);
+        }
+
         document.getElementById('emailModal').classList.add('hidden');
-        // Reset du formulaire
         if(recipientControl) recipientControl.clear();
         document.getElementById('id_subject').value = "";
         document.getElementById('id_body').value = "";
+        document.getElementById('draft_id').value = "";
+
+        setTimeout(() => window.location.reload(), 500);
     }
 
-    function resumeDraft(subject, body) {
+    function saveDraftSilently(draftId, subject, body) {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('action', 'autosave_draft');
+        formData.append('draft_id', draftId);
+        formData.append('subject', subject);
+        formData.append('body', body);
+
+        fetch('{% url "dashboard:chat" %}', {
+            method: 'POST',
+            body: formData
+        }).then(response => console.log("Brouillon sauvegardé"));
+    }
+
+    function resumeDraft(id, subject, body) {
+        document.getElementById('draft_id').value = id;
         document.getElementById('id_subject').value = subject;
         document.getElementById('id_body').value = body;
         openModal();
     }
 
     function replyToEmail(senderId, subject) {
-        if(recipientControl) {
-            recipientControl.clear();
-            recipientControl.addItem(senderId); // Ajoute l'expéditeur
-        }
-        // Ajoute "Re:" si pas déjà présent
+        if(recipientControl) { recipientControl.clear(); recipientControl.addItem(senderId); }
         const subj = subject.startsWith("Re:") ? subject : "Re: " + subject;
         document.getElementById('id_subject').value = subj;
         openModal();
     }
 
-    // Plan Campus
     function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
     function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
-
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCampusMap(); });
     document.getElementById('campusMapModal').addEventListener('click', function(e) { if (e.target === this) closeCampusMap(); });
 
-    // Auto-open si erreur serveur
     const hasErrors = "{{ form.errors|yesno:'true,false' }}";
     if (hasErrors === 'true') openModal();
 </script>
