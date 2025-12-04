@@ -79,22 +79,22 @@ tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C75
             <div class="flex flex-col items-center mb-8">
                 <div class="relative group">
                     <div class="size-24 rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-white overflow-hidden">
-                        {% if user.profile_picture_url %}
-                            <img src="{{ user.profile_picture_url }}" class="w-full h-full object-cover">
+                        {% if student.profile_picture %}
+                            <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}" class="w-full h-full object-cover">
                         {% else %}
-                            {{ user.full_name|slice:":1" }}
+                            {{ student.full_name|slice:":1" }}
                         {% endif %}
                     </div>
                     <form action="{% url 'dashboard:upload_profile_picture' %}" method="post" enctype="multipart/form-data" class="absolute bottom-0 right-0">
                         {% csrf_token %}
                         <label class="bg-gray-800 text-white rounded-full p-1.5 cursor-pointer hover:bg-gray-700 border-2 border-white dark:border-surface-dark shadow-sm flex">
                             <span class="material-symbols-outlined text-sm">edit</span>
-                            <input type="file" name="profile_picture" class="hidden" onchange="this.form.submit()">
+                            <input type="file" name="profile_picture" accept="image/*" class="hidden" onchange="this.form.submit()">
                         </label>
                     </form>
                 </div>
-                <h2 class="mt-4 text-xl font-bold">{{ user.full_name }}</h2>
-                <p class="text-gray-500">{{ user.year }} - {{ user.student_id }}</p>
+                <h2 class="mt-4 text-xl font-bold">{{ student.full_name }}</h2>
+                <p class="text-gray-500">{{ student.year }} - {{ student.student_id }}</p>
             </div>
 
             <div class="space-y-6">
@@ -102,7 +102,7 @@ tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C75
                     <label class="block text-sm font-medium text-gray-500 mb-1">Adresse Email Universitaire</label>
                     <div class="p-3 bg-gray-50 dark:bg-white/5 rounded-lg text-gray-900 dark:text-white border border-border-light dark:border-border-dark flex items-center gap-3">
                         <span class="material-symbols-outlined text-gray-400">mail</span>
-                        {{ user.email }}
+                        {{ student.email }}
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@ tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#F4C75
                     <label class="block text-sm font-medium text-gray-500 mb-1">Numéro Étudiant</label>
                     <div class="p-3 bg-gray-50 dark:bg-white/5 rounded-lg text-gray-900 dark:text-white border border-border-light dark:border-border-dark flex items-center gap-3">
                         <span class="material-symbols-outlined text-gray-400">badge</span>
-                        {{ user.student_id }}
+                        {{ student.student_id }}
                     </div>
                 </div>
 

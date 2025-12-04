@@ -100,6 +100,18 @@ class ForumPost(models.Model):
     def __str__(self):
         return f"{self.content[:50]} by {self.author.full_name}"
 
+class ForumPostRead(models.Model):
+    """Modèle pour tracker les messages lus par chaque étudiant"""
+    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name='read_by')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='read_posts')
+    read_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('post', 'student')
+    
+    def __str__(self):
+        return f"{self.student.full_name} a lu {self.post.id}"
+
 class ForumAttachment(models.Model):
     post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(upload_to='forum_attachments/')
