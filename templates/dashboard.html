@@ -69,10 +69,13 @@ tailwind.config = {
             {% endif %}
 
             <nav class="flex flex-col gap-2">
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary-700 dark:text-primary" href="{% url 'dashboard:dashboard' %}">
-                    <span class="material-symbols-outlined">home</span>
-                    <p class="text-sm font-medium">Accueil</p>
-                </a>
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20"
+                       href="{% url 'dashboard:dashboard' %}">
+                        <span class="material-symbols-outlined text-primary dark:text-primary">home</span>
+                        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Accueil</p>
+                    </a>
+
+                
                 <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300" href="{% url 'dashboard:calendar' %}">
                     <span class="material-symbols-outlined">calendar_month</span>
                     <p class="text-sm font-medium">Calendrier</p>

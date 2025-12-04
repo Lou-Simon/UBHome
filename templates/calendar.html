@@ -201,7 +201,7 @@
                                     <p class="text-xs text-{{ color }}-600/80 dark:text-{{ color }}-400/80 line-clamp-1">{{ event.location }}</p>
 
                                     {% if event.is_personal_event %}
-                                    <form method="POST" action="{% url 'dashboard:delete_personal_event' eventId=event.id %}" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <form method="POST" action="{% url 'dashboard:delete_event' event_id=event.id %}" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         {% csrf_token %}
                                         <button type="submit" onclick="return confirm('Supprimer ?')" class="text-red-500 hover:text-red-700">
                                             <span class="material-symbols-outlined text-base">delete</span>
@@ -224,7 +224,7 @@
 <div id="event-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 justify-center items-center backdrop-blur-sm">
     <div class="bg-white dark:bg-[#111318] rounded-xl shadow-2xl w-full max-w-lg mx-4 my-8 p-6 lg:p-8 transform transition-all duration-300">
         <header class="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800 mb-6">
-            <h3 class="text-xl font-bold text-white">Créer un nouvel événement</h3>
+            <h3 class="text-xl font-bold text-black dark:text-white ">Créer un nouvel événement</h3>
             <button id="close-modal-btn" class="text-slate-400 hover:text-primary transition duration-300">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -242,14 +242,14 @@
             <label class="flex flex-col gap-1">
                 <span class="text-sm font-medium text-slate-300">Titre</span>
                 <input type="text" name="title" required value="{{ form_data.title|default_if_none:'' }}"
-                       class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white placeholder-gray-500"
+                       class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white placeholder-gray-500"
                        placeholder="Ex: Réunion de travail"/>
             </label>
 
             <label class="flex flex-col gap-1">
                 <span class="text-sm font-medium text-slate-300">Lieu</span>
                 <input type="text" name="location" required value="{{ form_data.location|default_if_none:'' }}"
-                       class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white placeholder-gray-500"
+                       class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white placeholder-gray-500"
                        placeholder="Ex: Salle 305"/>
             </label>
 
@@ -257,23 +257,23 @@
                 <label class="flex flex-col gap-1">
                     <span class="text-sm font-medium text-slate-300">Date</span>
                     <input type="date" name="date" required value="{{ form_data.date|default:current_date }}"
-                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white"/>
+                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white"/>
                 </label>
                 <label class="flex flex-col gap-1">
                     <span class="text-sm font-medium text-slate-300">Début</span>
                     <input type="time" name="start_time" required value="{{ form_data.start_time|default:'09:00' }}" step="300"
-                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white"/>
+                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white"/>
                 </label>
                 <label class="flex flex-col gap-1">
                     <span class="text-sm font-medium text-slate-300">Fin</span>
                     <input type="time" name="end_time" required value="{{ form_data.end_time|default:'10:00' }}" step="300"
-                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white"/>
+                           class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white"/>
                 </label>
             </div>
 
             <label class="flex flex-col gap-1">
                 <span class="text-sm font-medium text-slate-300">Inviter (Optionnel)</span>
-                <select multiple name="attendees" class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-white h-32">
+                <select multiple name="attendees" class="border border-slate-700 bg-transparent rounded-lg focus:border-primary focus:ring-primary text-black dark:text-white h-32">
                     {% for student in all_other_students %}
                     <option value="{{ student.student_id }}" {% if student.student_id|stringformat:"s" in form_data.attendees %}selected{% endif %}>
                     {{ student.full_name }}
