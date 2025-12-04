@@ -8,20 +8,16 @@ class EmailForm(forms.ModelForm):
     recipients = forms.ModelMultipleChoiceField(
         queryset=Student.objects.all(),
         required=False,
-        label="Étudiants spécifiques",
+        label="Destinataires",
         widget=forms.SelectMultiple(attrs={
-            'class': 'w-full rounded-lg border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-gray-900 dark:text-white focus:ring-ubo-blue focus:border-ubo-blue h-32'
+            'id': 'select-recipients',
+            'placeholder': 'Saisissez un nom...',
+            'class': 'w-full',
+            'autocomplete': 'off'
         })
     )
 
-    group = forms.ChoiceField(
-        choices=[],
-        required=False,
-        label="Ou toute une filière",
-        widget=forms.Select(attrs={
-            'class': 'w-full rounded-lg border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-gray-900 dark:text-white focus:ring-ubo-blue focus:border-ubo-blue'
-        })
-    )
+    # NOTE : Le champ 'group' a été supprimé ici
 
     class Meta:
         model = Email
@@ -29,23 +25,19 @@ class EmailForm(forms.ModelForm):
         widgets = {
             'subject': forms.TextInput(attrs={
                 'class': 'w-full rounded-lg border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-gray-900 dark:text-white focus:ring-ubo-blue focus:border-ubo-blue',
-                'placeholder': 'Sujet du message'
+                'placeholder': 'Objet'
             }),
             'body': forms.Textarea(attrs={
                 'class': 'w-full rounded-lg border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-gray-900 dark:text-white focus:ring-ubo-blue focus:border-ubo-blue',
-                'rows': 6,
+                'rows': 10,
                 'placeholder': 'Votre message...'
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['recipients'].queryset = Student.objects.all()
-        self.fields['recipients'].label_from_instance = lambda obj: f"{obj.full_name} ({obj.year})"
-        
-        distinct_years = Student.objects.order_by('year').values_list('year', flat=True).distinct()
-        choices = [('', '--- Choisir une filière ---')] + [(year, year) for year in distinct_years if year]
-        self.fields['group'].choices = choices
+        self.fields['recipients'].label_from_instance = lambda obj: f"{obj.full_name} :: {obj.email} :: {obj.year}"
 
 
 # --- 2. NOUVEAU Formulaire de Photo de Profil ---

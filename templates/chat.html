@@ -24,8 +24,7 @@
                         "surface-dark": "#1e2025",
                         "border-light": "#e5e7eb",
                         "border-dark": "#374151",
-                        "ubo-blue": "#0055A4",
-                        "ubo-yellow": "#F4C753"
+                        "ubo-blue": "#0055A4"
                     },
                     fontFamily: {display: "Lexend"},
                     borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}
@@ -56,48 +55,51 @@
                         <p class="text-[#616f89] dark:text-slate-400 text-sm font-normal leading-normal">Hub Étudiant</p>
                     </div>
                 </div>
+
                 {% if user.full_name %}
-            <div class="flex flex-col px-3 py-2">
-                <p class="text-base font-semibold">{{ user.full_name }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.year }}</p>
-            </div>
-            {% endif %}
+                <div class="flex flex-col px-3 py-2">
+                    <p class="text-base font-semibold text-[#111318] dark:text-white">{{ user.full_name }}</p>
+                    <p class="text-sm text-[#616f89] dark:text-slate-400">{{ user.year }}</p>
+                </div>
+                {% endif %}
 
                 <nav class="flex flex-col gap-2">
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                       href="{% url 'dashboard:dashboard' %}">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:dashboard' %}">
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">home</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Accueil</p>
                     </a>
-
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                       href="{% url 'dashboard:calendar' %}">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:calendar' %}">
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">calendar_month</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Calendrier</p>
                     </a>
 
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20"
-                       href="{% url 'dashboard:chat' %}">
-                        <span class="material-symbols-outlined text-primary dark:text-primary">mail</span>
-                        <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Emails</p>
+                    <a class="flex justify-between items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" href="{% url 'dashboard:chat' %}">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary dark:text-primary">mail</span>
+                            <p class="text-primary dark:text-primary text-sm font-medium leading-normal">Emails</p>
+                        </div>
+                        {% if total_email_notifs > 0 %}
+                        <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">{{ total_email_notifs }}</span>
+                        {% endif %}
                     </a>
 
                     <div class="pl-4 ml-3 border-l-2 border-primary/30 space-y-1">
-                        <a href="?box=inbox" class="flex justify-between items-center px-3 py-2 rounded-lg {% if box_type == 'inbox' %}bg-slate-100 dark:bg-white/10{% else %}hover:bg-slate-50 dark:hover:bg-white/5{% endif %} text-sm text-[#111318] dark:text-slate-300">
+                        <a href="?box=inbox" class="flex justify-between items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'inbox' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
                             <span>Boîte de réception</span>
                             {% if unread_count > 0 %}<span class="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ unread_count }}</span>{% endif %}
                         </a>
-                        <a href="?box=sent" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'sent' %}bg-slate-100 dark:bg-white/10{% else %}hover:bg-slate-50 dark:hover:bg-white/5{% endif %} text-sm text-[#111318] dark:text-slate-300">Envoyés</a>
-                        <a href="?box=drafts" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'drafts' %}bg-slate-100 dark:bg-white/10{% else %}hover:bg-slate-50 dark:hover:bg-white/5{% endif %} text-sm text-[#111318] dark:text-slate-300">Brouillons</a>
-                        <a href="?box=trash" class="flex items-center px-3 py-2 rounded-lg {% if box_type == 'trash' %}bg-slate-100 dark:bg-white/10{% else %}hover:bg-slate-50 dark:hover:bg-white/5{% endif %} text-sm text-[#111318] dark:text-slate-300">Corbeille</a>
+                        <a href="?box=sent" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'sent' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">Envoyés</a>
+                        <a href="?box=drafts" class="flex justify-between items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'drafts' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">
+                            <span>Brouillons</span>
+                            {% if draft_count > 0 %}<span class="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{{ draft_count }}</span>{% endif %}
+                        </a>
+                        <a href="?box=trash" class="flex items-center px-3 py-2 rounded-lg transition-colors {% if box_type == 'trash' %}bg-primary/10 dark:bg-primary/20 text-primary font-medium{% else %}hover:bg-slate-50 dark:hover:bg-white/5 text-[#111318] dark:text-slate-300{% endif %} text-sm">Corbeille</a>
                     </div>
 
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                       href="{% url 'dashboard:forum' %}">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:forum' %}">
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">forum</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Forum</p>
                     </a>
-
                     <button onclick="openCampusMap()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-left w-full">
                         <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">map</span>
                         <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Plan du Campus</p>
@@ -106,13 +108,11 @@
             </div>
 
             <div class="flex flex-col gap-1">
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                   href="{% url 'dashboard:profile' %}">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" href="{% url 'dashboard:profile' %}">
                     <span class="material-symbols-outlined text-[#111318] dark:text-slate-300">account_circle</span>
                     <p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Mon Profil</p>
                 </a>
-                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
-                   href="{% url 'dashboard:logout' %}">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20" href="{% url 'dashboard:logout' %}">
                     <span class="material-symbols-outlined text-red-500">logout</span>
                     <p class="text-red-500 text-sm font-medium leading-normal">Déconnexion</p>
                 </a>
@@ -134,10 +134,24 @@
                     </form>
                 </div>
 
-                <div class="p-4 flex justify-center">
-                    <button onclick="openModal()" class="flex items-center gap-2 px-6 py-2 bg-ubo-yellow text-white font-bold rounded-full shadow hover:opacity-90 transition">
+                <div class="p-4 flex justify-center items-center gap-2">
+                    <button onclick="openModal()" class="flex items-center gap-2 px-6 py-2 bg-ubo-blue text-white font-bold rounded-full shadow hover:opacity-90 transition transform hover:scale-105">
                         <span class="material-symbols-outlined">edit</span> Nouveau message
                     </button>
+
+                    {% if selected_email and box_type != 'sent' %}
+                    <form action="{% url 'dashboard:delete_email' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="email_id" value="{{ selected_email.id }}">
+                        <input type="hidden" name="current_box" value="{{ box_type }}">
+                        <button type="submit" class="flex items-center justify-center size-10 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-red-500 rounded-full shadow hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                                title="{% if box_type == 'trash' %}Supprimer définitivement{% else %}Déplacer vers la corbeille{% endif %}">
+                        <span class="material-symbols-outlined text-[20px]">
+                            {% if box_type == 'trash' %}delete_forever{% else %}delete{% endif %}
+                        </span>
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
 
                 <div class="flex-1 overflow-y-auto px-2">
@@ -159,7 +173,12 @@
                     </a>
                     {% endfor %}
                     {% else %}
-                    <div class="text-center py-10 text-gray-500">Aucun message.</div>
+                    <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+                        <span class="material-symbols-outlined text-4xl mb-2">
+                            {% if box_type == 'trash' %}delete_outline{% elif box_type == 'drafts' %}draft{% else %}inbox{% endif %}
+                        </span>
+                        <p>{% if box_type == 'trash' %}Corbeille vide.{% elif box_type == 'drafts' %}Aucun brouillon.{% else %}Aucun message.{% endif %}</p>
+                    </div>
                     {% endif %}
                 </div>
             </main>
@@ -173,14 +192,6 @@
                         <button onclick="replyToEmail('{{ selected_email.sender.id }}', '{{ selected_email.subject|escapejs }}')" class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full" title="Répondre">
                             <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">reply</span>
                         </button>
-                        {% endif %}
-                        {% if box_type != 'sent' and box_type != 'trash' %}
-                        <form action="{% url 'dashboard:delete_email' %}" method="post">{% csrf_token %}
-                            <input type="hidden" name="email_id" value="{{ selected_email.id }}">
-                            <button type="submit" class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full text-red-500" title="Supprimer">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
-                        </form>
                         {% endif %}
                     </div>
                 </div>
@@ -197,9 +208,11 @@
                     </div>
 
                     {% if selected_email.is_draft %}
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-yellow-800 rounded-r-lg">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-yellow-800 rounded-r-lg flex justify-between items-center">
                         <p>Ceci est un brouillon.</p>
-                        <button onclick="resumeDraft('{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="underline font-bold">Reprendre la rédaction</button>
+                        <button onclick="resumeDraft('{{ selected_email.id }}', '{{ selected_email.subject|escapejs }}', '{{ selected_email.body|escapejs }}')" class="px-4 py-2 bg-yellow-400 text-yellow-900 font-bold rounded hover:bg-yellow-500 transition">
+                            Reprendre la rédaction
+                        </button>
                     </div>
                     {% endif %}
 
@@ -218,14 +231,15 @@
 </div>
 
 <div id="emailModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
-        <div class="p-4 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
+        <div class="p-4 border-b border-border-light dark:border-border-dark flex justify-between items-center bg-gray-50 dark:bg-white/5 rounded-t-xl">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Nouveau message</h3>
-            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><span class="material-symbols-outlined">close</span></button>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"><span class="material-symbols-outlined">close</span></button>
         </div>
 
-        <form method="POST" action="{% url 'dashboard:chat' %}" class="flex-1 flex flex-col p-6 overflow-y-auto gap-4">
+        <form id="emailForm" method="POST" action="{% url 'dashboard:chat' %}" class="flex-1 flex flex-col p-6 overflow-y-auto gap-4">
             {% csrf_token %}
+            <input type="hidden" name="draft_id" id="draft_id" value="">
             <input type="hidden" name="form_submit" value="true">
 
             {% if form.non_field_errors %}
@@ -237,15 +251,12 @@
                 {{ form.recipients }}
             </div>
 
-            <input type="text" name="subject" id="id_subject" placeholder="Objet" class="w-full rounded border-gray-300 dark:bg-white/5 dark:border-gray-700 text-gray-900 dark:text-white">
-            <textarea name="body" id="id_body" rows="8" placeholder="Votre message..." class="w-full rounded border-gray-300 dark:bg-white/5 dark:border-gray-700 text-gray-900 dark:text-white flex-1"></textarea>
+            <input type="text" name="subject" id="id_subject" placeholder="Objet" class="w-full rounded-lg border-gray-300 dark:bg-surface-dark dark:border-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
+            <textarea name="body" id="id_body" rows="10" placeholder="Votre message..." class="w-full rounded-lg border-gray-300 dark:bg-surface-dark dark:border-gray-700 text-gray-900 dark:text-white flex-1 focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
 
-            <div class="flex justify-between pt-4 border-t border-border-light dark:border-border-dark">
-                <button type="submit" name="save_draft" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-white">Brouillon</button>
-                <div class="flex gap-2">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700">Annuler</button>
-                    <button type="submit" name="send_email" class="px-6 py-2 bg-ubo-blue text-white rounded hover:opacity-90 font-medium">Envoyer</button>
-                </div>
+            <div class="flex justify-end pt-4 border-t border-border-light dark:border-border-dark">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition mr-2">Annuler</button>
+                <button type="submit" name="send_email" class="px-6 py-2 bg-ubo-blue text-white rounded-lg hover:opacity-90 font-bold shadow-md transition">Envoyer</button>
             </div>
         </form>
     </div>
@@ -261,11 +272,20 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
     var recipientControl;
+
     document.addEventListener('DOMContentLoaded', function() {
         if(document.getElementById('select-recipients')) {
             recipientControl = new TomSelect('#select-recipients', {
-                plugins: ['remove_button'], maxItems: null, valueField: 'value', labelField: 'text', searchField: ['text'],
-                placeholder: 'Rechercher un nom...', create: false, selectOnTab: true,
+                plugins: ['remove_button'],
+                maxItems: null,
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                placeholder: 'Saisissez un nom...',
+                persist: false,
+                create: false,
+                selectOnTab: true,
+                openOnFocus: false,
                 onItemAdd: function() { this.setTextboxValue(''); this.refreshOptions(); },
                 render: {
                     option: function(data, escape) {
@@ -283,30 +303,69 @@
     });
 
     function openModal() { document.getElementById('emailModal').classList.remove('hidden'); }
+
     function closeModal() {
+        // SAUVEGARDE AUTO lors de la fermeture
+        const subject = document.getElementById('id_subject').value;
+        const body = document.getElementById('id_body').value;
+        const draftId = document.getElementById('draft_id').value;
+
+        // Si pas vide, on sauvegarde
+        if (subject.trim() !== "" || body.trim() !== "") {
+            saveDraftSilently(draftId, subject, body);
+        }
+
         document.getElementById('emailModal').classList.add('hidden');
+
+        // Reset pour la prochaine ouverture
         if(recipientControl) recipientControl.clear();
         document.getElementById('id_subject').value = "";
         document.getElementById('id_body').value = "";
+        document.getElementById('draft_id').value = "";
+
+        // Petit délai pour voir le nouveau brouillon apparaître
+        setTimeout(() => window.location.reload(), 500);
     }
-    function resumeDraft(subject, body) {
+
+    function saveDraftSilently(draftId, subject, body) {
+        const formData = new FormData();
+        // Correction syntaxe pour éviter les erreurs VS Code
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('action', 'autosave_draft');
+        formData.append('draft_id', draftId);
+        formData.append('subject', subject);
+        formData.append('body', body);
+
+        fetch('{% url "dashboard:chat" %}', {
+            method: 'POST',
+            body: formData
+        }).then(response => console.log("Brouillon sauvegardé"));
+    }
+
+    function resumeDraft(id, subject, body) {
+        document.getElementById('draft_id').value = id; // On remet l'ID pour update
         document.getElementById('id_subject').value = subject;
         document.getElementById('id_body').value = body;
         openModal();
     }
+
     function replyToEmail(senderId, subject) {
         if(recipientControl) { recipientControl.clear(); recipientControl.addItem(senderId); }
-        document.getElementById('id_subject').value = subject.startsWith("Re:") ? subject : "Re: " + subject;
+        const subj = subject.startsWith("Re:") ? subject : "Re: " + subject;
+        document.getElementById('id_subject').value = subj;
         openModal();
     }
 
-    // Plan Campus
     function openCampusMap() { document.getElementById('campusMapModal').classList.remove('hidden'); }
     function closeCampusMap() { document.getElementById('campusMapModal').classList.add('hidden'); }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCampusMap(); });
+    document.getElementById('campusMapModal').addEventListener('click', function(e) { if (e.target === this) closeCampusMap(); });
 
-    // Auto-open error
+    // Gestion erreur formulaire
     const hasErrors = "{{ form.errors|yesno:'true,false' }}";
-    if (hasErrors === 'true') openModal();
+    if (hasErrors === 'true') {
+        openModal();
+    }
 </script>
 
 </body>
